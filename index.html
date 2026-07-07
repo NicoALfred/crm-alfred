@@ -502,7 +502,7 @@ function diffJours(dateStr) {
 function renderClients(filtre='', statutFiltre='') {
   let data = clientsData;
   if (!data||data.length===0) {
-    document.getElementById('clients-table').innerHTML = '<div class="empty-state"><p>Aucun client importé. Complète l'onglet CLIENTS dans le Google Sheet.</p></div>';
+    document.getElementById('clients-table').innerHTML = '<div class="empty-state"><p>Aucun client importé. Complète l&apos;onglet CLIENTS dans le Google Sheet.</p></div>';
     document.getElementById('clients-count').textContent = '0 client';
     return;
   }
@@ -581,7 +581,7 @@ async function sauvegarderLead() {
   try {
     await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});
     fermerModal(); await chargerDonnees();
-  } catch(e) { alert('Erreur lors de l'enregistrement.'); }
+  } catch(e) { alert('Erreur lors de l&apos;enregistrement.'); }
 }
 
 function ouvrirDetail(id) {
