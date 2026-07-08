@@ -89,6 +89,8 @@
   .card-relance.urgent{color:var(--rouge);font-weight:700;}
   .card-relance.warning{color:var(--orange);font-weight:700;}
   .card-assignee{width:22px;height:22px;border-radius:50%;background:var(--bleu-pale);color:#3A9AAA;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .btn-modifier{padding:3px 6px;border:none;background:none;font-size:11px;cursor:pointer;opacity:0.5;transition:opacity 0.15s;flex-shrink:0;}
+  .btn-modifier:hover{opacity:1;}
   .table-wrap{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .table-filters{padding:18px 22px;border-bottom:1px solid var(--gris-clair);display:flex;gap:10px;align-items:center;}
   .filter-search{flex:1;padding:9px 14px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;}
@@ -400,7 +402,6 @@ function renderKanban(cid){
 function renderCard(l){
   const isFromFacturier=l['_fromFacturier']===true;
   const isOS=l['Type']==='One-shot';
-  const ini=(l['Assigné à']||'—').substring(0,2).toUpperCase();
   const j=diffJours(l['Date dernière relance']);
   let rc='',rt='';
   if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFromFacturier){
@@ -415,16 +416,18 @@ function renderCard(l){
   const opts=isFromFacturier?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
   const cardClass='card'+(isOS?' oneshot-card':'');
   const draggable=isFromFacturier?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
-  const click=isFromFacturier?'':`onclick="ouvrirDetail('${l['ID']}')"`;
-  return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} ${click}>
+  const contenu=isFromFacturier
+    ?`<div class="card-entreprise">${l['Prénom/Nom']||'—'}</div><div class="card-contact">${l['Commentaires']||''}</div>`
+    :`<div class="card-entreprise">${l['Entreprise']||'—'}</div><div class="card-contact">${l['Prénom/Nom']||''}</div>`;
+  const btnMod=`<button class="btn-modifier" onclick="event.stopPropagation();ouvrirEdition('${l['ID']}',${isFromFacturier})">✏️</button>`;
+  return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} onclick="ouvrirDetail('${l['ID']}')">
     ${badge}
-    <div class="card-entreprise">${l['Entreprise']||'—'}</div>
-    <div class="card-contact">${l['Prénom/Nom']||''}</div>
+    ${contenu}
     ${mStr}
     <div class="card-footer">
-      ${isFromFacturier?'<div style="font-size:9px;color:var(--gris)">'+( l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
+      ${isFromFacturier?'<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
       <div class="card-relance ${rc}">${rt}</div>
-      <div class="card-assignee">${ini}</div>
+      ${btnMod}
     </div>
   </div>`;
 }
@@ -524,8 +527,78 @@ async function changerStatutDepuisDetail(){
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
 document.getElementById('modal-lead').addEventListener('click',function(e){if(e.target===this)fermerModal();});
+document.getElementById('modal-edition').addEventListener('click',function(e){if(e.target===this)fermerEdition();});
 document.getElementById('modal-detail').addEventListener('click',function(e){if(e.target===this)fermerModalDetail();});
 setDate();chargerDonnees();
 </script>
+
+<!-- MODAL EDITION -->
+<div class="modal-overlay" id="modal-edition">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Modifier le lead</div><button class="modal-close" onclick="fermerEdition()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="e-nom"></div>
+        <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="e-poste"></div>
+        <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="e-entreprise"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="e-email" type="email"></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="e-tel"></div>
+        <div class="form-group"><label class="form-label">Statut</label>
+          <select class="form-select" id="e-statut">
+            <option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Montant (€/mois)</label><input class="form-input" id="e-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Assigné à</label>
+          <select class="form-select" id="e-assigne"></select>
+        </div>
+        <div class="form-group full"><label class="form-label">Source</label>
+          <select class="form-select" id="e-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
+        </div>
+        <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="e-commentaires"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="fermerEdition()">Annuler</button><button class="btn-primary" onclick="sauvegarderEdition()">Enregistrer</button></div>
+  </div>
+</div>
+
+function ouvrirEdition(id, isFromFacturier){
+  if(isFromFacturier) return; // Les cartes facturier ne sont pas éditables depuis le CRM
+  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
+  leadDetailCourant=l;
+  document.getElementById('e-nom').value=l['Prénom/Nom']||'';
+  document.getElementById('e-poste').value=l['Poste']||'';
+  document.getElementById('e-entreprise').value=l['Entreprise']||'';
+  document.getElementById('e-email').value=l['Email']||'';
+  document.getElementById('e-tel').value=l['Téléphone']||'';
+  document.getElementById('e-statut').value=l['Statut']||'En discussion';
+  document.getElementById('e-montant').value=l['Montant estimé (€/mois)']||'';
+  document.getElementById('e-commentaires').value=l['Commentaires']||'';
+  document.getElementById('e-source').value=l['Source']||'Prospection';
+  // Remplir assigné à
+  const sel=document.getElementById('e-assigne');
+  sel.innerHTML=assignesList.map(a=>`<option value="${a}" ${a===l['Assigné à']?'selected':''}>${a}</option>`).join('');
+  document.getElementById('modal-edition').classList.add('open');
+}
+function fermerEdition(){document.getElementById('modal-edition').classList.remove('open');leadDetailCourant=null;}
+async function sauvegarderEdition(){
+  if(!leadDetailCourant)return;
+  const data={
+    'Prénom/Nom':document.getElementById('e-nom').value,
+    'Poste':document.getElementById('e-poste').value,
+    'Entreprise':document.getElementById('e-entreprise').value,
+    'Email':document.getElementById('e-email').value,
+    'Téléphone':document.getElementById('e-tel').value,
+    'Statut':document.getElementById('e-statut').value,
+    'Montant estimé (€/mois)':document.getElementById('e-montant').value,
+    'Source':document.getElementById('e-source').value,
+    'Commentaires':document.getElementById('e-commentaires').value,
+    'Assigné à':document.getElementById('e-assigne').value,
+  };
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});
+    fermerEdition();await chargerDonnees();
+  }catch(e){alert('Erreur lors de la sauvegarde.');}
+}
 </body>
 </html>
