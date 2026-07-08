@@ -545,8 +545,9 @@ function ouvrirDetail(id){
 function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
 function basculerEdition(){
   if(!leadDetailCourant)return;
+  const id=leadDetailCourant['ID'];
   fermerModalDetail();
-  ouvrirEdition(leadDetailCourant['ID']);
+  ouvrirEdition(id);
 }
 async function changerStatutDepuisDetail(){
   if(!leadDetailCourant)return;
