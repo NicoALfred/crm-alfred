@@ -543,10 +543,11 @@ function ouvrirDetail(id){
   document.getElementById('modal-detail').classList.add('open');
 }
 function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
+function fermerModalDetailSansReset(){document.getElementById('modal-detail').classList.remove('open');}
 function basculerEdition(){
   if(!leadDetailCourant)return;
   const id=leadDetailCourant['ID'];
-  fermerModalDetail();
+  fermerModalDetailSansReset();
   ouvrirEdition(id);
 }
 async function changerStatutDepuisDetail(){
