@@ -52,7 +52,6 @@
   .retention-item{text-align:center;}
   .retention-item .num{font-size:22px;font-weight:700;}
   .retention-item .lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;}
-  /* KANBAN 5 colonnes */
   .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
   .kanban-col{background:var(--gris-clair);border-radius:var(--radius);padding:12px;min-height:180px;}
   .kanban-col.drag-over{background:var(--bleu-pale);outline:2px dashed var(--bleu);}
@@ -65,17 +64,17 @@
   .kanban-col[data-statut="Perdu"] .kanban-col-title{color:var(--rouge);}
   .kanban-col[data-statut="One-shot terminé"] .kanban-col-title{color:var(--violet);}
   .kanban-cards{display:flex;flex-direction:column;gap:8px;min-height:60px;}
-  .card{background:var(--blanc);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:grab;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;}
+  .card{background:var(--blanc);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;}
   .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.1);}
-  .card.dragging{opacity:0.4;cursor:grabbing;}
+  .card.dragging{opacity:0.4;}
   .card.oneshot-card{background:var(--violet-pale);}
   .card[data-statut="En discussion"]{border-left-color:var(--bleu);}
   .card[data-statut="Devis envoyé"]{border-left-color:var(--orange);}
   .card[data-statut="En cours"]{border-left-color:var(--vert);}
   .card[data-statut="Perdu"]{border-left-color:var(--rouge);}
   .card[data-statut="Terminé"]{border-left-color:#B0B0B0;}
-  .card-entreprise{font-size:12px;font-weight:700;color:var(--noir);margin-bottom:2px;}
-  .card-contact{font-size:10px;color:var(--gris);margin-bottom:5px;}
+  .card-titre{font-size:12px;font-weight:700;color:var(--noir);margin-bottom:2px;}
+  .card-sous{font-size:10px;color:var(--gris);margin-bottom:5px;}
   .card-montant{font-size:11px;font-weight:600;margin-bottom:5px;}
   .card-montant.recurrent{color:var(--vert);}
   .card-montant.oneshot{color:var(--violet);}
@@ -88,9 +87,8 @@
   .card-relance{font-size:9px;color:var(--gris);white-space:nowrap;}
   .card-relance.urgent{color:var(--rouge);font-weight:700;}
   .card-relance.warning{color:var(--orange);font-weight:700;}
-  .card-assignee{width:22px;height:22px;border-radius:50%;background:var(--bleu-pale);color:#3A9AAA;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .btn-modifier{padding:3px 6px;border:none;background:none;font-size:11px;cursor:pointer;opacity:0.5;transition:opacity 0.15s;flex-shrink:0;}
-  .btn-modifier:hover{opacity:1;}
+  .btn-modifier{padding:3px 7px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:6px;font-size:10px;cursor:pointer;opacity:0.6;transition:opacity 0.15s;flex-shrink:0;}
+  .btn-modifier:hover{opacity:1;background:var(--gris-clair);}
   .table-wrap{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .table-filters{padding:18px 22px;border-bottom:1px solid var(--gris-clair);display:flex;gap:10px;align-items:center;}
   .filter-search{flex:1;padding:9px 14px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;}
@@ -128,6 +126,7 @@
   .modal-header{padding:26px 30px 18px;border-bottom:1px solid var(--gris-clair);display:flex;align-items:center;justify-content:space-between;}
   .modal-title{font-size:20px;font-weight:700;}
   .modal-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--gris-clair);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .modal-close:hover{background:#E0E0E0;}
   .modal-body{padding:24px 30px;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .form-grid .full{grid-column:1/-1;}
@@ -150,6 +149,7 @@
   .type-btn.active-oneshot{background:var(--violet-pale);border-color:var(--violet);color:var(--violet);font-weight:700;}
   .modal-footer{padding:18px 30px 26px;display:flex;gap:10px;justify-content:flex-end;}
   .btn-secondary{padding:9px 22px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
+  .btn-secondary:hover{background:var(--gris-clair);}
   .btn-primary{padding:9px 22px;background:var(--noir);color:var(--blanc);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .btn-primary:hover{opacity:0.85;}
   .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,26,0.5);z-index:2000;align-items:center;justify-content:center;}
@@ -231,7 +231,32 @@
   </div>
 </main>
 
-<!-- MODAL LEAD -->
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-edition">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Modifier le lead</div><button class="modal-close" onclick="fermerEdition()">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="e-nom"></div>
+        <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="e-poste"></div>
+        <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="e-entreprise"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="e-email" type="email"></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="e-tel"></div>
+        <div class="form-group"><label class="form-label">Statut</label>
+          <select class="form-select" id="e-statut"><option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Montant (€/mois)</label><input class="form-input" id="e-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Assigné à</label><select class="form-select" id="e-assigne"></select></div>
+        <div class="form-group full"><label class="form-label">Source</label>
+          <select class="form-select" id="e-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
+        </div>
+        <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="e-commentaires"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="fermerEdition()">Annuler</button><button class="btn-primary" onclick="sauvegarderEdition()">Enregistrer</button></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-lead">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Nouveau lead</div><button class="modal-close" onclick="fermerModal()">✕</button></div>
@@ -251,9 +276,7 @@
         <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="f-email" type="email"></div>
         <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="f-tel"></div>
         <div class="form-group"><label class="form-label">Statut</label>
-          <select class="form-select" id="f-statut">
-            <option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option>
-          </select>
+          <select class="form-select" id="f-statut"><option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option></select>
         </div>
         <div class="form-group"><label class="form-label" id="montant-label">Montant (€/mois)</label><input class="form-input" id="f-montant" type="number" placeholder="800"></div>
         <div class="form-group">
@@ -271,7 +294,6 @@
   </div>
 </div>
 
-<!-- MODAL DETAIL -->
 <div class="modal-overlay" id="modal-detail">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="detail-title">—</div><button class="modal-close" onclick="fermerModalDetail()">✕</button></div>
@@ -280,7 +302,6 @@
   </div>
 </div>
 
-<!-- CONFIRMATION -->
 <div class="confirm-overlay" id="confirm-drag">
   <div class="confirm-box">
     <h3>Confirmer</h3><p id="confirm-drag-text"></p>
@@ -327,7 +348,6 @@ function renderDashboard(d){
     <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Jan → Juin 2026</div></div>
     <div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">${fmt(d.caEstime2026)}</div><div class="stat-sub">Avec clients actuels</div></div>
     <div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">${ru}<span> leads</span></div><div class="stat-sub">${d.leadsEnCours||0} leads en cours</div></div>`;
-
   const pct=Math.min(Math.round((d.caEstime2026/d.objectif2026)*100),100);
   document.getElementById('objectif-section').innerHTML=`
     <div class="objectif-card">
@@ -335,7 +355,6 @@ function renderDashboard(d){
       <div class="barre-fond"><div class="barre-remplissage" style="width:${pct}%"></div></div>
       <div class="objectif-pct">${pct}%</div>
     </div>`;
-
   document.getElementById('charts-section').style.display='grid';
   const noms12=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
   const mi=new Date().getMonth();
@@ -348,17 +367,14 @@ function renderDashboard(d){
     {label:'CA réel',data:caR,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:4,spanGaps:false},
     {label:'Projection',data:caP,borderColor:'#9B7FD4',backgroundColor:'rgba(155,127,212,0.08)',borderDash:[5,5],tension:0.3,pointRadius:4,spanGaps:false}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},boxWidth:12}}},scales:{y:{ticks:{callback:v=>(v/1000).toFixed(0)+'k€',font:{size:10}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}});
-
   const act=d.caActivites||{};
   if(chartActivites)chartActivites.destroy();
   chartActivites=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#A8D5DC','#E8A040','#4DA882','#9B7FD4'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}}},cutout:'65%'}});
-
   document.getElementById('retention-section').style.display='grid';
   document.getElementById('retention-pct').textContent=(d.tauxRetention||100)+'%';
   document.getElementById('ret-actifs').textContent=d.clientsActifs||0;
   document.getElementById('ret-perdus').textContent=d.clientsPerdus||0;
   document.getElementById('ret-pause').textContent=d.nbClientsPause||0;
-
   const histo=(d.historique||[]).filter(m=>m.annee>=2023);
   if(chartHistorique)chartHistorique.destroy();
   if(histo.length>0){
@@ -379,15 +395,14 @@ function renderKanban(cid){
   const html=cols.map(col=>{
     let cards=[];
     if(col.key==='En cours'){
-      // Leads "En cours" + missions one-shot en cours + clients du facturier
-      const leadsEnCours=leadsData.filter(l=>l['Statut']==='En cours');
-      const oneshotsEnCours=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours');
-      cards=[...leadsEnCours,...oneshotsEnCours,...missionsEnCours];
-    } else if(col.key==='One-shot terminé'){
+      const leadsEC=leadsData.filter(l=>l['Statut']==='En cours');
+      const oneshotsEC=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours');
+      cards=[...leadsEC,...oneshotsEC,...missionsEnCours];
+    }else if(col.key==='One-shot terminé'){
       cards=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='Terminé');
-    } else if(col.key==='Perdu'){
+    }else if(col.key==='Perdu'){
       cards=leadsData.filter(l=>l['Statut']==='Perdu');
-    } else {
+    }else{
       cards=leadsData.filter(l=>l['Statut']===col.key&&l['Type']!=='One-shot');
     }
     const ch=cards.length===0?'<div style="padding:16px;text-align:center;color:#B0B0B0;font-size:11px">Aucun</div>':cards.map(renderCard).join('');
@@ -400,32 +415,30 @@ function renderKanban(cid){
 }
 
 function renderCard(l){
-  const isFromFacturier=l['_fromFacturier']===true;
+  const isFF=l['_fromFacturier']===true;
   const isOS=l['Type']==='One-shot';
   const j=diffJours(l['Date dernière relance']);
   let rc='',rt='';
-  if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFromFacturier){
+  if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFF){
     if(j>=14){rc='urgent';rt=j+'j ⚠';}else if(j>=7){rc='warning';rt=j+'j';}else if(j>0){rt='il y a '+j+'j';}
   }
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
   const mStr=m?`<div class="card-montant ${isOS?'oneshot':'recurrent'}">${m.toLocaleString('fr-FR')} ${isOS?'€ (mission)':'€/mois'}</div>`:'';
-  let badge='';
-  if(isFromFacturier){badge='<span class="card-badge facturier">CLIENT ACTIF</span>';}
-  else if(isOS){badge='<span class="card-badge oneshot">ONE-SHOT</span>';}
-  else{badge='<span class="card-badge recurrent">RÉCURRENT</span>';}
-  const opts=isFromFacturier?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
+  let badge=isFF?'<span class="card-badge facturier">CLIENT ACTIF</span>':isOS?'<span class="card-badge oneshot">ONE-SHOT</span>':'<span class="card-badge recurrent">RÉCURRENT</span>';
+  const opts=isFF?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
   const cardClass='card'+(isOS?' oneshot-card':'');
-  const draggable=isFromFacturier?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
-  const contenu=isFromFacturier
-    ?`<div class="card-entreprise">${l['Prénom/Nom']||'—'}</div><div class="card-contact">${l['Commentaires']||''}</div>`
-    :`<div class="card-entreprise">${l['Entreprise']||'—'}</div><div class="card-contact">${l['Prénom/Nom']||''}</div>`;
-  const btnMod=`<button class="btn-modifier" onclick="event.stopPropagation();ouvrirEdition('${l['ID']}',${isFromFacturier})">✏️</button>`;
+  const draggable=isFF?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
+  // Cartes facturier : occupant en gras + adresse. Autres : entreprise + contact
+  const titre=isFF?(l['Prénom/Nom']||'—'):(l['Entreprise']||'—');
+  const sous=isFF?(l['Commentaires']||''):(l['Prénom/Nom']||'');
+  const btnMod=isFF?'':` <button class="btn-modifier" onclick="event.stopPropagation();ouvrirEdition('${l['ID']}')">✏️</button>`;
   return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} onclick="ouvrirDetail('${l['ID']}')">
     ${badge}
-    ${contenu}
+    <div class="card-titre">${titre}</div>
+    <div class="card-sous">${sous}</div>
     ${mStr}
     <div class="card-footer">
-      ${isFromFacturier?'<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
+      ${isFF?'<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
       <div class="card-relance ${rc}">${rt}</div>
       ${btnMod}
     </div>
@@ -475,25 +488,30 @@ function renderRelances(){
 }
 async function changerStatutRelance(id,s){const l=leadsData.find(x=>x['ID']===id);if(!l)return;dragLeadId=id;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Passer "${l['Entreprise']}" en "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
 
-function setType(t){
-  document.getElementById('f-type').value=t;
-  document.getElementById('btn-recurrent').className='type-btn'+(t==='Récurrent'?' active-recurrent':'');
-  document.getElementById('btn-oneshot').className='type-btn'+(t==='One-shot'?' active-oneshot':'');
-  document.getElementById('montant-label').textContent=t==='One-shot'?'Montant de la mission (€)':'Montant estimé (€/mois)';
+// MODAL EDITION
+function ouvrirEdition(id){
+  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
+  leadDetailCourant=l;
+  document.getElementById('e-nom').value=l['Prénom/Nom']||'';
+  document.getElementById('e-poste').value=l['Poste']||'';
+  document.getElementById('e-entreprise').value=l['Entreprise']||'';
+  document.getElementById('e-email').value=l['Email']||'';
+  document.getElementById('e-tel').value=l['Téléphone']||'';
+  document.getElementById('e-statut').value=l['Statut']||'En discussion';
+  document.getElementById('e-montant').value=l['Montant estimé (€/mois)']||'';
+  document.getElementById('e-commentaires').value=l['Commentaires']||'';
+  document.getElementById('e-source').value=l['Source']||'Prospection';
+  document.getElementById('e-assigne').innerHTML=assignesList.map(a=>`<option value="${a}" ${a===l['Assigné à']?'selected':''}>${a}</option>`).join('');
+  document.getElementById('modal-edition').classList.add('open');
 }
-function renderServicesCheckboxes(){document.getElementById('services-checkboxes').innerHTML=SERVICES.map(s=>`<label class="service-checkbox"><input type="checkbox" value="${s}" onchange="this.closest('label').classList.toggle('checked',this.checked)"><span>${s}</span></label>`).join('');}
-function renderAssigneSelect(){document.getElementById('f-assigne').innerHTML=assignesList.map(a=>`<option value="${a}">${a}</option>`).join('');}
-function ajouterAssigne(){const n=prompt('Prénom :');if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}}
-function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();document.getElementById('modal-lead').classList.add('open');}
-function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
-
-async function sauvegarderLead(){
-  const svcs=[...document.querySelectorAll('#services-checkboxes input:checked')].map(i=>i.value).join(' + ');
-  const data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value};
-  if(!data['Entreprise']){alert("Le nom de l'entreprise est obligatoire.");return;}
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});fermerModal();await chargerDonnees();}catch(e){alert('Erreur.');}
+function fermerEdition(){document.getElementById('modal-edition').classList.remove('open');leadDetailCourant=null;}
+async function sauvegarderEdition(){
+  if(!leadDetailCourant)return;
+  const data={'Prénom/Nom':document.getElementById('e-nom').value,'Poste':document.getElementById('e-poste').value,'Entreprise':document.getElementById('e-entreprise').value,'Email':document.getElementById('e-email').value,'Téléphone':document.getElementById('e-tel').value,'Statut':document.getElementById('e-statut').value,'Montant estimé (€/mois)':document.getElementById('e-montant').value,'Source':document.getElementById('e-source').value,'Commentaires':document.getElementById('e-commentaires').value,'Assigné à':document.getElementById('e-assigne').value};
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});fermerEdition();await chargerDonnees();}catch(e){alert('Erreur lors de la sauvegarde.');}
 }
 
+// MODAL DETAIL
 function ouvrirDetail(id){
   const l=leadsData.find(x=>x['ID']===id);if(!l)return;
   leadDetailCourant=l;
@@ -510,9 +528,9 @@ function ouvrirDetail(id){
     <div><div class="form-label" style="margin-bottom:4px">Email</div><div>${l['Email']||'—'}</div></div>
     <div><div class="form-label" style="margin-bottom:4px">Téléphone</div><div>${l['Téléphone']||'—'}</div></div>
     <div><div class="form-label" style="margin-bottom:4px">Statut</div><div><strong>${l['Statut']||'—'}</strong></div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Type</div><div>${l['Type']||'Récurrent'}</div></div>
     <div><div class="form-label" style="margin-bottom:4px">Assigné à</div><div>${l['Assigné à']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">${isOS?'Montant mission':'Montant mensuel'}</div><div>${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
+    <div><div class="form-label" style="margin-bottom:4px">Montant</div><div>${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
+    <div><div class="form-label" style="margin-bottom:4px">Source</div><div>${l['Source']||'—'}</div></div>
     <div style="grid-column:1/-1"><div class="form-label" style="margin-bottom:4px">Services</div><div>${l['Services souhaités']||'—'}</div></div>
     <div style="grid-column:1/-1"><div class="form-label" style="margin-bottom:4px">Commentaires</div><div style="background:#F8F6F2;padding:10px;border-radius:8px;font-size:12px">${l['Commentaires']||'—'}</div></div>
   </div>`;
@@ -526,79 +544,27 @@ async function changerStatutDepuisDetail(){
   const suiv=prog[leadDetailCourant['Statut']];if(!suiv)return;
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
+
+// MODAL NOUVEAU LEAD
+function setType(t){document.getElementById('f-type').value=t;document.getElementById('btn-recurrent').className='type-btn'+(t==='Récurrent'?' active-recurrent':'');document.getElementById('btn-oneshot').className='type-btn'+(t==='One-shot'?' active-oneshot':'');document.getElementById('montant-label').textContent=t==='One-shot'?'Montant de la mission (€)':'Montant estimé (€/mois)';}
+function renderServicesCheckboxes(){document.getElementById('services-checkboxes').innerHTML=SERVICES.map(s=>`<label class="service-checkbox"><input type="checkbox" value="${s}" onchange="this.closest('label').classList.toggle('checked',this.checked)"><span>${s}</span></label>`).join('');}
+function renderAssigneSelect(){document.getElementById('f-assigne').innerHTML=assignesList.map(a=>`<option value="${a}">${a}</option>`).join('');}
+function ajouterAssigne(){const n=prompt('Prénom :');if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}}
+function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();document.getElementById('modal-lead').classList.add('open');}
+function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
+async function sauvegarderLead(){
+  const svcs=[...document.querySelectorAll('#services-checkboxes input:checked')].map(i=>i.value).join(' + ');
+  const data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value};
+  if(!data['Entreprise']){alert("Le nom de l'entreprise est obligatoire.");return;}
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});fermerModal();await chargerDonnees();}catch(e){alert('Erreur.');}
+}
+
 document.getElementById('modal-lead').addEventListener('click',function(e){if(e.target===this)fermerModal();});
-document.getElementById('modal-edition').addEventListener('click',function(e){if(e.target===this)fermerEdition();});
 document.getElementById('modal-detail').addEventListener('click',function(e){if(e.target===this)fermerModalDetail();});
-setDate();chargerDonnees();
+document.getElementById('modal-edition').addEventListener('click',function(e){if(e.target===this)fermerEdition();});
+
+setDate();
+chargerDonnees();
 </script>
-
-<!-- MODAL EDITION -->
-<div class="modal-overlay" id="modal-edition">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Modifier le lead</div><button class="modal-close" onclick="fermerEdition()">✕</button></div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="e-nom"></div>
-        <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="e-poste"></div>
-        <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="e-entreprise"></div>
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="e-email" type="email"></div>
-        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="e-tel"></div>
-        <div class="form-group"><label class="form-label">Statut</label>
-          <select class="form-select" id="e-statut">
-            <option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Montant (€/mois)</label><input class="form-input" id="e-montant" type="number"></div>
-        <div class="form-group"><label class="form-label">Assigné à</label>
-          <select class="form-select" id="e-assigne"></select>
-        </div>
-        <div class="form-group full"><label class="form-label">Source</label>
-          <select class="form-select" id="e-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
-        </div>
-        <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="e-commentaires"></textarea></div>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn-secondary" onclick="fermerEdition()">Annuler</button><button class="btn-primary" onclick="sauvegarderEdition()">Enregistrer</button></div>
-  </div>
-</div>
-
-function ouvrirEdition(id, isFromFacturier){
-  if(isFromFacturier) return; // Les cartes facturier ne sont pas éditables depuis le CRM
-  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
-  leadDetailCourant=l;
-  document.getElementById('e-nom').value=l['Prénom/Nom']||'';
-  document.getElementById('e-poste').value=l['Poste']||'';
-  document.getElementById('e-entreprise').value=l['Entreprise']||'';
-  document.getElementById('e-email').value=l['Email']||'';
-  document.getElementById('e-tel').value=l['Téléphone']||'';
-  document.getElementById('e-statut').value=l['Statut']||'En discussion';
-  document.getElementById('e-montant').value=l['Montant estimé (€/mois)']||'';
-  document.getElementById('e-commentaires').value=l['Commentaires']||'';
-  document.getElementById('e-source').value=l['Source']||'Prospection';
-  // Remplir assigné à
-  const sel=document.getElementById('e-assigne');
-  sel.innerHTML=assignesList.map(a=>`<option value="${a}" ${a===l['Assigné à']?'selected':''}>${a}</option>`).join('');
-  document.getElementById('modal-edition').classList.add('open');
-}
-function fermerEdition(){document.getElementById('modal-edition').classList.remove('open');leadDetailCourant=null;}
-async function sauvegarderEdition(){
-  if(!leadDetailCourant)return;
-  const data={
-    'Prénom/Nom':document.getElementById('e-nom').value,
-    'Poste':document.getElementById('e-poste').value,
-    'Entreprise':document.getElementById('e-entreprise').value,
-    'Email':document.getElementById('e-email').value,
-    'Téléphone':document.getElementById('e-tel').value,
-    'Statut':document.getElementById('e-statut').value,
-    'Montant estimé (€/mois)':document.getElementById('e-montant').value,
-    'Source':document.getElementById('e-source').value,
-    'Commentaires':document.getElementById('e-commentaires').value,
-    'Assigné à':document.getElementById('e-assigne').value,
-  };
-  try{
-    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});
-    fermerEdition();await chargerDonnees();
-  }catch(e){alert('Erreur lors de la sauvegarde.');}
-}
 </body>
 </html>
