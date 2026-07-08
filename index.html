@@ -6,11 +6,7 @@
 <title>Alfred CRM</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bleu:#A8D5DC;--bleu-pale:#D6EEF2;--noir:#1A1A1A;--gris:#6B6B6B;
-    --gris-clair:#F0F0F0;--blanc-casse:#F8F6F2;--blanc:#FFFFFF;
-    --rouge:#D94F4F;--orange:#E8A040;--vert:#4DA882;--violet:#9B7FD4;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);
-  }
+  :root{--bleu:#A8D5DC;--bleu-pale:#D6EEF2;--noir:#1A1A1A;--gris:#6B6B6B;--gris-clair:#F0F0F0;--blanc-casse:#F8F6F2;--blanc:#FFFFFF;--rouge:#D94F4F;--orange:#E8A040;--vert:#4DA882;--violet:#9B7FD4;--violet-pale:#F0EBF9;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
   .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
@@ -31,8 +27,7 @@
   .page-subtitle{font-size:13px;color:var(--gris);margin-top:6px;}
   .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;}
   .stat-card{background:var(--blanc);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border-top:3px solid transparent;}
-  .stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}
-  .stat-card.orange{border-top-color:var(--orange);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.violet{border-top-color:var(--violet);}
+  .stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.orange{border-top-color:var(--orange);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.violet{border-top-color:var(--violet);}
   .stat-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
   .stat-value{font-size:26px;font-weight:700;color:var(--noir);line-height:1;}
   .stat-value span{font-size:13px;font-weight:400;color:var(--gris);}
@@ -68,25 +63,26 @@
   .kanban-col[data-statut="Devis envoyé"] .kanban-col-title{color:var(--orange);}
   .kanban-col[data-statut="En cours"] .kanban-col-title{color:var(--vert);}
   .kanban-col[data-statut="Perdu"] .kanban-col-title{color:var(--rouge);}
-  .kanban-col[data-statut="One-shot"] .kanban-col-title{color:var(--violet);}
+  .kanban-col[data-statut="One-shot terminé"] .kanban-col-title{color:var(--violet);}
   .kanban-cards{display:flex;flex-direction:column;gap:8px;min-height:60px;}
   .card{background:var(--blanc);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:grab;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;}
   .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.1);}
   .card.dragging{opacity:0.4;cursor:grabbing;}
+  .card.oneshot-card{background:var(--violet-pale);}
   .card[data-statut="En discussion"]{border-left-color:var(--bleu);}
   .card[data-statut="Devis envoyé"]{border-left-color:var(--orange);}
   .card[data-statut="En cours"]{border-left-color:var(--vert);}
   .card[data-statut="Perdu"]{border-left-color:var(--rouge);}
   .card[data-statut="Terminé"]{border-left-color:#B0B0B0;}
-  .card[data-statut="One-shot"]{border-left-color:var(--violet);}
   .card-entreprise{font-size:12px;font-weight:700;color:var(--noir);margin-bottom:2px;}
   .card-contact{font-size:10px;color:var(--gris);margin-bottom:5px;}
   .card-montant{font-size:11px;font-weight:600;margin-bottom:5px;}
   .card-montant.recurrent{color:var(--vert);}
   .card-montant.oneshot{color:var(--violet);}
   .card-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-bottom:5px;}
-  .card-badge.oneshot{background:#EDE5F8;color:var(--violet);}
+  .card-badge.oneshot{background:#DDD0F5;color:var(--violet);}
   .card-badge.recurrent{background:var(--bleu-pale);color:#3A9AAA;}
+  .card-badge.facturier{background:#E0F5EC;color:var(--vert);}
   .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;}
   .card-statut-select{font-size:9px;border:1px solid #E0E0E0;border-radius:6px;padding:2px 4px;font-family:inherit;background:var(--blanc);color:var(--gris);cursor:pointer;flex:1;min-width:0;}
   .card-relance{font-size:9px;color:var(--gris);white-space:nowrap;}
@@ -118,7 +114,6 @@
   .relance-info p{font-size:12px;color:var(--gris);}
   .relance-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
   .btn-relancer{padding:7px 14px;background:var(--noir);color:var(--blanc);border:none;border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer;}
-  .btn-relancer:hover{opacity:0.8;}
   .btn-statut-relance{padding:7px 14px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:6px;font-family:inherit;font-size:11px;cursor:pointer;}
   .btn-statut-relance:hover{background:var(--gris-clair);}
   .relance-meta{text-align:right;flex-shrink:0;margin-left:20px;}
@@ -131,7 +126,6 @@
   .modal-header{padding:26px 30px 18px;border-bottom:1px solid var(--gris-clair);display:flex;align-items:center;justify-content:space-between;}
   .modal-title{font-size:20px;font-weight:700;}
   .modal-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--gris-clair);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  .modal-close:hover{background:#E0E0E0;}
   .modal-body{padding:24px 30px;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .form-grid .full{grid-column:1/-1;}
@@ -151,10 +145,9 @@
   .type-toggle{display:flex;gap:8px;}
   .type-btn{flex:1;padding:9px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:11px;cursor:pointer;text-align:center;transition:all 0.15s;background:var(--blanc);}
   .type-btn.active-recurrent{background:var(--bleu-pale);border-color:var(--bleu);color:#3A9AAA;font-weight:700;}
-  .type-btn.active-oneshot{background:#EDE5F8;border-color:var(--violet);color:var(--violet);font-weight:700;}
+  .type-btn.active-oneshot{background:var(--violet-pale);border-color:var(--violet);color:var(--violet);font-weight:700;}
   .modal-footer{padding:18px 30px 26px;display:flex;gap:10px;justify-content:flex-end;}
   .btn-secondary{padding:9px 22px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
-  .btn-secondary:hover{background:var(--gris-clair);}
   .btn-primary{padding:9px 22px;background:var(--noir);color:var(--blanc);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .btn-primary:hover{opacity:0.85;}
   .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,26,0.5);z-index:2000;align-items:center;justify-content:center;}
@@ -267,9 +260,7 @@
         </div>
         <div class="form-group full"><label class="form-label">Services souhaités</label><div class="services-grid" id="services-checkboxes"></div></div>
         <div class="form-group full"><label class="form-label">Source</label>
-          <select class="form-select" id="f-source">
-            <option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option>
-          </select>
+          <select class="form-select" id="f-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
         </div>
         <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="f-commentaires"></textarea></div>
       </div>
@@ -297,11 +288,11 @@
 
 <script>
 const API="https://script.google.com/macros/s/AKfycbzrQJzhHWsSlRtcETVAGpgV_mjd5kiaH5pgYYz1O-HbQ3CIR-K0h2_fk50i--vFUInKzQ/exec";
-let leadsData=[],clientsData=[],leadDetailCourant=null,dragLeadId=null,dragTargetStatut=null;
+let leadsData=[],missionsEnCours=[],clientsData=[],leadDetailCourant=null,dragLeadId=null,dragTargetStatut=null;
 let chartCA=null,chartActivites=null,chartHistorique=null;
 const SERVICES=["Nettoyage","Café / Tisanerie","Consommables","Fontaines à eau"];
 let assignesList=["Nicolas","Alexis"];
-const STATUTS_ACTIFS=["En discussion","Devis envoyé","En cours"];
+const STATUTS_ACTIFS=["En discussion","Devis envoyé"];
 const STATUTS_PIPELINE=["En discussion","Devis envoyé","En cours","Terminé","Perdu"];
 
 function goTo(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelector('[data-page="'+p+'"]').classList.add('active');}
@@ -311,13 +302,15 @@ function diffJours(d){if(!d)return 0;const dt=new Date(d);if(isNaN(dt))return 0;
 
 async function chargerDonnees(){
   try{
-    const[dashboard,leads,clients]=await Promise.all([
+    const[dashboard,leads,clients,missions]=await Promise.all([
       fetch(API+"?action=getDashboard").then(r=>r.json()),
       fetch(API+"?action=getLeads").then(r=>r.json()),
       fetch(API+"?action=getClients").then(r=>r.json()),
+      fetch(API+"?action=getMissionsEnCours").then(r=>r.json()),
     ]);
     leadsData=Array.isArray(leads)?leads:[];
     clientsData=Array.isArray(clients)?clients:[];
+    missionsEnCours=Array.isArray(missions)?missions:[];
     renderDashboard(dashboard);
     renderKanban('kanban-board');
     renderClients();
@@ -326,10 +319,10 @@ async function chargerDonnees(){
 }
 
 function renderDashboard(d){
-  const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&l['Type']!=='One-shot'&&diffJours(l['Date dernière relance'])>=7).length;
+  const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJours(l['Date dernière relance'])>=7).length;
   document.getElementById('stats-grid').innerHTML=`
     <div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">${fmt(d.caMensuel)}</div><div class="stat-sub">${d.nbClientsActifs||'—'} clients actifs</div></div>
-    <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Depuis janvier 2026</div></div>
+    <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Jan → Juin 2026</div></div>
     <div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">${fmt(d.caEstime2026)}</div><div class="stat-sub">Avec clients actuels</div></div>
     <div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">${ru}<span> leads</span></div><div class="stat-sub">${d.leadsEnCours||0} leads en cours</div></div>`;
 
@@ -375,19 +368,28 @@ function renderDashboard(d){
 
 function renderKanban(cid){
   const cols=[
-    {statut:'En discussion',label:'En discussion'},
-    {statut:'Devis envoyé',label:'Devis envoyé'},
-    {statut:'En cours',label:'En cours'},
-    {statut:'One-shot',label:'⚡ One-shot'},
-    {statut:'Perdu',label:'Perdu'},
+    {key:'En discussion',label:'En discussion'},
+    {key:'Devis envoyé',label:'Devis envoyé'},
+    {key:'En cours',label:'En cours'},
+    {key:'One-shot terminé',label:'⚡ One-shot terminé'},
+    {key:'Perdu',label:'Perdu'},
   ];
   const html=cols.map(col=>{
-    let cards;
-    if(col.statut==='One-shot'){cards=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']!=='Terminé');}
-    else if(col.statut==='Perdu'){cards=leadsData.filter(l=>l['Statut']==='Perdu'||l['Statut']==='Terminé');}
-    else{cards=leadsData.filter(l=>l['Statut']===col.statut&&l['Type']!=='One-shot');}
+    let cards=[];
+    if(col.key==='En cours'){
+      // Leads "En cours" + missions one-shot en cours + clients du facturier
+      const leadsEnCours=leadsData.filter(l=>l['Statut']==='En cours');
+      const oneshotsEnCours=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours');
+      cards=[...leadsEnCours,...oneshotsEnCours,...missionsEnCours];
+    } else if(col.key==='One-shot terminé'){
+      cards=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='Terminé');
+    } else if(col.key==='Perdu'){
+      cards=leadsData.filter(l=>l['Statut']==='Perdu');
+    } else {
+      cards=leadsData.filter(l=>l['Statut']===col.key&&l['Type']!=='One-shot');
+    }
     const ch=cards.length===0?'<div style="padding:16px;text-align:center;color:#B0B0B0;font-size:11px">Aucun</div>':cards.map(renderCard).join('');
-    return`<div class="kanban-col" data-statut="${col.statut}" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${col.statut}')">
+    return`<div class="kanban-col" data-statut="${col.key}" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${col.key}')">
       <div class="kanban-col-header"><div class="kanban-col-title">${col.label}</div><div class="kanban-col-count">${cards.length}</div></div>
       <div class="kanban-cards">${ch}</div>
     </div>`;
@@ -396,24 +398,31 @@ function renderKanban(cid){
 }
 
 function renderCard(l){
+  const isFromFacturier=l['_fromFacturier']===true;
+  const isOS=l['Type']==='One-shot';
   const ini=(l['Assigné à']||'—').substring(0,2).toUpperCase();
   const j=diffJours(l['Date dernière relance']);
   let rc='',rt='';
-  if(STATUTS_ACTIFS.includes(l['Statut'])&&l['Type']!=='One-shot'){
+  if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFromFacturier){
     if(j>=14){rc='urgent';rt=j+'j ⚠';}else if(j>=7){rc='warning';rt=j+'j';}else if(j>0){rt='il y a '+j+'j';}
   }
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  const isOS=l['Type']==='One-shot';
   const mStr=m?`<div class="card-montant ${isOS?'oneshot':'recurrent'}">${m.toLocaleString('fr-FR')} ${isOS?'€ (mission)':'€/mois'}</div>`:'';
-  const badge=isOS?'<span class="card-badge oneshot">ONE-SHOT</span>':'<span class="card-badge recurrent">RÉCURRENT</span>';
-  const opts=STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
-  return`<div class="card" data-statut="${l['Statut']}" data-id="${l['ID']}" draggable="true" ondragstart="onDragStart(event,'${l['ID']}')" onclick="ouvrirDetail('${l['ID']}')">
+  let badge='';
+  if(isFromFacturier){badge='<span class="card-badge facturier">CLIENT ACTIF</span>';}
+  else if(isOS){badge='<span class="card-badge oneshot">ONE-SHOT</span>';}
+  else{badge='<span class="card-badge recurrent">RÉCURRENT</span>';}
+  const opts=isFromFacturier?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
+  const cardClass='card'+(isOS?' oneshot-card':'');
+  const draggable=isFromFacturier?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
+  const click=isFromFacturier?'':`onclick="ouvrirDetail('${l['ID']}')"`;
+  return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} ${click}>
     ${badge}
     <div class="card-entreprise">${l['Entreprise']||'—'}</div>
     <div class="card-contact">${l['Prénom/Nom']||''}</div>
     ${mStr}
     <div class="card-footer">
-      <select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,'${l['ID']}')">${opts}</select>
+      ${isFromFacturier?'<div style="font-size:9px;color:var(--gris)">'+( l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
       <div class="card-relance ${rc}">${rt}</div>
       <div class="card-assignee">${ini}</div>
     </div>
@@ -431,7 +440,7 @@ async function changerStatutMenu(e,id){const s=e.target.value;const l=leadsData.
 function renderClients(f='',sf=''){
   let data=clientsData;
   if(!data||!data.length){document.getElementById('clients-table').innerHTML='<div class="empty-state"><p>Aucun client chargé depuis le facturier.</p></div>';document.getElementById('clients-count').textContent='0 client';return;}
-  if(f){const fl=f.toLowerCase();data=data.filter(c=>(c['Société (Facturation)']||'').toLowerCase().includes(fl)||(c['Occupant']||'').toLowerCase().includes(fl));}
+  if(f){const fl=f.toLowerCase();data=data.filter(c=>(c['Société (Facturation)']||'').toLowerCase().includes(fl)||(c['Occupant']||'').toLowerCase().includes(fl)||(c['Adresse']||'').toLowerCase().includes(fl));}
   if(sf){data=data.filter(c=>c['Statut']===sf);}
   document.getElementById('clients-count').textContent=data.length+' client'+(data.length>1?'s':'');
   const rows=data.map(c=>{
@@ -440,16 +449,16 @@ function renderClients(f='',sf=''){
     const tot=parseFloat(c['TOTAL (€/mois)'])||0;
     const fa=c['Statut Facturation']||'';
     const fc=fa.toLowerCase().includes('retard')?'badge-retard':'badge-ajour';
-    return`<tr><td><strong>${c['Société (Facturation)']||'—'}</strong></td><td>${c['Occupant']||'—'}</td><td>${c['Services']||'—'}</td><td><span class="badge ${bc}">${st||'En cours'}</span></td><td>${tot?tot.toLocaleString('fr-FR')+' €':'—'}</td><td>${fa?'<span class="badge '+fc+'">'+fa+'</span>':'—'}</td><td>${c['Agent']||'—'}</td></tr>`;
+    return`<tr><td><strong>${c['Société (Facturation)']||'—'}</strong></td><td>${c['Occupant']||'—'}</td><td>${c['Adresse']||'—'}</td><td>${c['Services']||'—'}</td><td><span class="badge ${bc}">${st||'En cours'}</span></td><td>${tot?tot.toLocaleString('fr-FR')+' €':'—'}</td><td>${fa?'<span class="badge '+fc+'">'+fa+'</span>':'—'}</td><td>${c['Agent']||'—'}</td></tr>`;
   }).join('');
-  document.getElementById('clients-table').innerHTML=`<table><thead><tr><th>Société</th><th>Occupant</th><th>Services</th><th>Statut</th><th>CA/mois</th><th>Facturation</th><th>Agent</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('clients-table').innerHTML=`<table><thead><tr><th>Société</th><th>Occupant</th><th>Adresse</th><th>Services</th><th>Statut</th><th>CA/mois</th><th>Facturation</th><th>Agent</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 function filtrerClients(v){renderClients(v,document.querySelector('.filter-select').value);}
 function filtrerClientsStatut(v){renderClients(document.querySelector('.filter-search').value,v);}
 
 function renderRelances(){
   const c=document.getElementById('relances-list');
-  const u=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&l['Type']!=='One-shot'&&diffJours(l['Date dernière relance'])>=7).sort((a,b)=>diffJours(b['Date dernière relance'])-diffJours(a['Date dernière relance']));
+  const u=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJours(l['Date dernière relance'])>=7).sort((a,b)=>diffJours(b['Date dernière relance'])-diffJours(a['Date dernière relance']));
   if(!u.length){c.innerHTML='<div class="empty-state">✅<p>Aucune relance en attente.</p></div>';return;}
   c.innerHTML=u.map(l=>{
     const j=diffJours(l['Date dernière relance']);
@@ -486,12 +495,12 @@ function ouvrirDetail(id){
   const l=leadsData.find(x=>x['ID']===id);if(!l)return;
   leadDetailCourant=l;
   document.getElementById('detail-title').textContent=l['Entreprise']||'—';
-  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':l['Type']==='One-shot'?'Terminé':null,'Terminé':null,'Perdu':null};
+  const isOS=l['Type']==='One-shot';
+  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
   const suiv=prog[l['Statut']];
   document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
   document.getElementById('detail-btn-statut').disabled=!suiv;
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  const isOS=l['Type']==='One-shot';
   document.getElementById('detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
     <div><div class="form-label" style="margin-bottom:4px">Contact</div><div>${l['Prénom/Nom']||'—'}</div></div>
     <div><div class="form-label" style="margin-bottom:4px">Poste</div><div>${l['Poste']||'—'}</div></div>
@@ -509,7 +518,8 @@ function ouvrirDetail(id){
 function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
 async function changerStatutDepuisDetail(){
   if(!leadDetailCourant)return;
-  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':leadDetailCourant['Type']==='One-shot'?'Terminé':null};
+  const isOS=leadDetailCourant['Type']==='One-shot';
+  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null};
   const suiv=prog[leadDetailCourant['Statut']];if(!suiv)return;
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
