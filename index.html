@@ -18,7 +18,7 @@
   .nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
   .nav-item .icon{font-size:16px;width:20px;text-align:center;}
   .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
-  .btn-add-lead{width:100%;padding:11px;background:var(--bleu);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;}
+  .btn-add-lead{width:100%;padding:11px;background:var(--bleu);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;}
   .btn-add-lead:hover{opacity:0.85;}
   .main{margin-left:220px;padding:40px 48px;min-height:100vh;}
   .page{display:none;}.page.active{display:block;}
@@ -27,7 +27,7 @@
   .page-subtitle{font-size:13px;color:var(--gris);margin-top:6px;}
   .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;}
   .stat-card{background:var(--blanc);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border-top:3px solid transparent;}
-  .stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.orange{border-top-color:var(--orange);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.violet{border-top-color:var(--violet);}
+  .stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}
   .stat-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
   .stat-value{font-size:26px;font-weight:700;color:var(--noir);line-height:1;}
   .stat-value span{font-size:13px;font-weight:400;color:var(--gris);}
@@ -68,6 +68,7 @@
   .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.1);}
   .card.dragging{opacity:0.4;}
   .card.oneshot-card{background:var(--violet-pale);}
+  .card.contrat-futur{border-left-color:var(--orange) !important;background:#FFFBF5;}
   .card[data-statut="En discussion"]{border-left-color:var(--bleu);}
   .card[data-statut="Devis envoyé"]{border-left-color:var(--orange);}
   .card[data-statut="En cours"]{border-left-color:var(--vert);}
@@ -78,17 +79,17 @@
   .card-montant{font-size:11px;font-weight:600;margin-bottom:5px;}
   .card-montant.recurrent{color:var(--vert);}
   .card-montant.oneshot{color:var(--violet);}
+  .card-montant.futur{color:var(--orange);}
   .card-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-bottom:5px;}
   .card-badge.oneshot{background:#DDD0F5;color:var(--violet);}
   .card-badge.recurrent{background:var(--bleu-pale);color:#3A9AAA;}
   .card-badge.facturier{background:#E0F5EC;color:var(--vert);}
+  .card-badge.futur{background:#FFF3E0;color:var(--orange);}
   .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;}
   .card-statut-select{font-size:9px;border:1px solid #E0E0E0;border-radius:6px;padding:2px 4px;font-family:inherit;background:var(--blanc);color:var(--gris);cursor:pointer;flex:1;min-width:0;}
   .card-relance{font-size:9px;color:var(--gris);white-space:nowrap;}
   .card-relance.urgent{color:var(--rouge);font-weight:700;}
   .card-relance.warning{color:var(--orange);font-weight:700;}
-  .btn-modifier{padding:3px 7px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:6px;font-size:10px;cursor:pointer;opacity:0.6;transition:opacity 0.15s;flex-shrink:0;}
-  .btn-modifier:hover{opacity:1;background:var(--gris-clair);}
   .table-wrap{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .table-filters{padding:18px 22px;border-bottom:1px solid var(--gris-clair);display:flex;gap:10px;align-items:center;}
   .filter-search{flex:1;padding:9px 14px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;}
@@ -103,8 +104,8 @@
   .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
   .badge-encours{background:#E0F5EC;color:var(--vert);}
   .badge-pause{background:#FFF3E0;color:var(--orange);}
-  .badge-averifier{background:var(--bleu-pale);color:#3A9AAA;}
   .badge-perdu{background:#FFECEC;color:var(--rouge);}
+  .badge-averifier{background:var(--bleu-pale);color:#3A9AAA;}
   .badge-retard{background:#FFECEC;color:var(--rouge);}
   .badge-ajour{background:#E0F5EC;color:var(--vert);}
   .relances-list{display:flex;flex-direction:column;gap:12px;}
@@ -152,6 +153,7 @@
   .btn-secondary:hover{background:var(--gris-clair);}
   .btn-primary{padding:9px 22px;background:var(--noir);color:var(--blanc);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .btn-primary:hover{opacity:0.85;}
+  .btn-edit{padding:9px 22px;background:var(--bleu);color:var(--noir);border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
   .confirm-overlay{display:none;position:fixed;inset:0;background:rgba(26,26,26,0.5);z-index:2000;align-items:center;justify-content:center;}
   .confirm-overlay.open{display:flex;}
   .confirm-box{background:var(--blanc);border-radius:12px;padding:28px 32px;width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;}
@@ -161,6 +163,12 @@
   .loading{display:flex;align-items:center;justify-content:center;padding:80px;color:var(--gris);font-size:12px;letter-spacing:0.1em;}
   .empty-state{text-align:center;padding:60px;color:var(--gris);}
   .empty-state p{font-size:12px;margin-top:8px;}
+  .detail-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .detail-item .lbl{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gris);font-weight:700;margin-bottom:4px;}
+  .detail-item .val{font-size:13px;color:var(--noir);}
+  .detail-item.full{grid-column:1/-1;}
+  .detail-commentaire{background:#F8F6F2;padding:10px;border-radius:8px;font-size:12px;margin-top:4px;}
+  .tag-futur{display:inline-block;background:#FFF3E0;color:var(--orange);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;}
 </style>
 </head>
 <body>
@@ -215,10 +223,7 @@
       <div class="table-filters">
         <input class="filter-search" type="text" placeholder="Rechercher…" oninput="filtrerClients(this.value)">
         <select class="filter-select" onchange="filtrerClientsStatut(this.value)">
-          <option value="">Tous les statuts</option>
-          <option value="En cours">En cours</option>
-          <option value="En pause">En pause</option>
-          <option value="Perdu">Perdu</option>
+          <option value="">Tous les statuts</option><option value="En cours">En cours</option><option value="En pause">En pause</option><option value="Perdu">Perdu</option>
         </select>
       </div>
       <div id="clients-table"><div class="loading">Chargement…</div></div>
@@ -231,7 +236,20 @@
   </div>
 </main>
 
-<!-- MODALS -->
+<!-- MODAL DETAIL (avec bouton Modifier) -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="detail-title">—</div><button class="modal-close" onclick="fermerModalDetail()">✕</button></div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fermerModalDetail()">Fermer</button>
+      <button class="btn-edit" onclick="basculerEdition()">✏️ Modifier</button>
+      <button class="btn-primary" id="detail-btn-statut" onclick="changerStatutDepuisDetail()">Changer statut</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITION -->
 <div class="modal-overlay" id="modal-edition">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Modifier le lead</div><button class="modal-close" onclick="fermerEdition()">✕</button></div>
@@ -247,7 +265,8 @@
         </div>
         <div class="form-group"><label class="form-label">Montant (€/mois)</label><input class="form-input" id="e-montant" type="number"></div>
         <div class="form-group"><label class="form-label">Assigné à</label><select class="form-select" id="e-assigne"></select></div>
-        <div class="form-group full"><label class="form-label">Source</label>
+        <div class="form-group"><label class="form-label">Date de début contrat</label><input class="form-input" id="e-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Source</label>
           <select class="form-select" id="e-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
         </div>
         <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="e-commentaires"></textarea></div>
@@ -257,6 +276,7 @@
   </div>
 </div>
 
+<!-- MODAL NOUVEAU LEAD -->
 <div class="modal-overlay" id="modal-lead">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Nouveau lead</div><button class="modal-close" onclick="fermerModal()">✕</button></div>
@@ -266,7 +286,7 @@
           <label class="form-label">Type de mission</label>
           <div class="type-toggle">
             <button class="type-btn active-recurrent" id="btn-recurrent" onclick="setType('Récurrent')">🔄 Récurrent</button>
-            <button class="type-btn" id="btn-oneshot" onclick="setType('One-shot')">⚡ Mission one-shot</button>
+            <button class="type-btn" id="btn-oneshot" onclick="setType('One-shot')">⚡ One-shot</button>
           </div>
           <input type="hidden" id="f-type" value="Récurrent">
         </div>
@@ -283,22 +303,15 @@
           <label class="form-label">Assigné à</label>
           <div class="assigne-wrap"><select class="form-select" id="f-assigne"></select><button class="btn-add-assigne" onclick="ajouterAssigne()">+ Ajouter</button></div>
         </div>
-        <div class="form-group full"><label class="form-label">Services souhaités</label><div class="services-grid" id="services-checkboxes"></div></div>
-        <div class="form-group full"><label class="form-label">Source</label>
+        <div class="form-group"><label class="form-label">Date de début contrat</label><input class="form-input" id="f-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Source</label>
           <select class="form-select" id="f-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
         </div>
+        <div class="form-group full"><label class="form-label">Services souhaités</label><div class="services-grid" id="services-checkboxes"></div></div>
         <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="f-commentaires"></textarea></div>
       </div>
     </div>
     <div class="modal-footer"><button class="btn-secondary" onclick="fermerModal()">Annuler</button><button class="btn-primary" onclick="sauvegarderLead()">Enregistrer</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-detail">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title" id="detail-title">—</div><button class="modal-close" onclick="fermerModalDetail()">✕</button></div>
-    <div class="modal-body" id="detail-body"></div>
-    <div class="modal-footer"><button class="btn-secondary" onclick="fermerModalDetail()">Fermer</button><button class="btn-primary" id="detail-btn-statut" onclick="changerStatutDepuisDetail()">Changer statut</button></div>
   </div>
 </div>
 
@@ -322,6 +335,8 @@ function goTo(p){document.querySelectorAll('.page').forEach(x=>x.classList.remov
 function setDate(){document.getElementById('date-today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function fmt(n){return n?Math.round(n).toLocaleString('fr-FR')+' €':'—';}
 function diffJours(d){if(!d)return 0;const dt=new Date(d);if(isNaN(dt))return 0;return Math.floor((new Date()-dt)/86400000);}
+function joursAvant(d){if(!d)return null;const dt=new Date(d);if(isNaN(dt))return null;const diff=Math.floor((dt-new Date())/86400000);return diff>0?diff:null;}
+function estFutur(d){return joursAvant(d)!==null;}
 
 async function chargerDonnees(){
   try{
@@ -343,8 +358,9 @@ async function chargerDonnees(){
 
 function renderDashboard(d){
   const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJours(l['Date dernière relance'])>=7).length;
+  const avenir=leadsData.filter(l=>l['Statut']==='En cours'&&estFutur(l['Date de début'])).length;
   document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">${fmt(d.caMensuel)}</div><div class="stat-sub">${d.nbClientsActifs||'—'} clients actifs</div></div>
+    <div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">${fmt(d.caMensuel)}</div><div class="stat-sub">${d.nbClientsActifs||'—'} clients · ${avenir} contrat(s) à venir</div></div>
     <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Jan → Juin 2026</div></div>
     <div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">${fmt(d.caEstime2026)}</div><div class="stat-sub">Avec clients actuels</div></div>
     <div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">${ru}<span> leads</span></div><div class="stat-sub">${d.leadsEnCours||0} leads en cours</div></div>`;
@@ -361,7 +377,7 @@ function renderDashboard(d){
   const m26=d.mois2026||[];
   const caR=new Array(mi+1).fill(null),caP=new Array(mi+1).fill(null);
   m26.forEach(m=>{if(m.mois-1<=mi)caR[m.mois-1]=m.ca;});
-  for(let i=0;i<=mi;i++){if(caR[i]===null)caP[i]=d.caMensuel;}
+  for(let i=0;i<=mi;i++){if(caR[i]===null)caP[i]=d.caMensuelBrut||d.caMensuel;}
   if(chartCA)chartCA.destroy();
   chartCA=new Chart(document.getElementById('chartCA'),{type:'line',data:{labels:noms12.slice(0,mi+1),datasets:[
     {label:'CA réel',data:caR,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:4,spanGaps:false},
@@ -395,9 +411,11 @@ function renderKanban(cid){
   const html=cols.map(col=>{
     let cards=[];
     if(col.key==='En cours'){
-      const leadsEC=leadsData.filter(l=>l['Statut']==='En cours');
-      const oneshotsEC=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours');
-      cards=[...leadsEC,...oneshotsEC,...missionsEnCours];
+      const futurs=leadsData.filter(l=>l['Statut']==='En cours'&&estFutur(l['Date de début']));
+      const actifs=leadsData.filter(l=>l['Statut']==='En cours'&&!estFutur(l['Date de début'])&&l['Type']!=='One-shot');
+      const oneshotsEC=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours'&&!estFutur(l['Date de début']));
+      // Futurs en tête, puis actifs, puis missions facturier
+      cards=[...futurs,...actifs,...oneshotsEC,...missionsEnCours];
     }else if(col.key==='One-shot terminé'){
       cards=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='Terminé');
     }else if(col.key==='Perdu'){
@@ -417,30 +435,36 @@ function renderKanban(cid){
 function renderCard(l){
   const isFF=l['_fromFacturier']===true;
   const isOS=l['Type']==='One-shot';
+  const futur=estFutur(l['Date de début']);
+  const joursDebut=joursAvant(l['Date de début']);
   const j=diffJours(l['Date dernière relance']);
   let rc='',rt='';
   if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFF){
     if(j>=14){rc='urgent';rt=j+'j ⚠';}else if(j>=7){rc='warning';rt=j+'j';}else if(j>0){rt='il y a '+j+'j';}
   }
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  const mStr=m?`<div class="card-montant ${isOS?'oneshot':'recurrent'}">${m.toLocaleString('fr-FR')} ${isOS?'€ (mission)':'€/mois'}</div>`:'';
-  let badge=isFF?'<span class="card-badge facturier">CLIENT ACTIF</span>':isOS?'<span class="card-badge oneshot">ONE-SHOT</span>':'<span class="card-badge recurrent">RÉCURRENT</span>';
+  let mStr='';
+  if(m){
+    const cls=futur?'futur':isOS?'oneshot':'recurrent';
+    const label=futur?'€/mois (à venir)':isOS?'€ (mission)':'€/mois';
+    mStr=`<div class="card-montant ${cls}">${m.toLocaleString('fr-FR')} ${label}</div>`;
+  }
+  let badge=isFF?'<span class="card-badge facturier">CLIENT ACTIF</span>':futur?'<span class="card-badge futur">⏳ À VENIR</span>':isOS?'<span class="card-badge oneshot">ONE-SHOT</span>':'<span class="card-badge recurrent">RÉCURRENT</span>';
   const opts=isFF?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
-  const cardClass='card'+(isOS?' oneshot-card':'');
+  let cardClass='card'+(isOS&&!futur?' oneshot-card':'')+(futur?' contrat-futur':'');
   const draggable=isFF?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
-  // Cartes facturier : occupant en gras + adresse. Autres : entreprise + contact
   const titre=isFF?(l['Prénom/Nom']||'—'):(l['Entreprise']||'—');
   const sous=isFF?(l['Commentaires']||''):(l['Prénom/Nom']||'');
-  const btnMod=isFF?'':` <button class="btn-modifier" onclick="event.stopPropagation();ouvrirEdition('${l['ID']}')">✏️</button>`;
+  const debutStr=futur?`<div style="font-size:9px;color:var(--orange);font-weight:600;margin-bottom:4px">Début dans ${joursDebut}j · ${new Date(l['Date de début']).toLocaleDateString('fr-FR')}</div>`:'';
   return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} onclick="ouvrirDetail('${l['ID']}')">
     ${badge}
     <div class="card-titre">${titre}</div>
     <div class="card-sous">${sous}</div>
+    ${debutStr}
     ${mStr}
     <div class="card-footer">
       ${isFF?'<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
       <div class="card-relance ${rc}">${rt}</div>
-      ${btnMod}
     </div>
   </div>`;
 }
@@ -488,6 +512,50 @@ function renderRelances(){
 }
 async function changerStatutRelance(id,s){const l=leadsData.find(x=>x['ID']===id);if(!l)return;dragLeadId=id;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Passer "${l['Entreprise']}" en "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
 
+// MODAL DETAIL
+function ouvrirDetail(id){
+  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
+  leadDetailCourant=l;
+  document.getElementById('detail-title').textContent=l['Entreprise']||'—';
+  const isOS=l['Type']==='One-shot';
+  const futur=estFutur(l['Date de début']);
+  const joursDebut=joursAvant(l['Date de début']);
+  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
+  const suiv=prog[l['Statut']];
+  document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
+  document.getElementById('detail-btn-statut').disabled=!suiv;
+  const m=parseFloat(l['Montant estimé (€/mois)'])||0;
+  const dd=l['Date de début']?new Date(l['Date de début']).toLocaleDateString('fr-FR'):'—';
+  document.getElementById('detail-body').innerHTML=`
+    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${dd}</div>`:''}
+    <div class="detail-row">
+      <div class="detail-item"><div class="lbl">Contact</div><div class="val">${l['Prénom/Nom']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Poste</div><div class="val">${l['Poste']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Email</div><div class="val">${l['Email']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Téléphone</div><div class="val">${l['Téléphone']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${l['Statut']||'—'}</strong></div></div>
+      <div class="detail-item"><div class="lbl">Assigné à</div><div class="val">${l['Assigné à']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Montant</div><div class="val">${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${dd}</div></div>
+      <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
+      <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
+    </div>`;
+  document.getElementById('modal-detail').classList.add('open');
+}
+function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
+function basculerEdition(){
+  if(!leadDetailCourant)return;
+  fermerModalDetail();
+  ouvrirEdition(leadDetailCourant['ID']);
+}
+async function changerStatutDepuisDetail(){
+  if(!leadDetailCourant)return;
+  const isOS=leadDetailCourant['Type']==='One-shot';
+  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null};
+  const suiv=prog[leadDetailCourant['Statut']];if(!suiv)return;
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
+}
+
 // MODAL EDITION
 function ouvrirEdition(id){
   const l=leadsData.find(x=>x['ID']===id);if(!l)return;
@@ -501,48 +569,15 @@ function ouvrirEdition(id){
   document.getElementById('e-montant').value=l['Montant estimé (€/mois)']||'';
   document.getElementById('e-commentaires').value=l['Commentaires']||'';
   document.getElementById('e-source').value=l['Source']||'Prospection';
+  document.getElementById('e-debut').value=l['Date de début']||'';
   document.getElementById('e-assigne').innerHTML=assignesList.map(a=>`<option value="${a}" ${a===l['Assigné à']?'selected':''}>${a}</option>`).join('');
   document.getElementById('modal-edition').classList.add('open');
 }
 function fermerEdition(){document.getElementById('modal-edition').classList.remove('open');leadDetailCourant=null;}
 async function sauvegarderEdition(){
   if(!leadDetailCourant)return;
-  const data={'Prénom/Nom':document.getElementById('e-nom').value,'Poste':document.getElementById('e-poste').value,'Entreprise':document.getElementById('e-entreprise').value,'Email':document.getElementById('e-email').value,'Téléphone':document.getElementById('e-tel').value,'Statut':document.getElementById('e-statut').value,'Montant estimé (€/mois)':document.getElementById('e-montant').value,'Source':document.getElementById('e-source').value,'Commentaires':document.getElementById('e-commentaires').value,'Assigné à':document.getElementById('e-assigne').value};
+  const data={'Prénom/Nom':document.getElementById('e-nom').value,'Poste':document.getElementById('e-poste').value,'Entreprise':document.getElementById('e-entreprise').value,'Email':document.getElementById('e-email').value,'Téléphone':document.getElementById('e-tel').value,'Statut':document.getElementById('e-statut').value,'Montant estimé (€/mois)':document.getElementById('e-montant').value,'Source':document.getElementById('e-source').value,'Commentaires':document.getElementById('e-commentaires').value,'Assigné à':document.getElementById('e-assigne').value,'Date de début':document.getElementById('e-debut').value};
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});fermerEdition();await chargerDonnees();}catch(e){alert('Erreur lors de la sauvegarde.');}
-}
-
-// MODAL DETAIL
-function ouvrirDetail(id){
-  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
-  leadDetailCourant=l;
-  document.getElementById('detail-title').textContent=l['Entreprise']||'—';
-  const isOS=l['Type']==='One-shot';
-  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
-  const suiv=prog[l['Statut']];
-  document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
-  document.getElementById('detail-btn-statut').disabled=!suiv;
-  const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  document.getElementById('detail-body').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-    <div><div class="form-label" style="margin-bottom:4px">Contact</div><div>${l['Prénom/Nom']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Poste</div><div>${l['Poste']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Email</div><div>${l['Email']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Téléphone</div><div>${l['Téléphone']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Statut</div><div><strong>${l['Statut']||'—'}</strong></div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Assigné à</div><div>${l['Assigné à']||'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Montant</div><div>${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
-    <div><div class="form-label" style="margin-bottom:4px">Source</div><div>${l['Source']||'—'}</div></div>
-    <div style="grid-column:1/-1"><div class="form-label" style="margin-bottom:4px">Services</div><div>${l['Services souhaités']||'—'}</div></div>
-    <div style="grid-column:1/-1"><div class="form-label" style="margin-bottom:4px">Commentaires</div><div style="background:#F8F6F2;padding:10px;border-radius:8px;font-size:12px">${l['Commentaires']||'—'}</div></div>
-  </div>`;
-  document.getElementById('modal-detail').classList.add('open');
-}
-function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
-async function changerStatutDepuisDetail(){
-  if(!leadDetailCourant)return;
-  const isOS=leadDetailCourant['Type']==='One-shot';
-  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null};
-  const suiv=prog[leadDetailCourant['Statut']];if(!suiv)return;
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
 
 // MODAL NOUVEAU LEAD
@@ -551,10 +586,10 @@ function renderServicesCheckboxes(){document.getElementById('services-checkboxes
 function renderAssigneSelect(){document.getElementById('f-assigne').innerHTML=assignesList.map(a=>`<option value="${a}">${a}</option>`).join('');}
 function ajouterAssigne(){const n=prompt('Prénom :');if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}}
 function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();document.getElementById('modal-lead').classList.add('open');}
-function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
+function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires','f-debut'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
 async function sauvegarderLead(){
   const svcs=[...document.querySelectorAll('#services-checkboxes input:checked')].map(i=>i.value).join(' + ');
-  const data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value};
+  const data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value,'Date de début':document.getElementById('f-debut').value};
   if(!data['Entreprise']){alert("Le nom de l'entreprise est obligatoire.");return;}
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});fermerModal();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
