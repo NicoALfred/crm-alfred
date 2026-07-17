@@ -273,6 +273,7 @@
           <select class="form-select" id="e-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
         </div>
         <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="e-commentaires"></textarea></div>
+        <div class="form-group full"><label class="form-label">🔗 Lien devis (Google Drive)</label><input class="form-input" id="e-devis" placeholder="https://drive.google.com/..."></div>
       </div>
     </div>
     <div class="modal-footer"><button class="btn-secondary" onclick="fermerEdition()">Annuler</button><button class="btn-primary" onclick="sauvegarderEdition()">Enregistrer</button></div>
@@ -311,6 +312,7 @@
         </div>
         <div class="form-group full"><label class="form-label">Services souhaités</label><div class="services-grid" id="services-checkboxes"></div></div>
         <div class="form-group full"><label class="form-label">Commentaires</label><textarea class="form-textarea" id="f-commentaires"></textarea></div>
+        <div class="form-group full"><label class="form-label">🔗 Lien devis (Google Drive)</label><input class="form-input" id="f-devis" placeholder="https://drive.google.com/..."></div>
       </div>
     </div>
     <div class="modal-footer"><button class="btn-secondary" onclick="fermerModal()">Annuler</button><button class="btn-primary" onclick="sauvegarderLead()">Enregistrer</button></div>
@@ -622,6 +624,7 @@ function ouvrirDetail(id){
       <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(l['Date de début'])}</div></div>
       <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
       <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
+      ${l['Lien devis']?`<div class="detail-item full" style="margin-top:8px"><a href="${l['Lien devis']}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>`:''}
     </div>`;
   document.getElementById('modal-detail').classList.add('open');
 }
@@ -655,6 +658,7 @@ function ouvrirEdition(id){
   document.getElementById('e-commentaires').value=l['Commentaires']||'';
   document.getElementById('e-source').value=l['Source']||'Prospection';
   document.getElementById('e-debut').value=l['Date de début']||'';
+  document.getElementById('e-devis').value=l['Lien devis']||'';
   document.getElementById('e-assigne').innerHTML=assignesList.map(a=>`<option value="${a}" ${a===l['Assigné à']?'selected':''}>${a}</option>`).join('');
   document.getElementById('modal-edition').classList.add('open');
 }
@@ -671,7 +675,7 @@ function renderServicesCheckboxes(){document.getElementById('services-checkboxes
 function renderAssigneSelect(){document.getElementById('f-assigne').innerHTML=assignesList.map(a=>`<option value="${a}">${a}</option>`).join('');}
 function ajouterAssigne(){const n=prompt('Prénom :');if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}}
 function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();document.getElementById('modal-lead').classList.add('open');}
-function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires','f-debut'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
+function fermerModal(){document.getElementById('modal-lead').classList.remove('open');['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-commentaires','f-debut','f-devis'].forEach(id=>{document.getElementById(id).value='';});setType('Récurrent');}
 async function sauvegarderLead(){
   const svcs=[...document.querySelectorAll('#services-checkboxes input:checked')].map(i=>i.value).join(' + ');
   const data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value,'Date de début':document.getElementById('f-debut').value};
