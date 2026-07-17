@@ -544,6 +544,7 @@ function ouvrirDetailOS(id){
       <div class="detail-item"><div class="lbl">Email client</div><div class="val">${os['Email']||'—'}</div></div>
       <div class="detail-item full"><div class="lbl">Description</div><div class="detail-commentaire">${os['Description']||'—'}</div></div>
       <div class="detail-item full"><div class="lbl">Notes</div><div class="detail-commentaire">${os['Notes']||'—'}</div></div>
+      ${os['LienDevis']?`<div class="detail-item full" style="margin-top:8px"><a href="${os['LienDevis']}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>`:''}
     </div>
     <div style="margin-top:16px">
       <div class="form-label" style="margin-bottom:6px">Changer le statut</div>
