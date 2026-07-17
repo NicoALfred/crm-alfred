@@ -376,6 +376,24 @@ function renderDashboard(d){
     <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Jan → Juin 2026</div></div>
     <div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">${fmt(d.caEstime2026)}</div><div class="stat-sub">Avec clients actuels</div></div>
     <div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">${ru}<span> leads</span></div><div class="stat-sub">${d.leadsEnCours||0} leads en cours</div></div>`;
+
+  // Ajouter ligne one-shots sous les 4 stats
+  document.getElementById('stats-grid').insertAdjacentHTML('afterend', `
+    <div style="background:var(--blanc);border-radius:var(--radius);padding:16px 22px;box-shadow:var(--shadow);margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;border-left:4px solid var(--violet);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px">⚡</span>
+        <div>
+          <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);font-weight:700;margin-bottom:4px">CA One-shots ${new Date().getFullYear()}</div>
+          <div style="font-size:22px;font-weight:700;color:var(--violet)">${fmt(d.caOneShots||0)}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:24px;text-align:center;">
+        <div><div style="font-size:18px;font-weight:700;color:#888">${d.osAvenir||0}</div><div style="font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em">À venir</div></div>
+        <div><div style="font-size:18px;font-weight:700;color:var(--orange)">${d.osEnCours||0}</div><div style="font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em">En cours</div></div>
+        <div><div style="font-size:18px;font-weight:700;color:var(--vert)">${d.osTerminees||0}</div><div style="font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em">Terminées</div></div>
+      </div>
+    </div>
+  `);
   const pct=Math.min(Math.round((d.caEstime2026/d.objectif2026)*100),100);
   document.getElementById('objectif-section').innerHTML=`
     <div class="objectif-card">
