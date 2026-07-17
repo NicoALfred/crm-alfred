@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -52,44 +52,46 @@
   .retention-item{text-align:center;}
   .retention-item .num{font-size:22px;font-weight:700;}
   .retention-item .lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;}
-  .kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:start;}
+  /* KANBAN 6 colonnes */
+  .kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
   .kanban-col{background:var(--gris-clair);border-radius:var(--radius);padding:12px;min-height:180px;}
   .kanban-col.drag-over{background:var(--bleu-pale);outline:2px dashed var(--bleu);}
   .kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--blanc);}
-  .kanban-col-title{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;color:var(--gris);}
+  .kanban-col-title{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;color:var(--gris);}
   .kanban-col-count{background:var(--blanc);color:var(--gris);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;}
-  .kanban-col[data-statut="En discussion"] .kanban-col-title{color:#3A9AAA;}
-  .kanban-col[data-statut="Devis envoyé"] .kanban-col-title{color:var(--orange);}
-  .kanban-col[data-statut="En cours"] .kanban-col-title{color:var(--vert);}
-  .kanban-col[data-statut="Perdu"] .kanban-col-title{color:var(--rouge);}
-  .kanban-col[data-statut="One-shot terminé"] .kanban-col-title{color:var(--violet);}
+  .kanban-col[data-col="discussion"] .kanban-col-title{color:#3A9AAA;}
+  .kanban-col[data-col="devis"] .kanban-col-title{color:var(--orange);}
+  .kanban-col[data-col="encours"] .kanban-col-title{color:var(--vert);}
+  .kanban-col[data-col="osavenir"] .kanban-col-title{color:var(--violet);}
+  .kanban-col[data-col="ostermines"] .kanban-col-title{color:#888;}
+  .kanban-col[data-col="perdu"] .kanban-col-title{color:var(--rouge);}
   .kanban-cards{display:flex;flex-direction:column;gap:8px;min-height:60px;}
-  .card{background:var(--blanc);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;}
+  .card{background:var(--blanc);border-radius:8px;padding:11px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;}
   .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.1);}
   .card.dragging{opacity:0.4;}
-  .card.oneshot-card{background:var(--violet-pale);}
-  .card.contrat-futur{border-left-color:var(--orange) !important;background:#FFFBF5;}
+  .card.card-futur{background:#FFFBF5;border-left-color:var(--orange)!important;}
+  .card.card-oneshot{background:var(--violet-pale);border-left-color:var(--violet)!important;}
   .card[data-statut="En discussion"]{border-left-color:var(--bleu);}
   .card[data-statut="Devis envoyé"]{border-left-color:var(--orange);}
   .card[data-statut="En cours"]{border-left-color:var(--vert);}
   .card[data-statut="Perdu"]{border-left-color:var(--rouge);}
-  .card[data-statut="Terminé"]{border-left-color:#B0B0B0;}
   .card-titre{font-size:12px;font-weight:700;color:var(--noir);margin-bottom:2px;}
   .card-sous{font-size:10px;color:var(--gris);margin-bottom:5px;}
   .card-montant{font-size:11px;font-weight:600;margin-bottom:5px;}
-  .card-montant.recurrent{color:var(--vert);}
-  .card-montant.oneshot{color:var(--violet);}
-  .card-montant.futur{color:var(--orange);}
+  .card-montant.vert{color:var(--vert);}
+  .card-montant.orange{color:var(--orange);}
+  .card-montant.violet{color:var(--violet);}
   .card-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-bottom:5px;}
-  .card-badge.oneshot{background:#DDD0F5;color:var(--violet);}
-  .card-badge.recurrent{background:var(--bleu-pale);color:#3A9AAA;}
-  .card-badge.facturier{background:#E0F5EC;color:var(--vert);}
-  .card-badge.futur{background:#FFF3E0;color:var(--orange);}
-  .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+  .badge-actif{background:#E0F5EC;color:var(--vert);}
+  .badge-futur{background:#FFF3E0;color:var(--orange);}
+  .badge-recurrent{background:var(--bleu-pale);color:#3A9AAA;}
+  .badge-oneshot{background:#DDD0F5;color:var(--violet);}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:4px;}
   .card-statut-select{font-size:9px;border:1px solid #E0E0E0;border-radius:6px;padding:2px 4px;font-family:inherit;background:var(--blanc);color:var(--gris);cursor:pointer;flex:1;min-width:0;}
   .card-relance{font-size:9px;color:var(--gris);white-space:nowrap;}
   .card-relance.urgent{color:var(--rouge);font-weight:700;}
   .card-relance.warning{color:var(--orange);font-weight:700;}
+  .card-debut{font-size:9px;color:var(--orange);font-weight:600;margin-bottom:4px;}
   .table-wrap{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .table-filters{padding:18px 22px;border-bottom:1px solid var(--gris-clair);display:flex;gap:10px;align-items:center;}
   .filter-search{flex:1;padding:9px 14px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;}
@@ -161,20 +163,21 @@
   .confirm-box p{font-size:13px;color:var(--gris);margin-bottom:24px;}
   .confirm-btns{display:flex;gap:10px;justify-content:center;}
   .loading{display:flex;align-items:center;justify-content:center;padding:80px;color:var(--gris);font-size:12px;letter-spacing:0.1em;}
-  .empty-state{text-align:center;padding:60px;color:var(--gris);}
-  .empty-state p{font-size:12px;margin-top:8px;}
+  .empty-state{text-align:center;padding:40px;color:var(--gris);}
+  .empty-state p{font-size:11px;margin-top:6px;}
   .detail-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .detail-item .lbl{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gris);font-weight:700;margin-bottom:4px;}
   .detail-item .val{font-size:13px;color:var(--noir);}
   .detail-item.full{grid-column:1/-1;}
   .detail-commentaire{background:#F8F6F2;padding:10px;border-radius:8px;font-size:12px;margin-top:4px;}
   .tag-futur{display:inline-block;background:#FFF3E0;color:var(--orange);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;}
+  .os-statut-select{width:100%;padding:9px 12px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;margin-top:8px;}
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1093.7 312.78"><g><path d="M16.12,173.86C30.52,140.76,74.25,31.66,74.25,11.52c0-4.03-.56-6.91-2.02-8.93,10.95-1.72,25.92-2.59,34.83-2.59,10.95,0,14.11,2.31,16.99,10.37l54.4,150.24c5.77,16.71,12.37,32.53,19.29,42.33h-60.73c3.45-7.78,3.45-19.87-2.32-36.56l-12.37-34.83h-61.59c-.28,20.16,3.75,49.22,2.02,59.01-.56,9.77-6.61,12.37-18.98,12.37H0c5.46-7.5,10.36-15.54,16.12-29.09ZM120.02,124.94L80.88,14.11c-11.51,35.69-20.44,75.7-19.87,110.83h59.01Z" style="fill:#fff"/><path d="M229.22,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h68.51c-12.37,11.52-16.71,32.24-16.71,57.85v102.19c0,16.41.3,28.5,2.32,37.15h4.03c36.54,0,52.38-46.45,77.13-46.45v8.74c0,13.8,0,28.19,3.75,42.02h-139.03c6.61-8.93,8.91-22.17,8.91-41.46Z" style="fill:#fff"/><path d="M562.7,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h75.12c50.95,0,78.58,18.42,78.58,52.39,0,29.06-20.72,46.92-57,51.82,33.68,50.65,52.97,73.69,71.39,78.28-5.18,14.7-19.85,21.89-34.83,21.89-19.85,0-36.56-26.48-74.27-98.46h-7.2v54.12c0,19.29,2.02,32.53,8.65,41.46h-60.44c6.61-8.93,8.91-22.17,8.91-41.46ZM621.44,102.19c24.75,0,40.57-17.27,40.57-48.35s-15.54-47.5-44.32-47.5h-12.09v94.98c4.9.59,10.95.87,15.84.87Z" style="fill:#fff"/><path d="M932.78,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h73.1c62.18,0,96.73,44.33,96.73,100.46s-30.52,101.04-94.12,101.04h-75.7c6.61-8.93,8.91-22.17,8.91-41.46ZM979.42,197.18l15.26.59c37.41,0,50.95-43.48,50.95-95.86,0-57.28-20.44-95.57-54.98-95.57h-14.98v155.14c0,15.54,1.15,27.07,3.75,35.69Z" style="fill:#fff"/><path d="M787.22,92.85l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M424.51,91.17l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M746.76,202.94h145.92c-4.03-12.09-4.03-24.75-4.03-36.84v-7.59c-23.02,0-44.04,40.12-78.87,40.12h-5.18c-4.59-8.65-6.05-20.74-6.05-37.15v-56.98c.92.2,1.82.42,2.72.64v-6.22c-.9.13-1.81.24-2.72.4V6.05h7.2c43.48,0,58.15,35.5,82.34,35.5v-7.58c0-10.95.28-21.88,4.03-32.53h-145.36c6.61,9.21,8.91,21.59,8.91,39.73v120.31c0,19.29-2.3,32.53-8.91,41.46Z" style="fill:#fff"/><path d="M384.16,1.44c6.63,9.21,8.93,21.59,8.93,39.73v120.31c0,19.29-2.3,32.53-8.93,41.46h68.51c-12.37-10.08-16.69-36.28-16.69-57.87v-39.42c.72.16,1.41.33,2.12.5v-6.08c-.71.13-1.41.27-2.12.4V6.05h7.19c42.59,0,57.56,36.08,81.16,36.36v-8.43c0-10.95.28-21.88,4.03-32.53h-144.21Z" style="fill:#fff"/></g><g><g><path d="M94.8,300.08v-18.36h-.21l-8.97,15.13h-.74l-8.97-15.13h-.21v18.36h-4.42v-27h4.75l9.39,15.92h.08l9.39-15.92h4.55v27h-4.63Z" style="fill:#fff"/><path d="M126.88,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M168.85,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M190.15,273.08h4.22l12.53,27h-5.09l-3.27-7.28h-12.86l-3.23,7.28h-4.84l12.53-27ZM187.34,289.08h9.55l-4.63-10.46h-.25l-4.67,10.46Z" style="fill:#fff"/><path d="M236.96,280.03c-2.27-2.27-6.12-3.64-9.3-3.64-5.83,0-9.92,4.63-9.92,10.21,0,5.21,3.56,10.17,10.38,10.17,2.81,0,6.12-.83,7.94-2.19v-5.42h-8.48v-4.13h12.69v11.83c-3.39,2.48-8.19,4.05-12.45,4.05-8.56,0-14.93-6.41-14.93-14.35s6.45-14.31,14.72-14.31c4.3,0,8.89,1.74,12.57,4.88l-3.23,2.89Z" style="fill:#fff"/><path d="M266.69,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M296.71,300.08v-27h14.89c3.8,0,6.16,1.08,7.82,2.85,1.45,1.57,2.15,3.43,2.15,5.42,0,2.32-.95,4.34-2.48,5.83-1.61,1.53-3.89,2.52-7.48,2.52h-10.26v10.38h-4.63ZM301.34,277.22v8.35h10.26c1.16,0,2.77-.08,4.09-1.32.79-.75,1.24-1.78,1.24-2.85s-.41-1.99-1.12-2.73c-1.24-1.32-2.89-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M330.82,300.08v-27h14.89c3.6,0,6.08.99,7.82,2.85,1.36,1.45,2.15,3.35,2.15,5.42,0,3.64-2.4,6.41-5.95,7.73l6.45,11h-5.33l-5.79-10.38h-9.59v10.38h-4.63ZM335.45,277.22v8.35h11.08c2.44,0,4.51-1.9,4.51-4.22,0-1.03-.41-1.94-1.12-2.69-1.28-1.32-2.77-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M379.08,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM379.08,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M404.38,300.08v-27h21.71v4.13h-17.08v6.7h10.38v4.13h-10.38v12.03h-4.63Z" style="fill:#fff"/><path d="M449.83,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M486.55,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M520.08,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M534.51,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M564.37,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM564.37,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M614.03,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M650.83,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M678.29,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M700.53,273.08v22.87h16.58v4.13h-21.21v-27h4.63Z" style="fill:#fff"/><path d="M757.47,273.08h25.84v4.13h-10.59v22.87h-4.63v-22.87h-10.63v-4.13Z" style="fill:#fff"/><path d="M792.33,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M828.51,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M851.79,273.08h4.22l12.53,27h-5.09l-3.27-7.28h-12.86l-3.23,7.28h-4.84l12.53-27ZM848.98,289.08h9.55l-4.63-10.46h-.25l-4.67,10.46Z" style="fill:#fff"/><path d="M901.66,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M929.11,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M946.73,300.08v-27h14.89c3.6,0,6.08.99,7.82,2.85,1.36,1.45,2.15,3.35,2.15,5.42,0,3.64-2.4,6.41-5.95,7.73l6.45,11h-5.33l-5.79-10.38h-9.59v10.38h-4.63ZM951.36,277.22v8.35h11.08c2.44,0,4.51-1.9,4.51-4.22,0-1.03-.41-1.94-1.12-2.69-1.28-1.32-2.77-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M982.21,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M1014.3,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/></g><circle cx="740.23" cy="286.33" r="2.47" style="fill:#fff"/></g></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1093.7 312.78"><g><path d="M16.12,173.86C30.52,140.76,74.25,31.66,74.25,11.52c0-4.03-.56-6.91-2.02-8.93,10.95-1.72,25.92-2.59,34.83-2.59,10.95,0,14.11,2.31,16.99,10.37l54.4,150.24c5.77,16.71,12.37,32.53,19.29,42.33h-60.73c3.45-7.78,3.45-19.87-2.32-36.56l-12.37-34.83h-61.59c-.28,20.16,3.75,49.22,2.02,59.01-.56,9.77-6.61,12.37-18.98,12.37H0c5.46-7.5,10.36-15.54,16.12-29.09ZM120.02,124.94L80.88,14.11c-11.51,35.69-20.44,75.7-19.87,110.83h59.01Z" style="fill:#fff"/><path d="M229.22,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h68.51c-12.37,11.52-16.71,32.24-16.71,57.85v102.19c0,16.41.3,28.5,2.32,37.15h4.03c36.54,0,52.38-46.45,77.13-46.45v8.74c0,13.8,0,28.19,3.75,42.02h-139.03c6.61-8.93,8.91-22.17,8.91-41.46Z" style="fill:#fff"/><path d="M562.7,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h75.12c50.95,0,78.58,18.42,78.58,52.39,0,29.06-20.72,46.92-57,51.82,33.68,50.65,52.97,73.69,71.39,78.28-5.18,14.7-19.85,21.89-34.83,21.89-19.85,0-36.56-26.48-74.27-98.46h-7.2v54.12c0,19.29,2.02,32.53,8.65,41.46h-60.44c6.61-8.93,8.91-22.17,8.91-41.46ZM621.44,102.19c24.75,0,40.57-17.27,40.57-48.35s-15.54-47.5-44.32-47.5h-12.09v94.98c4.9.59,10.95.87,15.84.87Z" style="fill:#fff"/><path d="M932.78,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h73.1c62.18,0,96.73,44.33,96.73,100.46s-30.52,101.04-94.12,101.04h-75.7c6.61-8.93,8.91-22.17,8.91-41.46ZM979.42,197.18l15.26.59c37.41,0,50.95-43.48,50.95-95.86,0-57.28-20.44-95.57-54.98-95.57h-14.98v155.14c0,15.54,1.15,27.07,3.75,35.69Z" style="fill:#fff"/><path d="M787.22,92.85l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M424.51,91.17l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M746.76,202.94h145.92c-4.03-12.09-4.03-24.75-4.03-36.84v-7.59c-23.02,0-44.04,40.12-78.87,40.12h-5.18c-4.59-8.65-6.05-20.74-6.05-37.15v-56.98c.92.2,1.82.42,2.72.64v-6.22c-.9.13-1.81.24-2.72.4V6.05h7.2c43.48,0,58.15,35.5,82.34,35.5v-7.58c0-10.95.28-21.88,4.03-32.53h-145.36c6.61,9.21,8.91,21.59,8.91,39.73v120.31c0,19.29-2.3,32.53-8.91,41.46Z" style="fill:#fff"/><path d="M384.16,1.44c6.63,9.21,8.93,21.59,8.93,39.73v120.31c0,19.29-2.3,32.53-8.93,41.46h68.51c-12.37-10.08-16.69-36.28-16.69-57.87v-39.42c.72.16,1.41.33,2.12.5v-6.08c-.71.13-1.41.27-2.12.4V6.05h7.19c42.59,0,57.56,36.08,81.16,36.36v-8.43c0-10.95.28-21.88,4.03-32.53h-144.21Z" style="fill:#fff"/></g><g><g><path d="M94.8,300.08v-18.36h-.21l-8.97,15.13h-.74l-8.97-15.13h-.21v18.36h-4.42v-27h4.75l9.39,15.92h.08l9.39-15.92h4.55v27h-4.63Z" style="fill:#fff"/><path d="M126.88,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M168.85,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M190.15,273.08h4.22l12.53,27h-5.09l-3.27-7.28h-12.86l-3.23,7.28h-4.84l12.53-27ZM187.34,289.08h9.55l-4.63-10.46h-.25l-4.67,10.46Z" style="fill:#fff"/><path d="M236.96,280.03c-2.27-2.27-6.12-3.64-9.3-3.64-5.83,0-9.92,4.63-9.92,10.21,0,5.21,3.56,10.17,10.38,10.17,2.81,0,6.12-.83,7.94-2.19v-5.42h-8.48v-4.13h12.69v11.83c-3.39,2.48-8.19,4.05-12.45,4.05-8.56,0-14.93-6.41-14.93-14.35s6.45-14.31,14.72-14.31c4.3,0,8.89,1.74,12.57,4.88l-3.23,2.89Z" style="fill:#fff"/><path d="M266.69,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M379.08,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM379.08,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M534.51,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M564.37,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM564.37,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M982.21,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M1014.3,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/></g><circle cx="740.23" cy="286.33" r="2.47" style="fill:#fff"/></g></svg>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="icon">🏠</span> Dashboard</div>
@@ -236,14 +239,14 @@
   </div>
 </main>
 
-<!-- MODAL DETAIL (avec bouton Modifier) -->
+<!-- MODAL DETAIL -->
 <div class="modal-overlay" id="modal-detail">
   <div class="modal">
     <div class="modal-header"><div class="modal-title" id="detail-title">—</div><button class="modal-close" onclick="fermerModalDetail()">✕</button></div>
     <div class="modal-body" id="detail-body"></div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="fermerModalDetail()">Fermer</button>
-      <button class="btn-edit" onclick="basculerEdition()">✏️ Modifier</button>
+      <button class="btn-edit" id="btn-modifier" onclick="basculerEdition()">✏️ Modifier</button>
       <button class="btn-primary" id="detail-btn-statut" onclick="changerStatutDepuisDetail()">Changer statut</button>
     </div>
   </div>
@@ -290,20 +293,19 @@
           </div>
           <input type="hidden" id="f-type" value="Récurrent">
         </div>
-        <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="f-nom" placeholder="Sarah Martin"></div>
-        <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="f-poste" placeholder="Office Manager"></div>
-        <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="f-entreprise" placeholder="Startup XYZ"></div>
+        <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="f-nom"></div>
+        <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="f-poste"></div>
+        <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="f-entreprise"></div>
         <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="f-email" type="email"></div>
         <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="f-tel"></div>
         <div class="form-group"><label class="form-label">Statut</label>
           <select class="form-select" id="f-statut"><option>En discussion</option><option>Devis envoyé</option><option>En cours</option><option>Terminé</option><option>Perdu</option></select>
         </div>
-        <div class="form-group"><label class="form-label" id="montant-label">Montant (€/mois)</label><input class="form-input" id="f-montant" type="number" placeholder="800"></div>
-        <div class="form-group">
-          <label class="form-label">Assigné à</label>
+        <div class="form-group"><label class="form-label" id="montant-label">Montant (€/mois)</label><input class="form-input" id="f-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Assigné à</label>
           <div class="assigne-wrap"><select class="form-select" id="f-assigne"></select><button class="btn-add-assigne" onclick="ajouterAssigne()">+ Ajouter</button></div>
         </div>
-        <div class="form-group"><label class="form-label">Date de début contrat</label><input class="form-input" id="f-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Date de début</label><input class="form-input" id="f-debut" type="date"></div>
         <div class="form-group"><label class="form-label">Source</label>
           <select class="form-select" id="f-source"><option>Prospection</option><option>Broker</option><option>Recommandation</option><option>Autre</option></select>
         </div>
@@ -324,7 +326,8 @@
 
 <script>
 const API="https://script.google.com/macros/s/AKfycbzrQJzhHWsSlRtcETVAGpgV_mjd5kiaH5pgYYz1O-HbQ3CIR-K0h2_fk50i--vFUInKzQ/exec";
-let leadsData=[],missionsEnCours=[],clientsData=[],leadDetailCourant=null,dragLeadId=null,dragTargetStatut=null;
+let leadsData=[],missionsEnCours=[],clientsData=[],osShotAvenir=[],osEnCours=[],osTermines=[];
+let leadDetailCourant=null,osShotCourant=null,dragLeadId=null,dragTargetStatut=null;
 let chartCA=null,chartActivites=null,chartHistorique=null;
 const SERVICES=["Nettoyage","Café / Tisanerie","Consommables","Fontaines à eau"];
 let assignesList=["Nicolas","Alexis"];
@@ -337,20 +340,27 @@ function fmt(n){return n?Math.round(n).toLocaleString('fr-FR')+' €':'—';}
 function diffJours(d){if(!d)return 0;const dt=new Date(d);if(isNaN(dt))return 0;return Math.floor((new Date()-dt)/86400000);}
 function joursAvant(d){if(!d)return null;const dt=new Date(d);if(isNaN(dt))return null;const diff=Math.floor((dt-new Date())/86400000);return diff>0?diff:null;}
 function estFutur(d){return joursAvant(d)!==null;}
+function fmtDate(d){if(!d)return '—';try{return new Date(d).toLocaleDateString('fr-FR');}catch(e){return d;}}
 
 async function chargerDonnees(){
   try{
-    const[dashboard,leads,clients,missions]=await Promise.all([
+    const[dashboard,leads,clients,missions,osAv,osEc,osTe]=await Promise.all([
       fetch(API+"?action=getDashboard").then(r=>r.json()),
       fetch(API+"?action=getLeads").then(r=>r.json()),
       fetch(API+"?action=getClients").then(r=>r.json()),
       fetch(API+"?action=getMissionsEnCours").then(r=>r.json()),
+      fetch(API+"?action=getOneShotAvenir").then(r=>r.json()),
+      fetch(API+"?action=getOneShotEnCours").then(r=>r.json()),
+      fetch(API+"?action=getOneShotTermines").then(r=>r.json()),
     ]);
     leadsData=Array.isArray(leads)?leads:[];
     clientsData=Array.isArray(clients)?clients:[];
     missionsEnCours=Array.isArray(missions)?missions:[];
+    osShotAvenir=Array.isArray(osAv)?osAv:[];
+    osEnCours=Array.isArray(osEc)?osEc:[];
+    osTermines=Array.isArray(osTe)?osTe:[];
     renderDashboard(dashboard);
-    renderKanban('kanban-board');
+    renderKanban();
     renderClients();
     renderRelances();
   }catch(e){document.getElementById('stats-grid').innerHTML='<div class="loading">Impossible de charger. Vérifiez le déploiement Apps Script.</div>';}
@@ -358,9 +368,9 @@ async function chargerDonnees(){
 
 function renderDashboard(d){
   const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJours(l['Date dernière relance'])>=7).length;
-  const avenir=leadsData.filter(l=>l['Statut']==='En cours'&&estFutur(l['Date de début'])).length;
+  const av=d.contratsAVenir||0;
   document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">${fmt(d.caMensuel)}</div><div class="stat-sub">${d.nbClientsActifs||'—'} clients · ${avenir} contrat(s) à venir</div></div>
+    <div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">${fmt(d.caMensuel)}</div><div class="stat-sub">${d.nbClientsActifs||'—'} clients · ${av} à venir</div></div>
     <div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">${fmt(d.caReel2026)}</div><div class="stat-sub">Jan → Juin 2026</div></div>
     <div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">${fmt(d.caEstime2026)}</div><div class="stat-sub">Avec clients actuels</div></div>
     <div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">${ru}<span> leads</span></div><div class="stat-sub">${d.leadsEnCours||0} leads en cours</div></div>`;
@@ -400,83 +410,154 @@ function renderDashboard(d){
   }
 }
 
-function renderKanban(cid){
+// ============================================================
+// KANBAN 6 COLONNES
+// ============================================================
+function renderKanban(){
   const cols=[
-    {key:'En discussion',label:'En discussion'},
-    {key:'Devis envoyé',label:'Devis envoyé'},
-    {key:'En cours',label:'En cours'},
-    {key:'One-shot terminé',label:'⚡ One-shot terminé'},
-    {key:'Perdu',label:'Perdu'},
+    {key:'discussion',label:'En discussion',cards:leadsData.filter(l=>l['Statut']==='En discussion'&&l['Type']!=='One-shot')},
+    {key:'devis',label:'Devis envoyé',cards:leadsData.filter(l=>l['Statut']==='Devis envoyé'&&l['Type']!=='One-shot')},
+    {key:'encours',label:'En cours',cards:buildEnCours()},
+    {key:'osavenir',label:'⚡ One-shot à venir',cards:[...osShotAvenir,...osEnCours]},
+    {key:'ostermines',label:'⚡ One-shot terminé',cards:osTermines},
+    {key:'perdu',label:'Perdu',cards:leadsData.filter(l=>l['Statut']==='Perdu')},
   ];
   const html=cols.map(col=>{
-    let cards=[];
-    if(col.key==='En cours'){
-      const futurs=leadsData.filter(l=>l['Statut']==='En cours'&&estFutur(l['Date de début']));
-      const actifs=leadsData.filter(l=>l['Statut']==='En cours'&&!estFutur(l['Date de début'])&&l['Type']!=='One-shot');
-      const oneshotsEC=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='En cours'&&!estFutur(l['Date de début']));
-      // Futurs en tête, puis actifs, puis missions facturier
-      cards=[...futurs,...actifs,...oneshotsEC,...missionsEnCours];
-    }else if(col.key==='One-shot terminé'){
-      cards=leadsData.filter(l=>l['Type']==='One-shot'&&l['Statut']==='Terminé');
-    }else if(col.key==='Perdu'){
-      cards=leadsData.filter(l=>l['Statut']==='Perdu');
-    }else{
-      cards=leadsData.filter(l=>l['Statut']===col.key&&l['Type']!=='One-shot');
-    }
-    const ch=cards.length===0?'<div style="padding:16px;text-align:center;color:#B0B0B0;font-size:11px">Aucun</div>':cards.map(renderCard).join('');
-    return`<div class="kanban-col" data-statut="${col.key}" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${col.key}')">
-      <div class="kanban-col-header"><div class="kanban-col-title">${col.label}</div><div class="kanban-col-count">${cards.length}</div></div>
+    const ch=col.cards.length===0?'<div class="empty-state"><p>Aucun</p></div>':col.cards.map(c=>renderCard(c,col.key)).join('');
+    return`<div class="kanban-col" data-col="${col.key}">
+      <div class="kanban-col-header"><div class="kanban-col-title">${col.label}</div><div class="kanban-col-count">${col.cards.length}</div></div>
       <div class="kanban-cards">${ch}</div>
     </div>`;
   }).join('');
-  document.getElementById(cid).innerHTML='<div class="kanban">'+html+'</div>';
+  document.getElementById('kanban-board').innerHTML='<div class="kanban">'+html+'</div>';
 }
 
-function renderCard(l){
+function buildEnCours(){
+  // Futurs en tête (triés par date de début croissante), puis actifs
+  const futurs=missionsEnCours.filter(m=>m._futur).sort((a,b)=>{
+    const da=new Date(a['Date de début']||'9999'),db=new Date(b['Date de début']||'9999');
+    return da-db;
+  });
+  const actifs=missionsEnCours.filter(m=>!m._futur);
+  const leadsEC=leadsData.filter(l=>l['Statut']==='En cours'&&l['Type']!=='One-shot');
+  return [...futurs,...leadsEC,...actifs];
+}
+
+function renderCard(l,colKey){
   const isFF=l['_fromFacturier']===true;
-  const isOS=l['Type']==='One-shot';
-  const futur=estFutur(l['Date de début']);
-  const joursDebut=joursAvant(l['Date de début']);
-  const j=diffJours(l['Date dernière relance']);
-  let rc='',rt='';
-  if(STATUTS_ACTIFS.includes(l['Statut'])&&!isFF){
-    if(j>=14){rc='urgent';rt=j+'j ⚠';}else if(j>=7){rc='warning';rt=j+'j';}else if(j>0){rt='il y a '+j+'j';}
+  const isOS=l['_isOneShot']===true;
+  const isFutur=l['_futur']===true||estFutur(l['Date de début']);
+  const m=parseFloat(l['Montant estimé (€/mois)']||l['MontantHT'])||0;
+
+  let badge='',cardClass='card',montantCls='vert',montantLabel='€/mois';
+  if(isOS){
+    badge='<span class="card-badge badge-oneshot">ONE-SHOT</span>';
+    cardClass+=' card-oneshot';
+    montantCls='violet';montantLabel='€ HT';
+  }else if(isFutur){
+    badge='<span class="card-badge badge-futur">⏳ FUTUR CLIENT</span>';
+    cardClass+=' card-futur';
+    montantCls='orange';montantLabel='€/mois (à venir)';
+  }else if(isFF){
+    badge='<span class="card-badge badge-actif">CLIENT ACTIF</span>';
+  }else{
+    badge='<span class="card-badge badge-recurrent">RÉCURRENT</span>';
   }
-  const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  let mStr='';
-  if(m){
-    const cls=futur?'futur':isOS?'oneshot':'recurrent';
-    const label=futur?'€/mois (à venir)':isOS?'€ (mission)':'€/mois';
-    mStr=`<div class="card-montant ${cls}">${m.toLocaleString('fr-FR')} ${label}</div>`;
+
+  const titre=isOS?(l['Entreprise']||'—'):isFF?(l['Prénom/Nom']||'—'):(l['Entreprise']||'—');
+  const sous=isOS?(l['TypeMission']||''):isFF?(l['Commentaires']||''):(l['Prénom/Nom']||'');
+  const mStr=m?`<div class="card-montant ${montantCls}">${m.toLocaleString('fr-FR')} ${montantLabel}</div>`:'';
+
+  let debutStr='';
+  if(isFutur){
+    const j=joursAvant(l['Date de début']);
+    debutStr=`<div class="card-debut">Début dans ${j}j · ${fmtDate(l['Date de début'])}</div>`;
   }
-  let badge=isFF?'<span class="card-badge facturier">CLIENT ACTIF</span>':futur?'<span class="card-badge futur">⏳ À VENIR</span>':isOS?'<span class="card-badge oneshot">ONE-SHOT</span>':'<span class="card-badge recurrent">RÉCURRENT</span>';
-  const opts=isFF?'':STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
-  let cardClass='card'+(isOS&&!futur?' oneshot-card':'')+(futur?' contrat-futur':'');
-  const draggable=isFF?'':'draggable="true" ondragstart="onDragStart(event,\''+l['ID']+'\')"';
-  const titre=isFF?(l['Prénom/Nom']||'—'):(l['Entreprise']||'—');
-  const sous=isFF?(l['Commentaires']||''):(l['Prénom/Nom']||'');
-  const debutStr=futur?`<div style="font-size:9px;color:var(--orange);font-weight:600;margin-bottom:4px">Début dans ${joursDebut}j · ${new Date(l['Date de début']).toLocaleDateString('fr-FR')}</div>`:'';
-  return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} onclick="ouvrirDetail('${l['ID']}')">
+  if(isOS&&l['DateDebut']){
+    debutStr=`<div class="card-debut">${fmtDate(l['DateDebut'])}${l['DateFin']?' → '+fmtDate(l['DateFin']):''}</div>`;
+  }
+
+  // Footer
+  let footer='';
+  if(isOS){
+    const opts=['En cours','À venir','Terminée','Annulée'].map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
+    footer=`<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutOS(event,'${l['ID']}',${l['_rowIndex']||0})">${opts}</select>`;
+  }else if(!isFF){
+    const opts=STATUTS_PIPELINE.map(s=>`<option value="${s}" ${s===l['Statut']?'selected':''}>${s}</option>`).join('');
+    footer=`<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,'${l['ID']}')">${opts}</select>`;
+  }else{
+    footer=`<div style="font-size:9px;color:var(--gris)">${l['Services souhaités']||''}</div>`;
+  }
+
+  const draggable=(!isFF&&!isOS)?`draggable="true" ondragstart="onDragStart(event,'${l['ID']}')"`:'' ;
+  const click=isOS?`onclick="ouvrirDetailOS('${l['ID']}')"`:(!isFF?`onclick="ouvrirDetail('${l['ID']}')"`:'' );
+
+  return`<div class="${cardClass}" data-statut="${l['Statut']}" data-id="${l['ID']}" ${draggable} ${click}>
     ${badge}
     <div class="card-titre">${titre}</div>
     <div class="card-sous">${sous}</div>
     ${debutStr}
     ${mStr}
-    <div class="card-footer">
-      ${isFF?'<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>':'<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>'}
-      <div class="card-relance ${rc}">${rt}</div>
-    </div>
+    <div class="card-footer">${footer}</div>
   </div>`;
 }
 
+// Drag & drop (leads uniquement)
 function onDragStart(e,id){dragLeadId=id;setTimeout(()=>{const el=document.querySelector(`[data-id="${id}"]`);if(el)el.classList.add('dragging');},0);}
-function onDragOver(e){e.preventDefault();e.currentTarget.classList.add('drag-over');}
-function onDragLeave(e){e.currentTarget.classList.remove('drag-over');}
-function onDrop(e,s){e.preventDefault();e.currentTarget.classList.remove('drag-over');const l=leadsData.find(x=>x['ID']===dragLeadId);if(!l||l['Statut']===s)return;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Déplacer "${l['Entreprise']}" vers "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
-function annulerDrag(){document.getElementById('confirm-drag').classList.remove('open');dragLeadId=null;dragTargetStatut=null;renderKanban('kanban-board');}
+function onDragOver(e){e.preventDefault();}
+function onDrop(e,s){e.preventDefault();const l=leadsData.find(x=>x['ID']===dragLeadId);if(!l||l['Statut']===s)return;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Déplacer "${l['Entreprise']}" vers "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
+function annulerDrag(){document.getElementById('confirm-drag').classList.remove('open');dragLeadId=null;dragTargetStatut=null;}
 async function confirmerDrag(){document.getElementById('confirm-drag').classList.remove('open');if(!dragLeadId||!dragTargetStatut)return;try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:dragLeadId,statut:dragTargetStatut})});await chargerDonnees();}catch(e){alert('Erreur.');}dragLeadId=null;dragTargetStatut=null;}
 async function changerStatutMenu(e,id){const s=e.target.value;const l=leadsData.find(x=>x['ID']===id);if(!l||l['Statut']===s)return;dragLeadId=id;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Passer "${l['Entreprise']}" en "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
 
+// Changement statut one-shot
+async function changerStatutOS(e,id,rowIndex){
+  const newStatut=e.target.value;
+  if(!rowIndex)return;
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutOneShot',rowIndex:rowIndex,statut:newStatut})});
+    await chargerDonnees();
+  }catch(err){alert('Erreur lors de la mise à jour.');}
+}
+
+// DETAIL one-shot
+function ouvrirDetailOS(id){
+  const os=[...osShotAvenir,...osEnCours,...osTermines].find(x=>x['ID']===id);
+  if(!os)return;
+  osShotCourant=os;
+  document.getElementById('detail-title').textContent=os['Entreprise']||'—';
+  document.getElementById('btn-modifier').style.display='none';
+  document.getElementById('detail-btn-statut').style.display='none';
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-row">
+      <div class="detail-item"><div class="lbl">Type de mission</div><div class="val">${os['TypeMission']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${os['Statut']||'—'}</strong></div></div>
+      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(os['DateDebut'])}</div></div>
+      <div class="detail-item"><div class="lbl">Date de fin</div><div class="val">${fmtDate(os['DateFin'])}</div></div>
+      <div class="detail-item"><div class="lbl">Adresse</div><div class="val">${os['Adresse']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Métrage</div><div class="val">${os['Metrage']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Montant HT</div><div class="val">${os['MontantHT']?os['MontantHT'].toLocaleString('fr-FR')+' €':'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Statut facturation</div><div class="val">${os['StatutFacturation']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Agent</div><div class="val">${os['Agent']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Email client</div><div class="val">${os['Email']||'—'}</div></div>
+      <div class="detail-item full"><div class="lbl">Description</div><div class="detail-commentaire">${os['Description']||'—'}</div></div>
+      <div class="detail-item full"><div class="lbl">Notes</div><div class="detail-commentaire">${os['Notes']||'—'}</div></div>
+    </div>
+    <div style="margin-top:16px">
+      <div class="form-label" style="margin-bottom:6px">Changer le statut</div>
+      <select class="os-statut-select" onchange="changerStatutOSDepuisDetail(this.value,${os['_rowIndex']||0})">
+        ${['En cours','À venir','Terminée','Annulée'].map(s=>`<option value="${s}" ${s===os['Statut']?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>`;
+  document.getElementById('modal-detail').classList.add('open');
+}
+async function changerStatutOSDepuisDetail(statut,rowIndex){
+  if(!rowIndex)return;
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutOneShot',rowIndex:rowIndex,statut:statut})});fermerModalDetail();await chargerDonnees();}
+  catch(e){alert('Erreur.');}
+}
+
+// CLIENTS
 function renderClients(f='',sf=''){
   let data=clientsData;
   if(!data||!data.length){document.getElementById('clients-table').innerHTML='<div class="empty-state"><p>Aucun client chargé depuis le facturier.</p></div>';document.getElementById('clients-count').textContent='0 client';return;}
@@ -496,6 +577,7 @@ function renderClients(f='',sf=''){
 function filtrerClients(v){renderClients(v,document.querySelector('.filter-select').value);}
 function filtrerClientsStatut(v){renderClients(document.querySelector('.filter-search').value,v);}
 
+// RELANCES
 function renderRelances(){
   const c=document.getElementById('relances-list');
   const u=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJours(l['Date dernière relance'])>=7).sort((a,b)=>diffJours(b['Date dernière relance'])-diffJours(a['Date dernière relance']));
@@ -504,7 +586,7 @@ function renderRelances(){
     const j=diffJours(l['Date dernière relance']);
     const btns=STATUTS_PIPELINE.filter(s=>s!==l['Statut']).map(s=>`<button class="btn-statut-relance" onclick="changerStatutRelance('${l['ID']}','${s}')">→ ${s}</button>`).join('');
     return`<div class="relance-card ${j>=14?'urgent':''}">
-      <div class="relance-info"><h3>${l['Entreprise']||'—'}</h3><p>${l['Prénom/Nom']||''} · ${l['Statut']} · ${l['Assigné à']||'—'}</p><p style="margin-top:4px;color:#999;font-size:11px">${l['Commentaires']||''}</p>
+      <div class="relance-info"><h3>${l['Entreprise']||'—'}</h3><p>${l['Prénom/Nom']||''} · ${l['Statut']} · ${l['Assigné à']||'—'}</p>
       <div class="relance-actions"><button class="btn-relancer" onclick="ouvrirDetail('${l['ID']}')">Voir</button>${btns}</div></div>
       <div class="relance-meta"><div class="relance-jours">${j}</div><div class="relance-label">jours sans<br>contact</div></div>
     </div>`;
@@ -512,11 +594,13 @@ function renderRelances(){
 }
 async function changerStatutRelance(id,s){const l=leadsData.find(x=>x['ID']===id);if(!l)return;dragLeadId=id;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Passer "${l['Entreprise']}" en "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
 
-// MODAL DETAIL
+// MODAL DETAIL (leads)
 function ouvrirDetail(id){
   const l=leadsData.find(x=>x['ID']===id);if(!l)return;
-  leadDetailCourant=l;
+  leadDetailCourant=l;osShotCourant=null;
   document.getElementById('detail-title').textContent=l['Entreprise']||'—';
+  document.getElementById('btn-modifier').style.display='';
+  document.getElementById('detail-btn-statut').style.display='';
   const isOS=l['Type']==='One-shot';
   const futur=estFutur(l['Date de début']);
   const joursDebut=joursAvant(l['Date de début']);
@@ -525,9 +609,8 @@ function ouvrirDetail(id){
   document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
   document.getElementById('detail-btn-statut').disabled=!suiv;
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  const dd=l['Date de début']?new Date(l['Date de début']).toLocaleDateString('fr-FR'):'—';
   document.getElementById('detail-body').innerHTML=`
-    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${dd}</div>`:''}
+    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${fmtDate(l['Date de début'])}</div>`:''}
     <div class="detail-row">
       <div class="detail-item"><div class="lbl">Contact</div><div class="val">${l['Prénom/Nom']||'—'}</div></div>
       <div class="detail-item"><div class="lbl">Poste</div><div class="val">${l['Poste']||'—'}</div></div>
@@ -536,13 +619,13 @@ function ouvrirDetail(id){
       <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${l['Statut']||'—'}</strong></div></div>
       <div class="detail-item"><div class="lbl">Assigné à</div><div class="val">${l['Assigné à']||'—'}</div></div>
       <div class="detail-item"><div class="lbl">Montant</div><div class="val">${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${dd}</div></div>
+      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(l['Date de début'])}</div></div>
       <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
       <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
     </div>`;
   document.getElementById('modal-detail').classList.add('open');
 }
-function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;}
+function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;osShotCourant=null;}
 function fermerModalDetailSansReset(){document.getElementById('modal-detail').classList.remove('open');}
 function basculerEdition(){
   if(!leadDetailCourant)return;
@@ -558,7 +641,7 @@ async function changerStatutDepuisDetail(){
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadDetailCourant['ID'],statut:suiv})});fermerModalDetail();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
 
-// MODAL EDITION
+// EDITION
 function ouvrirEdition(id){
   const l=leadsData.find(x=>x['ID']===id);if(!l)return;
   leadDetailCourant=l;
@@ -579,10 +662,10 @@ function fermerEdition(){document.getElementById('modal-edition').classList.remo
 async function sauvegarderEdition(){
   if(!leadDetailCourant)return;
   const data={'Prénom/Nom':document.getElementById('e-nom').value,'Poste':document.getElementById('e-poste').value,'Entreprise':document.getElementById('e-entreprise').value,'Email':document.getElementById('e-email').value,'Téléphone':document.getElementById('e-tel').value,'Statut':document.getElementById('e-statut').value,'Montant estimé (€/mois)':document.getElementById('e-montant').value,'Source':document.getElementById('e-source').value,'Commentaires':document.getElementById('e-commentaires').value,'Assigné à':document.getElementById('e-assigne').value,'Date de début':document.getElementById('e-debut').value};
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});fermerEdition();await chargerDonnees();}catch(e){alert('Erreur lors de la sauvegarde.');}
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadDetailCourant['ID'],data})});fermerEdition();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
 
-// MODAL NOUVEAU LEAD
+// NOUVEAU LEAD
 function setType(t){document.getElementById('f-type').value=t;document.getElementById('btn-recurrent').className='type-btn'+(t==='Récurrent'?' active-recurrent':'');document.getElementById('btn-oneshot').className='type-btn'+(t==='One-shot'?' active-oneshot':'');document.getElementById('montant-label').textContent=t==='One-shot'?'Montant de la mission (€)':'Montant estimé (€/mois)';}
 function renderServicesCheckboxes(){document.getElementById('services-checkboxes').innerHTML=SERVICES.map(s=>`<label class="service-checkbox"><input type="checkbox" value="${s}" onchange="this.closest('label').classList.toggle('checked',this.checked)"><span>${s}</span></label>`).join('');}
 function renderAssigneSelect(){document.getElementById('f-assigne').innerHTML=assignesList.map(a=>`<option value="${a}">${a}</option>`).join('');}
