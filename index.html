@@ -239,6 +239,26 @@
   </div>
 </main>
 
+<!-- MODAL SIGNER -->
+<div class="modal-overlay" id="modal-signer">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✅ Marquer comme signé</div><button class="modal-close" onclick="fermerModalSigner()">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--gris);margin-bottom:20px">Vérifiez les informations avant de créer la ligne dans le facturier. Le lead sera supprimé du CRM.</p>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Société (Facturation)</label><input class="form-input" id="s-societe"></div>
+        <div class="form-group"><label class="form-label">Occupant / Contact</label><input class="form-input" id="s-occupant"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="s-email" type="email"></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="s-tel"></div>
+        <div class="form-group full"><label class="form-label">Adresse d'intervention</label><input class="form-input" id="s-adresse"></div>
+        <div class="form-group"><label class="form-label">Services</label><input class="form-input" id="s-services"></div>
+        <div class="form-group"><label class="form-label">Montant total HT (€/mois)</label><input class="form-input" id="s-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Date de début de contrat</label><input class="form-input" id="s-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Canal d'acquisition</label>
+          <select class="form-select" id="s-canal"><option value="Externe">Externe</option><option value="Volum">Volum</option></select>
+        </div>
+      </div>
+
 <!-- MODAL DETAIL -->
 <div class="modal-overlay" id="modal-detail">
   <div class="modal">
@@ -769,27 +789,9 @@ document.getElementById('modal-edition').addEventListener('click',function(e){if
 
 setDate();
 chargerDonnees();
+
 </script>
 
-<!-- MODAL SIGNER -->
-<div class="modal-overlay" id="modal-signer">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">✅ Marquer comme signé</div><button class="modal-close" onclick="fermerModalSigner()">✕</button></div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--gris);margin-bottom:20px">Vérifiez les informations avant de créer la ligne dans le facturier. Le lead sera supprimé du CRM.</p>
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Société (Facturation)</label><input class="form-input" id="s-societe"></div>
-        <div class="form-group"><label class="form-label">Occupant / Contact</label><input class="form-input" id="s-occupant"></div>
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="s-email" type="email"></div>
-        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="s-tel"></div>
-        <div class="form-group full"><label class="form-label">Adresse d'intervention</label><input class="form-input" id="s-adresse"></div>
-        <div class="form-group"><label class="form-label">Services</label><input class="form-input" id="s-services"></div>
-        <div class="form-group"><label class="form-label">Montant total HT (€/mois)</label><input class="form-input" id="s-montant" type="number"></div>
-        <div class="form-group"><label class="form-label">Date de début de contrat</label><input class="form-input" id="s-debut" type="date"></div>
-        <div class="form-group"><label class="form-label">Canal d'acquisition</label>
-          <select class="form-select" id="s-canal"><option value="Externe">Externe</option><option value="Volum">Volum</option></select>
-        </div>
-      </div>
       <div style="margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;">
         ✅ Une ligne sera créée dans l'onglet "🗂️ Suivi Clients" du facturier avec statut <strong id="s-statut-preview">En cours</strong>
       </div>
@@ -800,6 +802,10 @@ chargerDonnees();
     </div>
   </div>
 </div>
+
+<script>
+
+
 
 </body>
 </html>
