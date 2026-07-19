@@ -248,6 +248,7 @@
       <button class="btn-secondary" onclick="fermerModalDetail()">Fermer</button>
       <button class="btn-edit" id="btn-modifier" onclick="basculerEdition()">✏️ Modifier</button>
       <button class="btn-primary" id="detail-btn-statut" onclick="changerStatutDepuisDetail()">Changer statut</button>
+      <button class="btn-primary" id="btn-signer" onclick="ouvrirModalSigner()" style="display:none;background:#4DA882">✅ Marquer comme signé</button>
     </div>
   </div>
 </div>
@@ -616,37 +617,6 @@ function renderRelances(){
 async function changerStatutRelance(id,s){const l=leadsData.find(x=>x['ID']===id);if(!l)return;dragLeadId=id;dragTargetStatut=s;document.getElementById('confirm-drag-text').textContent=`Passer "${l['Entreprise']}" en "${s}" ?`;document.getElementById('confirm-drag').classList.add('open');}
 
 // MODAL DETAIL (leads)
-function ouvrirDetail(id){
-  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
-  leadDetailCourant=l;osShotCourant=null;
-  document.getElementById('detail-title').textContent=l['Entreprise']||'—';
-  document.getElementById('btn-modifier').style.display='';
-  document.getElementById('detail-btn-statut').style.display='';
-  const isOS=l['Type']==='One-shot';
-  const futur=estFutur(l['Date de début']);
-  const joursDebut=joursAvant(l['Date de début']);
-  const prog={'En discussion':'Devis envoyé','Devis envoyé':'En cours','En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
-  const suiv=prog[l['Statut']];
-  document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
-  document.getElementById('detail-btn-statut').disabled=!suiv;
-  const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  document.getElementById('detail-body').innerHTML=`
-    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${fmtDate(l['Date de début'])}</div>`:''}
-    <div class="detail-row">
-      <div class="detail-item"><div class="lbl">Contact</div><div class="val">${l['Prénom/Nom']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Poste</div><div class="val">${l['Poste']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Email</div><div class="val">${l['Email']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Téléphone</div><div class="val">${l['Téléphone']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${l['Statut']||'—'}</strong></div></div>
-      <div class="detail-item"><div class="lbl">Assigné à</div><div class="val">${l['Assigné à']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Montant</div><div class="val">${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(l['Date de début'])}</div></div>
-      <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
-      <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
-      ${l['Lien devis']?`<div class="detail-item full" style="margin-top:8px"><a href="${l['Lien devis']}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>`:''}
-    </div>`;
-  document.getElementById('modal-detail').classList.add('open');
-}
 function fermerModalDetail(){document.getElementById('modal-detail').classList.remove('open');leadDetailCourant=null;osShotCourant=null;}
 function fermerModalDetailSansReset(){document.getElementById('modal-detail').classList.remove('open');}
 function basculerEdition(){
@@ -702,6 +672,97 @@ async function sauvegarderLead(){
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});fermerModal();await chargerDonnees();}catch(e){alert('Erreur.');}
 }
 
+
+// SIGNER UN LEAD
+function ouvrirDetail(id){
+  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
+  leadDetailCourant=l;osShotCourant=null;
+  document.getElementById('detail-title').textContent=l['Entreprise']||'—';
+  document.getElementById('btn-modifier').style.display='';
+  document.getElementById('detail-btn-statut').style.display='';
+  document.getElementById('btn-signer').style.display='none';
+
+  // Bouton "Marquer comme signé" seulement pour "Devis envoyé"
+  if(l['Statut']==='Devis envoyé'){
+    document.getElementById('btn-signer').style.display='';
+    document.getElementById('detail-btn-statut').style.display='none'; // retire "→ En cours"
+  }
+
+  const isOS=l['Type']==='One-shot';
+  const futur=estFutur(l['Date de début']);
+  const joursDebut=joursAvant(l['Date de début']);
+  // Bouton statut normal pour En discussion uniquement
+  const prog={'En discussion':'Devis envoyé','Devis envoyé':null,'En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
+  const suiv=prog[l['Statut']];
+  document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
+  document.getElementById('detail-btn-statut').disabled=!suiv;
+  if(!suiv && l['Statut']!=='Devis envoyé') document.getElementById('detail-btn-statut').style.display='none';
+
+  const m=parseFloat(l['Montant estimé (€/mois)'])||0;
+  document.getElementById('detail-body').innerHTML=`
+    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${fmtDate(l['Date de début'])}</div>`:''}
+    <div class="detail-row">
+      <div class="detail-item"><div class="lbl">Contact</div><div class="val">${l['Prénom/Nom']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Poste</div><div class="val">${l['Poste']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Email</div><div class="val">${l['Email']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Téléphone</div><div class="val">${l['Téléphone']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${l['Statut']||'—'}</strong></div></div>
+      <div class="detail-item"><div class="lbl">Assigné à</div><div class="val">${l['Assigné à']||'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Montant</div><div class="val">${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
+      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(l['Date de début'])}</div></div>
+      <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
+      <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
+      ${l['Lien devis']?`<div class="detail-item full" style="margin-top:8px"><a href="${l['Lien devis']}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>`:''}
+    </div>`;
+  document.getElementById('modal-detail').classList.add('open');
+}
+
+function ouvrirModalSigner(){
+  if(!leadDetailCourant)return;
+  const l=leadDetailCourant;
+  // Pré-remplir le formulaire
+  document.getElementById('s-societe').value=l['Entreprise']||'';
+  document.getElementById('s-occupant').value=l['Prénom/Nom']||'';
+  document.getElementById('s-email').value=l['Email']||'';
+  document.getElementById('s-tel').value=l['Téléphone']||'';
+  document.getElementById('s-adresse').value=l['Commentaires']||''; // souvent l'adresse est dans commentaires
+  document.getElementById('s-services').value=l['Services souhaités']||'';
+  document.getElementById('s-montant').value=l['Montant estimé (€/mois)']||'';
+  document.getElementById('s-debut').value=l['Date de début']||'';
+  // Prévisualiser le statut
+  const futur=estFutur(l['Date de début']);
+  document.getElementById('s-statut-preview').textContent=futur?'A venir':'En cours';
+  fermerModalDetail();
+  document.getElementById('modal-signer').classList.add('open');
+}
+
+function fermerModalSigner(){document.getElementById('modal-signer').classList.remove('open');}
+
+async function confirmerSigner(){
+  if(!leadDetailCourant)return;
+  const data={
+    'Société': document.getElementById('s-societe').value,
+    'Occupant': document.getElementById('s-occupant').value,
+    'Email': document.getElementById('s-email').value,
+    'Téléphone': document.getElementById('s-tel').value,
+    'Adresse': document.getElementById('s-adresse').value,
+    'Services': document.getElementById('s-services').value,
+    'Montant': document.getElementById('s-montant').value,
+    'Date de début': document.getElementById('s-debut').value,
+    'Canal': document.getElementById('s-canal').value,
+  };
+  if(!data['Société']){alert("Le nom de la société est obligatoire.");return;}
+  try{
+    const res=await fetch(API,{method:'POST',body:JSON.stringify({action:'signerLead',id:leadDetailCourant['ID'],data})});
+    const json=await res.json();
+    if(json.error){alert('Erreur : '+json.error);return;}
+    fermerModalSigner();
+    leadDetailCourant=null;
+    await chargerDonnees();
+    alert('✅ Client créé dans le facturier avec statut "'+json.statut+'" !');
+  }catch(e){alert('Erreur lors de la création.');}
+}
+
 document.getElementById('modal-lead').addEventListener('click',function(e){if(e.target===this)fermerModal();});
 document.getElementById('modal-detail').addEventListener('click',function(e){if(e.target===this)fermerModalDetail();});
 document.getElementById('modal-edition').addEventListener('click',function(e){if(e.target===this)fermerEdition();});
@@ -709,5 +770,36 @@ document.getElementById('modal-edition').addEventListener('click',function(e){if
 setDate();
 chargerDonnees();
 </script>
+
+<!-- MODAL SIGNER -->
+<div class="modal-overlay" id="modal-signer">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✅ Marquer comme signé</div><button class="modal-close" onclick="fermerModalSigner()">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--gris);margin-bottom:20px">Vérifiez les informations avant de créer la ligne dans le facturier. Le lead sera supprimé du CRM.</p>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Société (Facturation)</label><input class="form-input" id="s-societe"></div>
+        <div class="form-group"><label class="form-label">Occupant / Contact</label><input class="form-input" id="s-occupant"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="s-email" type="email"></div>
+        <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="s-tel"></div>
+        <div class="form-group full"><label class="form-label">Adresse d'intervention</label><input class="form-input" id="s-adresse"></div>
+        <div class="form-group"><label class="form-label">Services</label><input class="form-input" id="s-services"></div>
+        <div class="form-group"><label class="form-label">Montant total HT (€/mois)</label><input class="form-input" id="s-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Date de début de contrat</label><input class="form-input" id="s-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Canal d'acquisition</label>
+          <select class="form-select" id="s-canal"><option value="Externe">Externe</option><option value="Volum">Volum</option></select>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;">
+        ✅ Une ligne sera créée dans l'onglet "🗂️ Suivi Clients" du facturier avec statut <strong id="s-statut-preview">En cours</strong>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fermerModalSigner()">Annuler</button>
+      <button class="btn-primary" onclick="confirmerSigner()" style="background:#4DA882">✅ Confirmer et créer dans le facturier</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
