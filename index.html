@@ -772,7 +772,7 @@ async function sauvegarderLead(){
 
 // INIT
 function renderRentabilite(d){
-  const ca=d.caMensuel||0;
+  const ca=d.caPaie||0; // CA Pennylane du mois de la paie
   const charges=d.totalCharges||0;
   const marge=d.margeBrute||0;
   const taux=d.tauxMarge||0;
