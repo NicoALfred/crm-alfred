@@ -155,6 +155,21 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .detail-commentaire{background:#F8F6F2;padding:10px;border-radius:8px;font-size:12px;margin-top:4px;}
 .tag-futur{display:inline-block;background:#FFF3E0;color:var(--orange);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;}
 .os-statut-select{width:100%;padding:9px 12px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;margin-top:8px;}
+.marge-card{background:var(--blanc);border-radius:var(--radius);padding:22px 24px;box-shadow:var(--shadow);margin-bottom:24px;}
+.marge-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.marge-title{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);font-weight:700;}
+.marge-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.marge-kpi{text-align:center;padding:16px;background:var(--blanc-casse);border-radius:8px;}
+.marge-kpi-val{font-size:24px;font-weight:700;line-height:1;}
+.marge-kpi-lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+.marge-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.agents-bars{display:flex;flex-direction:column;gap:8px;}
+.agent-bar-row{display:flex;align-items:center;gap:10px;}
+.agent-bar-nom{font-size:11px;color:var(--gris);width:130px;flex-shrink:0;text-align:right;}
+.agent-bar-fond{flex:1;background:var(--gris-clair);border-radius:4px;height:20px;overflow:hidden;}
+.agent-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--bleu),var(--vert));transition:width 0.8s ease;}
+.agent-bar-val{font-size:11px;font-weight:600;color:var(--noir);width:70px;flex-shrink:0;}
+.taux-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;}
 .signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;}
 </style>
 </head>
@@ -182,6 +197,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-card"><div class="chart-title">📈 CA mensuel 2026</div><div class="chart-wrap"><canvas id="chartCA"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">📊 Répartition CA par activité</div><div class="chart-wrap"><canvas id="chartActivites"></canvas></div></div>
     </div>
+    <div id="rentabilite-section"></div>
     <div class="charts-grid-2" id="retention-section" style="display:none">
       <div class="retention-card">
         <div class="chart-title">🔄 Taux de rétention clients</div>
@@ -413,6 +429,7 @@ function renderDashboard(d){
     '<div class="objectif-pct">'+pct+'%</div></div>';
 
   document.getElementById('charts-section').style.display='grid';
+  if(d.totalCharges!=null)renderRentabilite(d);
   const noms12=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
   const mi=new Date().getMonth();
   const m26=d.mois2026||[];
@@ -754,6 +771,68 @@ async function sauvegarderLead(){
 }
 
 // INIT
+function renderRentabilite(d){
+  const ca=d.caMensuel||0;
+  const charges=d.totalCharges||0;
+  const marge=d.margeBrute||0;
+  const taux=d.tauxMarge||0;
+  const agents=d.agentsDetail||[];
+  
+  var couleurTaux=taux>=50?'var(--vert)':taux>=35?'var(--orange)':'var(--rouge)';
+  var bgTaux=taux>=50?'#E0F5EC':taux>=35?'#FFF3E0':'#FFECEC';
+  
+  var maxMontant=Math.max.apply(null,agents.map(function(a){return a.montant;})||[1]);
+  
+  var agentsBarsHtml='';
+  agents.forEach(function(a){
+    var pct=Math.round((a.montant/maxMontant)*100);
+    var nom=a.nom.split(' ')[0]; // Prénom seulement
+    agentsBarsHtml+='<div class="agent-bar-row">';
+    agentsBarsHtml+='<div class="agent-bar-nom">'+nom+'</div>';
+    agentsBarsHtml+='<div class="agent-bar-fond"><div class="agent-bar-fill" style="width:'+pct+'%"></div></div>';
+    agentsBarsHtml+='<div class="agent-bar-val">'+a.montant.toLocaleString('fr-FR')+' €</div>';
+    agentsBarsHtml+='</div>';
+  });
+  
+  var label=d.paieLabel||'dernier mois';
+  
+  document.getElementById('rentabilite-section').innerHTML=
+    '<div class="marge-card">'+
+    '<div class="marge-header"><div class="marge-title">💰 Rentabilité — '+label+'</div>'+
+    '<span class="taux-badge" style="background:'+bgTaux+';color:'+couleurTaux+'">Marge '+taux+'%</span></div>'+
+    '<div class="marge-kpis">'+
+    '<div class="marge-kpi"><div class="marge-kpi-val" style="color:var(--bleu)">'+fmt(ca)+'</div><div class="marge-kpi-lbl">CA mensuel</div></div>'+
+    '<div class="marge-kpi"><div class="marge-kpi-val" style="color:var(--rouge)">'+fmt(charges)+'</div><div class="marge-kpi-lbl">Charges agents</div></div>'+
+    '<div class="marge-kpi"><div class="marge-kpi-val" style="color:'+couleurTaux+'">'+fmt(marge)+'</div><div class="marge-kpi-lbl">Marge brute</div></div>'+
+    '</div>'+
+    '<div class="marge-charts">'+
+    '<div><div class="chart-title">🥧 Répartition CA vs Charges</div><div style="position:relative;height:180px"><canvas id="chartRentabilite"></canvas></div></div>'+
+    '<div><div class="chart-title">👷 Coût par agent</div><div class="agents-bars">'+agentsBarsHtml+'</div></div>'+
+    '</div></div>';
+  
+  // Graphique camembert CA vs Charges
+  if(window._chartRenta)window._chartRenta.destroy();
+  window._chartRenta=new Chart(document.getElementById('chartRentabilite'),{
+    type:'doughnut',
+    data:{
+      labels:['Marge brute','Charges agents'],
+      datasets:[{
+        data:[Math.max(0,marge),charges],
+        backgroundColor:[couleurTaux,'#FFECEC'],
+        borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' €';}}}
+      },
+      cutout:'60%'
+    }
+  });
+}
+
 document.getElementById('date-today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 chargerDonnees();
 </script>
