@@ -441,8 +441,11 @@ function renderDashboard(d){
   var dataReel = new Array(12).fill(null);
   var dataProj = new Array(12).fill(null);
   
-  // Données réelles Pennylane (jan à mois actuel)
-  (d.mois2026||[]).forEach(function(m){ dataReel[m.mois-1] = m.ca; });
+  // Données réelles Pennylane (jan à mois actuel uniquement)
+  var moisCourant = new Date().getMonth() + 1; // 1-12
+  (d.mois2026||[]).forEach(function(m){ 
+    if(m.mois <= moisCourant) dataReel[m.mois-1] = m.ca; 
+  });
   
   // Projection (mois suivants depuis le Apps Script)
   var proj = d.projection || [];
