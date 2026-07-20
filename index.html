@@ -695,45 +695,48 @@ async function sauvegarderLead(){
 
 // SIGNER UN LEAD
 function ouvrirDetail(id){
-  const l=leadsData.find(x=>x['ID']===id);if(!l)return;
-  leadDetailCourant=l;osShotCourant=null;
+  const l=leadsData.find(x=>x['ID']===id);
+  if(!l)return;
+  leadDetailCourant=l;
+  osShotCourant=null;
+
   document.getElementById('detail-title').textContent=l['Entreprise']||'—';
   document.getElementById('btn-modifier').style.display='';
-  document.getElementById('detail-btn-statut').style.display='';
   document.getElementById('btn-signer').style.display='none';
+  document.getElementById('detail-btn-statut').style.display='';
 
-  // Bouton "Marquer comme signé" seulement pour "Devis envoyé"
   if(l['Statut']==='Devis envoyé'){
     document.getElementById('btn-signer').style.display='';
-    document.getElementById('detail-btn-statut').style.display='none'; // retire "→ En cours"
+    document.getElementById('detail-btn-statut').style.display='none';
   }
 
   const isOS=l['Type']==='One-shot';
   const futur=estFutur(l['Date de début']);
   const joursDebut=joursAvant(l['Date de début']);
-  // Bouton statut normal pour En discussion uniquement
   const prog={'En discussion':'Devis envoyé','Devis envoyé':null,'En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
   const suiv=prog[l['Statut']];
-  document.getElementById('detail-btn-statut').textContent=suiv?'→ '+suiv:'Clôturé';
-  document.getElementById('detail-btn-statut').disabled=!suiv;
-  if(!suiv && l['Statut']!=='Devis envoyé') document.getElementById('detail-btn-statut').style.display='none';
+  const btnSt=document.getElementById('detail-btn-statut');
+  btnSt.textContent=suiv?'→ '+suiv:'Clôturé';
+  btnSt.disabled=!suiv;
+  if(!suiv && l['Statut']!=='Devis envoyé') btnSt.style.display='none';
 
   const m=parseFloat(l['Montant estimé (€/mois)'])||0;
-  document.getElementById('detail-body').innerHTML=`
-    ${futur?`<div class="tag-futur">⏳ Contrat signé — début dans ${joursDebut} jour(s) · ${fmtDate(l['Date de début'])}</div>`:''}
-    <div class="detail-row">
-      <div class="detail-item"><div class="lbl">Contact</div><div class="val">${l['Prénom/Nom']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Poste</div><div class="val">${l['Poste']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Email</div><div class="val">${l['Email']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Téléphone</div><div class="val">${l['Téléphone']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>${l['Statut']||'—'}</strong></div></div>
-      <div class="detail-item"><div class="lbl">Assigné à</div><div class="val">${l['Assigné à']||'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Montant</div><div class="val">${m?m.toLocaleString('fr-FR')+' €':'—'}</div></div>
-      <div class="detail-item"><div class="lbl">Date de début</div><div class="val">${fmtDate(l['Date de début'])}</div></div>
-      <div class="detail-item full"><div class="lbl">Services</div><div class="val">${l['Services souhaités']||'—'}</div></div>
-      <div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">${l['Commentaires']||'—'}</div></div>
-      ${l['Lien devis']?`<div class="detail-item full" style="margin-top:8px"><a href="${l['Lien devis']}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>`:''}
-    </div>`;
+  let bodyHtml='';
+  if(futur) bodyHtml+='<div class="tag-futur">⏳ Contrat signé — début dans '+joursDebut+' jour(s) · '+fmtDate(l['Date de début'])+'</div>';
+  bodyHtml+='<div class="detail-row">';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Contact</div><div class="val">'+(l['Prénom/Nom']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Poste</div><div class="val">'+(l['Poste']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Email</div><div class="val">'+(l['Email']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Téléphone</div><div class="val">'+(l['Téléphone']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Statut</div><div class="val"><strong>'+(l['Statut']||'—')+'</strong></div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Assigné à</div><div class="val">'+(l['Assigné à']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Montant</div><div class="val">'+(m?m.toLocaleString('fr-FR')+' €':'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item"><div class="lbl">Date de début</div><div class="val">'+fmtDate(l['Date de début'])+'</div></div>';
+  bodyHtml+='<div class="detail-item full"><div class="lbl">Services</div><div class="val">'+(l['Services souhaités']||'—')+'</div></div>';
+  bodyHtml+='<div class="detail-item full"><div class="lbl">Commentaires</div><div class="detail-commentaire">'+(l['Commentaires']||'—')+'</div></div>';
+  if(l['Lien devis']) bodyHtml+='<div class="detail-item full" style="margin-top:8px"><a href="'+l['Lien devis']+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#F0F0F0;padding:10px 16px;border-radius:8px;text-decoration:none;color:var(--noir);font-size:12px;font-weight:600;">📄 Voir le devis</a></div>';
+  bodyHtml+='</div>';
+  document.getElementById('detail-body').innerHTML=bodyHtml;
   document.getElementById('modal-detail').classList.add('open');
 }
 
