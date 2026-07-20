@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -520,13 +520,23 @@ function changerStatutMenu(e,id){
   document.getElementById('confirm-drag-text').textContent='Passer "'+( l['Entreprise']||l['Prénom/Nom'])+'" en "'+s+'" ?';
   document.getElementById('confirm-drag').classList.add('open');
 }
-function annulerDrag(){document.getElementById('confirm-drag').classList.remove('open');dragId=null;dragStatut=null;}
+function annulerDrag(){
+  document.getElementById('confirm-drag').classList.remove('open');
+  // Réinitialiser le select à la valeur actuelle du lead
+  if(dragId){
+    var el=document.querySelector('[data-id="'+dragId+'"] .card-statut-select');
+    var l=leadsData.find(function(x){return x['ID']===dragId;});
+    if(el&&l)el.value=l['Statut'];
+  }
+  dragId=null;dragStatut=null;
+}
 async function confirmerDrag(){
   document.getElementById('confirm-drag').classList.remove('open');
   if(!dragId||!dragStatut)return;
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:dragId,statut:dragStatut})});await chargerDonnees();}
-  catch(e){alert('Erreur.');}
+  var idACopier=dragId;var statutACopier=dragStatut;
   dragId=null;dragStatut=null;
+  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:idACopier,statut:statutACopier})});await chargerDonnees();}
+  catch(e){alert('Erreur.');}
 }
 async function changerStatutOS(e,id,rowIndex){
   var s=e.target.value;
@@ -633,11 +643,14 @@ function ouvrirEdition(){
   fermerModal('modal-detail');
   ouvrirModal('modal-edition');
 }
+var _editionEnCours=false;
 async function sauvegarderEdition(){
-  if(!leadCourant)return;
+  if(!leadCourant||_editionEnCours)return;
+  _editionEnCours=true;
   var data={'Prénom/Nom':document.getElementById('e-nom').value,'Poste':document.getElementById('e-poste').value,'Entreprise':document.getElementById('e-entreprise').value,'Email':document.getElementById('e-email').value,'Téléphone':document.getElementById('e-tel').value,'Statut':document.getElementById('e-statut').value,'Montant estimé (€/mois)':document.getElementById('e-montant').value,'Source':document.getElementById('e-source').value,'Commentaires':document.getElementById('e-commentaires').value,'Assigné à':document.getElementById('e-assigne').value,'Date de début':document.getElementById('e-debut').value,'Lien devis':document.getElementById('e-devis').value};
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateLead',id:leadCourant['ID'],data})});fermerModal('modal-edition');await chargerDonnees();}
   catch(e){alert('Erreur lors de la sauvegarde.');}
+  _editionEnCours=false;
 }
 
 // SIGNER
@@ -704,8 +717,8 @@ function renderRelances(){
   }).join('');
 }
 function changerStatutMenu2(id,s){
-  dragId=id;dragStatut=s;
   var l=leadsData.find(function(x){return x['ID']===id;});
+  dragId=id;dragStatut=s;
   document.getElementById('confirm-drag-text').textContent='Passer "'+(l?l['Entreprise']||l['Prénom/Nom']:id)+'" en "'+s+'" ?';
   document.getElementById('confirm-drag').classList.add('open');
 }
@@ -728,12 +741,16 @@ function ajouterAssigne(){
   if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}
 }
 function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();ouvrirModal('modal-lead');}
+var _enregistrementEnCours=false;
 async function sauvegarderLead(){
+  if(_enregistrementEnCours)return;
+  _enregistrementEnCours=true;
   var svcs=[].slice.call(document.querySelectorAll('#services-checkboxes input:checked')).map(function(i){return i.value;}).join(' + ');
   var data={'Prénom/Nom':document.getElementById('f-nom').value,'Poste':document.getElementById('f-poste').value,'Entreprise':document.getElementById('f-entreprise').value,'Email':document.getElementById('f-email').value,'Téléphone':document.getElementById('f-tel').value,'Statut':document.getElementById('f-statut').value,'Montant estimé (€/mois)':document.getElementById('f-montant').value,'Services souhaités':svcs,'Source':document.getElementById('f-source').value,'Commentaires':document.getElementById('f-commentaires').value,'Assigné à':document.getElementById('f-assigne').value,'Type':document.getElementById('f-type').value,'Date de début':document.getElementById('f-debut').value,'Lien devis':document.getElementById('f-devis').value};
-  if(!data['Entreprise']){alert("Le nom de l'entreprise est obligatoire.");return;}
+  if(!data['Entreprise']){alert("Le nom de l'entreprise est obligatoire.");_enregistrementEnCours=false;return;}
   try{await fetch(API,{method:'POST',body:JSON.stringify({action:'addLead',data})});fermerModal('modal-lead');await chargerDonnees();}
   catch(e){alert('Erreur.');}
+  _enregistrementEnCours=false;
 }
 
 // INIT
