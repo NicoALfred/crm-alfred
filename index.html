@@ -436,11 +436,92 @@ function renderDashboard(d){
   const caR=new Array(mi+1).fill(null),caP=new Array(mi+1).fill(null);
   m26.forEach(m=>{if(m.mois-1<=mi)caR[m.mois-1]=m.ca;});
   for(let i=0;i<=mi;i++){if(caR[i]===null)caP[i]=d.caMensuelBrut||d.caMensuel;}
+  // Construire les données du graphique sur 12 mois
+  var labels12 = noms12.slice(1); // Jan à Déc
+  var dataReel = new Array(12).fill(null);
+  var dataProj = new Array(12).fill(null);
+  
+  // Données réelles Pennylane (jan à mois actuel)
+  (d.mois2026||[]).forEach(function(m){ dataReel[m.mois-1] = m.ca; });
+  
+  // Projection (mois suivants depuis le Apps Script)
+  var proj = d.projection || [];
+  proj.forEach(function(m){ dataProj[m.mois-1] = m.ca; });
+  
+  // Point de jonction : le dernier mois réel sert de premier point de projection
+  var dernierMoisReel = -1;
+  for(var i=0;i<12;i++){ if(dataReel[i]!==null) dernierMoisReel=i; }
+  if(dernierMoisReel>=0 && dataProj[dernierMoisReel+1]!==null){
+    dataProj[dernierMoisReel] = dataReel[dernierMoisReel]; // jonction
+  }
+  
   if(chartCA)chartCA.destroy();
-  chartCA=new Chart(document.getElementById('chartCA'),{type:'line',data:{labels:noms12.slice(0,mi+1),datasets:[
-    {label:'CA réel',data:caR,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:4,spanGaps:false},
-    {label:'Projection',data:caP,borderColor:'#9B7FD4',backgroundColor:'rgba(155,127,212,0.08)',borderDash:[5,5],tension:0.3,pointRadius:4,spanGaps:false}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},boxWidth:12}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:10}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:10}},grid:{display:false}}}}});
+  chartCA=new Chart(document.getElementById('chartCA'),{
+    type:'line',
+    data:{
+      labels:labels12,
+      datasets:[
+        {
+          label:'CA réel',
+          data:dataReel,
+          borderColor:'#A8D5DC',
+          backgroundColor:'rgba(168,213,220,0.12)',
+          tension:0.4,
+          pointRadius:5,
+          pointBackgroundColor:'#A8D5DC',
+          pointBorderColor:'#fff',
+          pointBorderWidth:2,
+          borderWidth:2.5,
+          fill:true,
+          spanGaps:false
+        },
+        {
+          label:'Projection',
+          data:dataProj,
+          borderColor:'#9B7FD4',
+          backgroundColor:'rgba(155,127,212,0.06)',
+          tension:0.4,
+          pointRadius:4,
+          pointBackgroundColor:'#9B7FD4',
+          pointBorderColor:'#fff',
+          pointBorderWidth:2,
+          borderWidth:2,
+          borderDash:[8,4],
+          fill:true,
+          spanGaps:false
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{
+          labels:{
+            font:{size:11},
+            boxWidth:24,
+            usePointStyle:true,
+            pointStyle:'line'
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label:function(ctx){
+              return ctx.dataset.label+' : '+(ctx.parsed.y?Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €':'—');
+            }
+          }
+        }
+      },
+      scales:{
+        y:{
+          ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:10}},
+          grid:{color:'#F0F0F0'}
+        },
+        x:{ticks:{font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
   const act=d.caActivites||{};
   if(chartAct)chartAct.destroy();
   chartAct=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#A8D5DC','#E8A040','#4DA882','#9B7FD4'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}}},cutout:'65%'}});
