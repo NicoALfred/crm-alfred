@@ -404,7 +404,7 @@ function renderDashboard(d){
   document.getElementById('stats-grid').innerHTML=
     '<div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">'+(d.nbClientsActifs||'—')+' clients · '+av+' à venir</div></div>'+
     '<div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">'+fmt(d.caReel2026)+'</div><div class="stat-sub">Jan → Juil 2026</div></div>'+
-    '<div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">'+fmt(d.caEstime2026)+'</div><div class="stat-sub">Avec clients actuels</div></div>'+
+    '<div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">'+fmt(d.caEstime2026)+'</div><div class="stat-sub">Avec clients actuels + contrats à venir</div></div>'+
     '<div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">'+ru+'<span> leads</span></div><div class="stat-sub">'+(d.leadsEnCours||0)+' leads en cours</div></div>';
 
   // Bannière one-shots
@@ -636,14 +636,31 @@ async function confirmerDrag(){
   if(!dragId||!dragStatut)return;
   var idACopier=dragId;var statutACopier=dragStatut;
   dragId=null;dragStatut=null;
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:idACopier,statut:statutACopier})});await chargerDonnees();}
-  catch(e){alert('Erreur.');}
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:idACopier,statut:statutACopier})});
+    // Mise à jour locale immédiate sans recharger tout
+    var lead=leadsData.find(function(x){return x['ID']===idACopier;});
+    if(lead){
+      lead['Statut']=statutACopier;
+      lead['Date dernière relance']=new Date().toISOString().split('T')[0];
+    }
+    renderKanban();
+    renderRelances();
+    // Recharger en arrière-plan sans bloquer l'UI
+    setTimeout(function(){chargerDonnees();},3000);
+  }catch(e){alert('Erreur.');}
 }
 async function changerStatutOS(e,id,rowIndex){
   var s=e.target.value;
   if(!rowIndex)return;
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutOneShot',rowIndex:rowIndex,statut:s})});await chargerDonnees();}
-  catch(e){alert('Erreur.');}
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutOneShot',rowIndex:rowIndex,statut:s})});
+    // Mise à jour locale
+    var os=[].concat(osAvenir,osEnCours,osTermines).find(function(x){return x['ID']===id;});
+    if(os) os['Statut']=s;
+    renderKanban();
+    setTimeout(function(){chargerDonnees();},3000);
+  }catch(e){alert('Erreur.');}
 }
 
 // DETAIL LEAD
@@ -686,8 +703,15 @@ function ouvrirDetailLead(id){
 }
 async function changerStatutDepuisDetail(suiv){
   if(!leadCourant)return;
-  try{await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:leadCourant['ID'],statut:suiv})});fermerModal('modal-detail');await chargerDonnees();}
-  catch(e){alert('Erreur.');}
+  var id=leadCourant['ID'];
+  fermerModal('modal-detail');
+  try{
+    await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutLead',id:id,statut:suiv})});
+    var lead=leadsData.find(function(x){return x['ID']===id;});
+    if(lead) lead['Statut']=suiv;
+    renderKanban();renderRelances();
+    setTimeout(function(){chargerDonnees();},3000);
+  }catch(e){alert('Erreur.');}
 }
 
 // DETAIL ONE-SHOT
