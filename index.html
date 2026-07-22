@@ -458,7 +458,7 @@ function renderDashboard(d){
   const noms12=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
   const mi=new Date().getMonth();
   // Construire les données du graphique sur 12 mois
-  var labels12 = noms12.slice(1); // Jan à Déc
+  var labels12 = noms12; // Jan à Déc (12 mois, doit matcher les 12 points de dataReel/dataProj)
   var dataReel = new Array(12).fill(null);
   var dataProj = new Array(12).fill(null);
   
