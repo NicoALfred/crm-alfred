@@ -163,12 +163,6 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .marge-kpi-val{font-size:24px;font-weight:700;line-height:1;}
 .marge-kpi-lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
 .marge-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-.agents-bars{display:flex;flex-direction:column;gap:8px;}
-.agent-bar-row{display:flex;align-items:center;gap:10px;}
-.agent-bar-nom{font-size:11px;color:var(--gris);width:130px;flex-shrink:0;text-align:right;}
-.agent-bar-fond{flex:1;background:var(--gris-clair);border-radius:4px;height:20px;overflow:hidden;}
-.agent-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--bleu),var(--vert));transition:width 0.8s ease;}
-.agent-bar-val{font-size:11px;font-weight:600;color:var(--noir);width:70px;flex-shrink:0;}
 .taux-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;}
 .signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;}
 </style>
@@ -432,10 +426,6 @@ function renderDashboard(d){
   if(d.totalCharges!=null)renderRentabilite(d);
   const noms12=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
   const mi=new Date().getMonth();
-  const m26=d.mois2026||[];
-  const caR=new Array(mi+1).fill(null),caP=new Array(mi+1).fill(null);
-  m26.forEach(m=>{if(m.mois-1<=mi)caR[m.mois-1]=m.ca;});
-  for(let i=0;i<=mi;i++){if(caR[i]===null)caP[i]=d.caMensuelBrut||d.caMensuel;}
   // Construire les données du graphique sur 12 mois
   var labels12 = noms12.slice(1); // Jan à Déc
   var dataReel = new Array(12).fill(null);
@@ -886,26 +876,12 @@ function renderRentabilite(d){
   const charges=d.totalCharges||0;
   const marge=d.margeBrute||0;
   const taux=d.tauxMarge||0;
-  const agents=d.agentsDetail||[];
-  
+
   var couleurTaux=taux>=50?'var(--vert)':taux>=35?'var(--orange)':'var(--rouge)';
   var bgTaux=taux>=50?'#E0F5EC':taux>=35?'#FFF3E0':'#FFECEC';
-  
-  var maxMontant=Math.max.apply(null,agents.map(function(a){return a.montant;})||[1]);
-  
-  var agentsBarsHtml='';
-  agents.forEach(function(a){
-    var pct=Math.round((a.montant/maxMontant)*100);
-    var nom=a.nom.split(' ')[0]; // Prénom seulement
-    agentsBarsHtml+='<div class="agent-bar-row">';
-    agentsBarsHtml+='<div class="agent-bar-nom">'+nom+'</div>';
-    agentsBarsHtml+='<div class="agent-bar-fond"><div class="agent-bar-fill" style="width:'+pct+'%"></div></div>';
-    agentsBarsHtml+='<div class="agent-bar-val">'+a.montant.toLocaleString('fr-FR')+' €</div>';
-    agentsBarsHtml+='</div>';
-  });
-  
+
   var label=d.paieLabel||'dernier mois';
-  
+
   document.getElementById('rentabilite-section').innerHTML=
     '<div class="marge-card">'+
     '<div class="marge-header"><div class="marge-title">💰 Rentabilité — '+label+'</div>'+
@@ -915,32 +891,69 @@ function renderRentabilite(d){
     '<div class="marge-kpi"><div class="marge-kpi-val" style="color:var(--rouge)">'+fmt(charges)+'</div><div class="marge-kpi-lbl">Charges agents</div></div>'+
     '<div class="marge-kpi"><div class="marge-kpi-val" style="color:'+couleurTaux+'">'+fmt(marge)+'</div><div class="marge-kpi-lbl">Marge brute</div></div>'+
     '</div>'+
-    '<div class="marge-charts">'+
-    '<div><div class="chart-title">🥧 Répartition CA vs Charges</div><div style="position:relative;height:180px"><canvas id="chartRentabilite"></canvas></div></div>'+
-    '<div><div class="chart-title">👷 Coût par agent</div><div class="agents-bars">'+agentsBarsHtml+'</div></div>'+
-    '</div></div>';
-  
-  // Graphique camembert CA vs Charges
-  if(window._chartRenta)window._chartRenta.destroy();
-  window._chartRenta=new Chart(document.getElementById('chartRentabilite'),{
-    type:'doughnut',
-    data:{
-      labels:['Marge brute','Charges agents'],
-      datasets:[{
-        data:[Math.max(0,marge),charges],
-        backgroundColor:[couleurTaux,'#FFECEC'],
-        borderWidth:0
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},
-        tooltip:{callbacks:{label:function(ctx){return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' €';}}}
+    '<div class="chart-title">📈 Évolution de la marge</div>'+
+    '<div style="position:relative;height:200px"><canvas id="chartMargeHisto"></canvas></div>'+
+    '</div>';
+
+  // Courbe de rentabilité sur les mois disponibles (un point par fichier de paie trouvé)
+  const histo = d.margeHistorique || [];
+  if(window._chartMargeHisto) window._chartMargeHisto.destroy();
+  if(histo.length>0){
+    const labels = histo.map(function(m){ return m.label; });
+    window._chartMargeHisto = new Chart(document.getElementById('chartMargeHisto'), {
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            type:'bar',
+            label:'CA',
+            data: histo.map(function(m){ return m.ca; }),
+            backgroundColor:'rgba(168,213,220,0.5)',
+            order:2,
+            yAxisID:'y'
+          },
+          {
+            type:'bar',
+            label:'Charges agents',
+            data: histo.map(function(m){ return m.charges; }),
+            backgroundColor:'rgba(217,79,79,0.35)',
+            order:2,
+            yAxisID:'y'
+          },
+          {
+            type:'line',
+            label:'Taux de marge',
+            data: histo.map(function(m){ return m.taux; }),
+            borderColor:'#4DA882',
+            backgroundColor:'#4DA882',
+            borderWidth:2.5,
+            tension:0.3,
+            pointRadius:4,
+            yAxisID:'y1',
+            order:1
+          }
+        ]
       },
-      cutout:'60%'
-    }
-  });
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},
+          tooltip:{callbacks:{label:function(ctx){
+            if(ctx.dataset.label==='Taux de marge') return ctx.dataset.label+' : '+ctx.parsed.y+'%';
+            return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';
+          }}}
+        },
+        scales:{
+          y:{position:'left',ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},
+          y1:{position:'right',ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{display:false},min:0},
+          x:{ticks:{font:{size:9}},grid:{display:false}}
+        }
+      }
+    });
+  } else {
+    document.getElementById('chartMargeHisto').parentElement.innerHTML='<div class="empty-state"><p>Pas encore assez de mois de paie pour tracer une courbe.</p></div>';
+  }
 }
 
 document.getElementById('date-today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
