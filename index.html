@@ -56,7 +56,7 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .pipeline-legend-item{display:flex;align-items:center;gap:6px;}
 .pipeline-legend-item strong{color:var(--noir);font-weight:700;}
 .pipeline-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
-.kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:start;}
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:start;}
 .kanban-col{background:var(--gris-clair);border-radius:var(--radius);padding:12px;min-height:180px;}
 .kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--blanc);}
 .kanban-col-title{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;color:var(--gris);}
@@ -80,6 +80,7 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .badge-futur{background:#FFF3E0;color:var(--orange);}
 .badge-recurrent{background:var(--bleu-pale);color:#3A9AAA;}
 .badge-oneshot{background:#DDD0F5;color:var(--violet);}
+.badge-annulee{background:#FFECEC;color:var(--rouge);}
 .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:4px;}
 .card-statut-select{font-size:9px;border:1px solid #E0E0E0;border-radius:6px;padding:2px 4px;font-family:inherit;background:var(--blanc);color:var(--gris);cursor:pointer;flex:1;min-width:0;}
 .btn-confirmer-mini{font-size:9px;font-weight:700;border:none;border-radius:6px;padding:5px 6px;font-family:inherit;background:var(--violet);color:var(--blanc);cursor:pointer;flex:1;min-width:0;}
@@ -226,8 +227,8 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="pipeline-legend">
       <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--bleu)"></span><strong>En discussion / Devis envoyé / Perdu</strong> → créés ici avec "+ Nouveau prospect"</div>
       <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--vert)"></span><strong>En cours</strong> (clients récurrents) → créés dans le facturier, onglet "🗂️ Suivi Clients"</div>
-      <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--violet)"></span><strong>⚡ One-shot à venir / terminé</strong> → créés dans le facturier, onglet "🎯 Missions One-Shot"</div>
-      <div class="pipeline-legend-item">Un prospect à "Devis envoyé" ? Ouvre sa fiche → "Marquer comme signé" / "Confirmer le one-shot" crée la ligne facturier à ta place.</div>
+      <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--violet)"></span><strong>⚡ One-shot</strong> → créés <u>uniquement</u> dans le facturier, onglet "🎯 Missions One-Shot" (jamais depuis le CRM)</div>
+      <div class="pipeline-legend-item">Un prospect à "Devis envoyé" ? Ouvre sa fiche → "Marquer comme signé" crée la ligne facturier à ta place.</div>
     </div>
     <div id="kanban-board"><div class="loading">Chargement…</div></div>
   </div>
@@ -342,15 +343,9 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Nouveau prospect</div><button class="modal-close" onclick="fermerModal('modal-lead')">✕</button></div>
     <div class="modal-body">
+      <p style="font-size:11px;color:var(--gris);margin-bottom:14px">⚡ Pour une mission one-shot, ne crée rien ici — ajoute-la directement dans le facturier (onglet "🎯 Missions One-Shot"), elle apparaîtra automatiquement dans le Pipeline.</p>
       <div class="form-grid">
-        <div class="form-group full">
-          <label class="form-label">Type de mission</label>
-          <div class="type-toggle">
-            <button class="type-btn active-recurrent" id="btn-recurrent" onclick="setType('Récurrent')">🔄 Récurrent</button>
-            <button class="type-btn" id="btn-oneshot" onclick="setType('One-shot')">⚡ One-shot</button>
-          </div>
-          <input type="hidden" id="f-type" value="Récurrent">
-        </div>
+        <input type="hidden" id="f-type" value="Récurrent">
         <div class="form-group"><label class="form-label">Prénom / Nom</label><input class="form-input" id="f-nom"></div>
         <div class="form-group"><label class="form-label">Poste</label><input class="form-input" id="f-poste"></div>
         <div class="form-group"><label class="form-label">Entreprise</label><input class="form-input" id="f-entreprise"></div>
@@ -385,7 +380,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 
 <script>
 const API="https://script.google.com/macros/s/AKfycbzrQJzhHWsSlRtcETVAGpgV_mjd5kiaH5pgYYz1O-HbQ3CIR-K0h2_fk50i--vFUInKzQ/exec";
-let leadsData=[],missionsEnCours=[],clientsData=[],osAvenir=[],osEnCours=[],osTermines=[];
+let leadsData=[],missionsEnCours=[],clientsData=[],osAll=[];
 let leadCourant=null,osCourant=null,dragId=null,dragStatut=null;
 let chartCA=null,chartAct=null,chartHisto=null;
 const SERVICES=["Nettoyage","Café / Tisanerie","Consommables","Fontaines à eau"];
@@ -408,27 +403,29 @@ function diffJ(d){if(!d)return 0;const dt=new Date(d);if(isNaN(dt))return 0;retu
 function joursAvant(d){if(!d)return null;const dt=new Date(d);if(isNaN(dt))return null;const diff=Math.floor((dt-new Date())/86400000);return diff>0?diff:null;}
 function estFutur(d){return joursAvant(d)!==null;}
 function fmtDate(d){if(!d||d==='-')return '—';try{const dt=new Date(d);if(isNaN(dt))return d;return dt.toLocaleDateString('fr-FR');}catch(e){return d;}}
+function todayISOStr(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function estOneShotTerminee(os){
+  var ref=os['DateFin']||os['DateDebut'];
+  if(!ref)return false;
+  return todayISOStr()>ref; // J+1 après la date de la mission
+}
 function ouvrirModal(id){document.getElementById(id).classList.add('open');}
 function fermerModal(id){document.getElementById(id).classList.remove('open');}
 
 // CHARGEMENT
 async function chargerDonnees(){
   try{
-    const[db,leads,clients,missions,av,ec,te]=await Promise.all([
+    const[db,leads,clients,missions,os]=await Promise.all([
       fetch(API+"?action=getDashboard").then(r=>r.json()),
       fetch(API+"?action=getLeads").then(r=>r.json()),
       fetch(API+"?action=getClients").then(r=>r.json()),
       fetch(API+"?action=getMissionsEnCours").then(r=>r.json()),
-      fetch(API+"?action=getOneShotAvenir").then(r=>r.json()),
-      fetch(API+"?action=getOneShotEnCours").then(r=>r.json()),
-      fetch(API+"?action=getOneShotTermines").then(r=>r.json()),
+      fetch(API+"?action=getOneShots").then(r=>r.json()),
     ]);
     leadsData=Array.isArray(leads)?leads:[];
     clientsData=Array.isArray(clients)?clients:[];
     missionsEnCours=Array.isArray(missions)?missions:[];
-    osAvenir=Array.isArray(av)?av:[];
-    osEnCours=Array.isArray(ec)?ec:[];
-    osTermines=Array.isArray(te)?te:[];
+    osAll=Array.isArray(os)?os:[];
     renderDashboard(db);
     renderKanban();
     renderClients();
@@ -637,14 +634,19 @@ function renderKanban(){
   var futurs=missionsEnCours.filter(function(m){return m._futur;}).sort(function(a,b){return new Date(a['Date de début']||'9999')-new Date(b['Date de début']||'9999');});
   var actifs=missionsEnCours.filter(function(m){return !m._futur;});
   var leadsEC=leadsData.filter(function(l){return l['Statut']==='En cours'&&l['Type']!=='One-shot';});
-  var leadsOSAvenir=leadsData.filter(function(l){return l['Type']==='One-shot'&&l['Statut']==='One-shot à venir';});
-  var leadsOSTermines=leadsData.filter(function(l){return l['Type']==='One-shot'&&l['Statut']==='One-shot terminé';});
+  var leadsOSEnAttente=leadsData.filter(function(l){return l['Type']==='One-shot'&&(l['Statut']==='One-shot à venir'||l['Statut']==='One-shot terminé');});
+  var cartesOneShot=osAll.concat(leadsOSEnAttente).sort(function(a,b){
+    var aT=a['_isOneShot']?estOneShotTerminee(a):false;
+    var bT=b['_isOneShot']?estOneShotTerminee(b):false;
+    if(aT!==bT)return aT?1:-1;
+    var da=a['DateDebut']||a['Date de début']||'',db=b['DateDebut']||b['Date de début']||'';
+    return aT?db.localeCompare(da):da.localeCompare(db);
+  });
   var cols=[
     {key:'discussion',label:'En discussion',cards:leadsData.filter(function(l){return l['Statut']==='En discussion';})},
     {key:'devis',label:'Devis envoyé',cards:leadsData.filter(function(l){return l['Statut']==='Devis envoyé';})},
     {key:'encours',label:'En cours',cards:futurs.concat(leadsEC).concat(actifs)},
-    {key:'osavenir',label:'⚡ One-shot à venir',cards:osAvenir.concat(osEnCours).concat(leadsOSAvenir)},
-    {key:'ostermines',label:'⚡ One-shot terminé',cards:osTermines.concat(leadsOSTermines)},
+    {key:'oneshot',label:'⚡ One-shot',cards:cartesOneShot},
     {key:'perdu',label:'Perdu',cards:leadsData.filter(function(l){return l['Statut']==='Perdu';})},
   ];
   var html='<div class="kanban">';
@@ -667,6 +669,9 @@ function renderCard(l,colKey){
   var typeSuppr='',idSuppr='',rowSuppr=0,nomSuppr=l['Entreprise']||l['Prénom/Nom']||'';
   if(isOS){
     badge='<span class="card-badge badge-oneshot">ONE-SHOT</span>';
+    var estAnnulee=l['Statut']==='Annulée';
+    var estTerminee=!estAnnulee&&estOneShotTerminee(l);
+    badge+=estAnnulee?'<span class="card-badge badge-annulee">❌ Annulée</span>':estTerminee?'<span class="card-badge badge-actif">✅ Terminée</span>':'<span class="card-badge badge-futur">⏳ À venir</span>';
     cardCls+=' card-oneshot';montantCls='violet';montantLbl='€ HT';
     typeSuppr='oneshot';rowSuppr=l['_rowIndex']||0;
   }else if(isFutur){
@@ -731,9 +736,7 @@ async function supprimerCarte(e,type,id,rowIndex,nom){
   if(type==='lead'){
     leadsData=leadsData.filter(function(x){return x['ID']!==id;});
   }else if(type==='oneshot'){
-    osAvenir=osAvenir.filter(function(x){return x['_rowIndex']!==rowIndex;});
-    osEnCours=osEnCours.filter(function(x){return x['_rowIndex']!==rowIndex;});
-    osTermines=osTermines.filter(function(x){return x['_rowIndex']!==rowIndex;});
+    osAll=osAll.filter(function(x){return x['_rowIndex']!==rowIndex;});
   }else if(type==='client'){
     missionsEnCours=missionsEnCours.filter(function(x){return x['_rowIndex']!==rowIndex;});
     clientsData=clientsData.filter(function(x){return x['_rowIndex']!==rowIndex;});
@@ -794,7 +797,7 @@ async function changerStatutOS(e,id,rowIndex){
   try{
     await fetch(API,{method:'POST',body:JSON.stringify({action:'updateStatutOneShot',rowIndex:rowIndex,statut:s})});
     // Mise à jour locale
-    var os=[].concat(osAvenir,osEnCours,osTermines).find(function(x){return x['ID']===id;});
+    var os=osAll.find(function(x){return x['ID']===id;});
     if(os) os['Statut']=s;
     renderKanban();
     setTimeout(function(){chargerDonnees();},3000);
@@ -856,7 +859,7 @@ async function changerStatutDepuisDetail(suiv){
 
 // DETAIL ONE-SHOT
 function ouvrirDetailOS(id){
-  var os=[].concat(osAvenir,osEnCours,osTermines).find(function(x){return x['ID']===id;});
+  var os=osAll.find(function(x){return x['ID']===id;});
   if(!os)return;
   osCourant=os;leadCourant=null;
   document.getElementById('detail-title').textContent=os['Entreprise']||'—';
@@ -1033,9 +1036,6 @@ function changerStatutMenu2(id,s){
 // NOUVEAU LEAD
 function setType(t){
   document.getElementById('f-type').value=t;
-  document.getElementById('btn-recurrent').className='type-btn'+(t==='Récurrent'?' active-recurrent':'');
-  document.getElementById('btn-oneshot').className='type-btn'+(t==='One-shot'?' active-oneshot':'');
-  document.getElementById('montant-label').textContent=t==='One-shot'?'Montant de la mission (€)':'Montant estimé (€/mois)';
   var sel=document.getElementById('f-statut');
   var current=sel.value;
   sel.innerHTML=optionsStatutPourType(t).map(function(s){return '<option'+(s===current?' selected':'')+'>'+s+'</option>';}).join('');
