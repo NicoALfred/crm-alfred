@@ -348,6 +348,9 @@ const SERVICES=["Nettoyage","Café / Tisanerie","Consommables","Fontaines à eau
 let assignesList=["Nicolas","Alexis"];
 const STATUTS_ACTIFS=["En discussion","Devis envoyé"];
 const STATUTS_PIPE=["En discussion","Devis envoyé","En cours","Terminé","Perdu"];
+const STATUTS_PIPE_RECURRENT=["En discussion","Devis envoyé","En cours","Terminé","Perdu"];
+const STATUTS_PIPE_ONESHOT=["En discussion","Devis envoyé","One-shot à venir","One-shot terminé","Perdu"];
+function optionsStatutPourType(t){ return t==='One-shot' ? STATUTS_PIPE_ONESHOT : STATUTS_PIPE_RECURRENT; }
 
 // UTILITAIRES
 function goTo(p){
@@ -543,12 +546,14 @@ function renderKanban(){
   var futurs=missionsEnCours.filter(function(m){return m._futur;}).sort(function(a,b){return new Date(a['Date de début']||'9999')-new Date(b['Date de début']||'9999');});
   var actifs=missionsEnCours.filter(function(m){return !m._futur;});
   var leadsEC=leadsData.filter(function(l){return l['Statut']==='En cours'&&l['Type']!=='One-shot';});
+  var leadsOSAvenir=leadsData.filter(function(l){return l['Type']==='One-shot'&&l['Statut']==='One-shot à venir';});
+  var leadsOSTermines=leadsData.filter(function(l){return l['Type']==='One-shot'&&l['Statut']==='One-shot terminé';});
   var cols=[
-    {key:'discussion',label:'En discussion',cards:leadsData.filter(function(l){return l['Statut']==='En discussion'&&l['Type']!=='One-shot';})},
-    {key:'devis',label:'Devis envoyé',cards:leadsData.filter(function(l){return l['Statut']==='Devis envoyé'&&l['Type']!=='One-shot';})},
+    {key:'discussion',label:'En discussion',cards:leadsData.filter(function(l){return l['Statut']==='En discussion';})},
+    {key:'devis',label:'Devis envoyé',cards:leadsData.filter(function(l){return l['Statut']==='Devis envoyé';})},
     {key:'encours',label:'En cours',cards:futurs.concat(leadsEC).concat(actifs)},
-    {key:'osavenir',label:'⚡ One-shot à venir',cards:osAvenir.concat(osEnCours)},
-    {key:'ostermines',label:'⚡ One-shot terminé',cards:osTermines},
+    {key:'osavenir',label:'⚡ One-shot à venir',cards:osAvenir.concat(osEnCours).concat(leadsOSAvenir)},
+    {key:'ostermines',label:'⚡ One-shot terminé',cards:osTermines.concat(leadsOSTermines)},
     {key:'perdu',label:'Perdu',cards:leadsData.filter(function(l){return l['Statut']==='Perdu';})},
   ];
   var html='<div class="kanban">';
@@ -577,6 +582,13 @@ function renderCard(l,colKey){
   }else if(isFF){
     badge='<span class="card-badge badge-actif">CLIENT ACTIF</span>';
     cardCls+=' card-encours';
+  }else if(l['Type']==='One-shot'){
+    badge='<span class="card-badge badge-oneshot">⚡ ONE-SHOT (prospect)</span>';
+    if(l['Statut']==='En discussion')cardCls+=' card-discussion';
+    else if(l['Statut']==='Devis envoyé')cardCls+=' card-devis';
+    else if(l['Statut']==='Perdu')cardCls+=' card-perdu';
+    else if(l['Statut']==='One-shot terminé')cardCls+=' card-encours';
+    else cardCls+=' card-devis';
   }else{
     badge='<span class="card-badge badge-recurrent">RÉCURRENT</span>';
     if(l['Statut']==='En discussion')cardCls+=' card-discussion';
@@ -595,7 +607,7 @@ function renderCard(l,colKey){
     var oOpts=['En cours','À venir','Terminée','Annulée'].map(function(s){return '<option value="'+s+'"'+(s===l['Statut']?' selected':'')+'>'+s+'</option>';}).join('');
     footer='<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutOS(event,\''+l['ID']+'\','+( l['_rowIndex']||0)+')">'+oOpts+'</select>';
   }else if(!isFF){
-    var opts=STATUTS_PIPE.map(function(s){return '<option value="'+s+'"'+(s===l['Statut']?' selected':'')+'>'+s+'</option>';}).join('');
+    var opts=optionsStatutPourType(l['Type']).map(function(s){return '<option value="'+s+'"'+(s===l['Statut']?' selected':'')+'>'+s+'</option>';}).join('');
     footer='<select class="card-statut-select" onclick="event.stopPropagation()" onchange="changerStatutMenu(event,\''+l['ID']+'\')">'+opts+'</select>';
   }else{
     footer='<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>';
@@ -681,11 +693,13 @@ function ouvrirDetailLead(id){
   html+='</div>';
   document.getElementById('detail-body').innerHTML=html;
   var isOS=l['Type']==='One-shot';
-  var prog={'En discussion':'Devis envoyé','Devis envoyé':null,'En cours':isOS?'Terminé':null,'Terminé':null,'Perdu':null};
+  var prog=isOS
+    ? {'En discussion':'Devis envoyé','Devis envoyé':'One-shot à venir','One-shot à venir':'One-shot terminé'}
+    : {'En discussion':'Devis envoyé'};
   var suiv=prog[l['Statut']];
   var footerHtml='<button class="btn-secondary" onclick="fermerModal(\'modal-detail\')">Fermer</button>';
   footerHtml+='<button class="btn-edit" onclick="ouvrirEdition()">✏️ Modifier</button>';
-  if(l['Statut']==='Devis envoyé'){
+  if(!isOS && l['Statut']==='Devis envoyé'){
     footerHtml+='<button class="btn-vert" onclick="ouvrirSigner()">✅ Marquer comme signé</button>';
   }else if(suiv){
     footerHtml+='<button class="btn-primary" onclick="changerStatutDepuisDetail(\''+suiv+'\')">→ '+suiv+'</button>';
@@ -750,7 +764,7 @@ function ouvrirEdition(){
   document.getElementById('e-entreprise').value=l['Entreprise']||'';
   document.getElementById('e-email').value=l['Email']||'';
   document.getElementById('e-tel').value=l['Téléphone']||'';
-  document.getElementById('e-statut').value=l['Statut']||'En discussion';
+  document.getElementById('e-statut').innerHTML=optionsStatutPourType(l['Type']).map(function(s){return '<option'+(s===l['Statut']?' selected':'')+'>'+s+'</option>';}).join('');
   document.getElementById('e-montant').value=l['Montant estimé (€/mois)']||'';
   document.getElementById('e-commentaires').value=l['Commentaires']||'';
   document.getElementById('e-source').value=l['Source']||'Prospection';
@@ -846,6 +860,9 @@ function setType(t){
   document.getElementById('btn-recurrent').className='type-btn'+(t==='Récurrent'?' active-recurrent':'');
   document.getElementById('btn-oneshot').className='type-btn'+(t==='One-shot'?' active-oneshot':'');
   document.getElementById('montant-label').textContent=t==='One-shot'?'Montant de la mission (€)':'Montant estimé (€/mois)';
+  var sel=document.getElementById('f-statut');
+  var current=sel.value;
+  sel.innerHTML=optionsStatutPourType(t).map(function(s){return '<option'+(s===current?' selected':'')+'>'+s+'</option>';}).join('');
 }
 function renderServicesCheckboxes(){
   document.getElementById('services-checkboxes').innerHTML=SERVICES.map(function(s){return '<label class="service-checkbox"><input type="checkbox" value="'+s+'" onchange="this.closest(\'label\').classList.toggle(\'checked\',this.checked)"><span>'+s+'</span></label>';}).join('');
@@ -857,7 +874,7 @@ function ajouterAssigne(){
   var n=prompt('Prénom :');
   if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}
 }
-function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();ouvrirModal('modal-lead');}
+function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();setType('Récurrent');ouvrirModal('modal-lead');}
 var _enregistrementEnCours=false;
 async function sauvegarderLead(){
   if(_enregistrementEnCours)return;
