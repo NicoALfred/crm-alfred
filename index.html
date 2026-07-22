@@ -213,6 +213,10 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       </div>
       <div class="chart-card"><div class="chart-title">📈 Historique CA 3 ans</div><div class="chart-wrap"><canvas id="chartHistorique"></canvas></div></div>
     </div>
+    <div class="chart-card" id="tendance-section" style="display:none;margin-bottom:24px">
+      <div class="chart-title" id="tendance-title">📈 Tendance CA depuis 2023</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chartTendance"></canvas></div>
+    </div>
   </div>
   <div class="page" id="page-pipeline">
     <div class="page-header">
@@ -594,8 +598,40 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
     });
     chartHisto=new Chart(document.getElementById('chartHistorique'),{type:'line',data:{labels:noms12,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}});
   }
+  renderTendance(histo);
 }
 
+// Courbe continue (pas année par année) depuis 2023 + droite de tendance (régression linéaire)
+function renderTendance(histo){
+  const noms3=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+  const pts=(histo||[]).slice().sort(function(a,b){return (a.annee-b.annee)||(a.mois-b.mois);});
+  if(!pts.length){document.getElementById('tendance-section').style.display='none';return;}
+  document.getElementById('tendance-section').style.display='block';
+  const labels=pts.map(function(m){return noms3[m.mois-1]+' '+String(m.annee).slice(2);});
+  const valeurs=pts.map(function(m){return m.ca;});
+  // Régression linéaire simple (moindres carrés) sur l'ensemble des points
+  const n=valeurs.length;
+  const xs=valeurs.map(function(_,i){return i;});
+  const sommeX=xs.reduce(function(s,x){return s+x;},0);
+  const sommeY=valeurs.reduce(function(s,y){return s+y;},0);
+  const sommeXY=xs.reduce(function(s,x,i){return s+x*valeurs[i];},0);
+  const sommeX2=xs.reduce(function(s,x){return s+x*x;},0);
+  const pente=(n*sommeXY-sommeX*sommeY)/(n*sommeX2-sommeX*sommeX||1);
+  const ordonnee=(sommeY-pente*sommeX)/n;
+  const tendance=xs.map(function(x){return Math.round(ordonnee+pente*x);});
+  const evolutionMensuelle=Math.round(pente);
+  const lbl=evolutionMensuelle>=0?'+'+evolutionMensuelle.toLocaleString('fr-FR')+' €/mois en moyenne':evolutionMensuelle.toLocaleString('fr-FR')+' €/mois en moyenne';
+  document.getElementById('tendance-title').innerHTML='📈 Tendance CA depuis 2023 <span style="color:'+(evolutionMensuelle>=0?'var(--vert)':'var(--rouge)')+'">— '+lbl+'</span>';
+  if(window._chartTendance)window._chartTendance.destroy();
+  window._chartTendance=new Chart(document.getElementById('chartTendance'),{
+    type:'line',
+    data:{labels:labels,datasets:[
+      {label:'CA mensuel',data:valeurs,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true},
+      {label:'Tendance',data:tendance,borderColor:'#1A1A1A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[6,4]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}}}
+  });
+}
 // KANBAN
 function renderKanban(){
   var futurs=missionsEnCours.filter(function(m){return m._futur;}).sort(function(a,b){return new Date(a['Date de début']||'9999')-new Date(b['Date de début']||'9999');});
