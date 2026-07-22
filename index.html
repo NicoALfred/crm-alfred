@@ -57,7 +57,9 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .kanban-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--blanc);}
 .kanban-col-title{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;color:var(--gris);}
 .kanban-col-count{background:var(--blanc);color:var(--gris);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;}
-.card{background:var(--blanc);border-radius:8px;padding:11px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;margin-bottom:8px;}
+.card{position:relative;background:var(--blanc);border-radius:8px;padding:11px;box-shadow:0 1px 4px rgba(0,0,0,0.05);cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border-left:3px solid transparent;user-select:none;margin-bottom:8px;}
+.card-delete{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,0.06);color:var(--gris);font-size:11px;line-height:18px;text-align:center;cursor:pointer;padding:0;}
+.card-delete:hover{background:var(--rouge);color:var(--blanc);}
 .card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,0.1);}
 .card.card-futur{background:#FFFBF5;border-left-color:var(--orange)!important;}
 .card.card-oneshot{background:var(--violet-pale);border-left-color:var(--violet)!important;}
@@ -178,7 +180,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="nav-item" data-page="clients" onclick="goTo('clients')"><span class="icon">🏢</span> Clients</div>
     <div class="nav-item" data-page="relances" onclick="goTo('relances')"><span class="icon">🔔</span> Relances</div>
   </nav>
-  <div class="sidebar-bottom"><button class="btn-add-lead" onclick="ouvrirModalLead()">+ Nouveau lead</button></div>
+  <div class="sidebar-bottom"><button class="btn-add-lead" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
 </aside>
 
 <main class="main">
@@ -208,8 +210,8 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   </div>
   <div class="page" id="page-pipeline">
     <div class="page-header">
-      <div><div class="page-title">Pipeline</div><div class="page-subtitle">Prospects, missions en cours et one-shots</div></div>
-      <button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau lead</button>
+      <div><div class="page-title">Pipeline</div><div class="page-subtitle">Prospects (créés ici) · Clients & missions confirmées (créés dans le facturier)</div></div>
+      <button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau prospect</button>
     </div>
     <div id="kanban-board"><div class="loading">Chargement…</div></div>
   </div>
@@ -294,9 +296,35 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-signer-oneshot">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⚡ Confirmer le one-shot</div><button class="modal-close" onclick="fermerModal('modal-signer-oneshot')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--gris);margin-bottom:20px">Complétez les infos de la mission. Une ligne sera créée dans l'onglet "🎯 Missions One-Shot" du facturier et le lead sera supprimé du CRM.</p>
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Client / Société</label><input class="form-input" id="so-client"></div>
+        <div class="form-group full"><label class="form-label">Adresse d'intervention</label><input class="form-input" id="so-adresse"></div>
+        <div class="form-group"><label class="form-label">Type de mission</label><input class="form-input" id="so-type" placeholder="Ex. Ménage de pré-emménagement"></div>
+        <div class="form-group"><label class="form-label">Métrage (m²)</label><input class="form-input" id="so-metrage"></div>
+        <div class="form-group"><label class="form-label">Date de début</label><input class="form-input" id="so-debut" type="date"></div>
+        <div class="form-group"><label class="form-label">Date de fin</label><input class="form-input" id="so-fin" type="date"></div>
+        <div class="form-group"><label class="form-label">Montant HT (€)</label><input class="form-input" id="so-montant" type="number"></div>
+        <div class="form-group"><label class="form-label">Agent</label><input class="form-input" id="so-agent"></div>
+        <div class="form-group"><label class="form-label">Email client</label><input class="form-input" id="so-email" type="email"></div>
+        <div class="form-group full"><label class="form-label">Description</label><textarea class="form-textarea" id="so-description"></textarea></div>
+        <div class="form-group full"><label class="form-label">🔗 Lien devis</label><input class="form-input" id="so-devis"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="fermerModal('modal-signer-oneshot')">Annuler</button>
+      <button class="btn-vert" onclick="confirmerSignerOneShot()">✅ Confirmer et créer dans le facturier</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-lead">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">Nouveau lead</div><button class="modal-close" onclick="fermerModal('modal-lead')">✕</button></div>
+    <div class="modal-header"><div class="modal-title">Nouveau prospect</div><button class="modal-close" onclick="fermerModal('modal-lead')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group full">
@@ -348,8 +376,8 @@ const SERVICES=["Nettoyage","Café / Tisanerie","Consommables","Fontaines à eau
 let assignesList=["Nicolas","Alexis"];
 const STATUTS_ACTIFS=["En discussion","Devis envoyé"];
 const STATUTS_PIPE=["En discussion","Devis envoyé","En cours","Terminé","Perdu"];
-const STATUTS_PIPE_RECURRENT=["En discussion","Devis envoyé","En cours","Terminé","Perdu"];
-const STATUTS_PIPE_ONESHOT=["En discussion","Devis envoyé","One-shot à venir","One-shot terminé","Perdu"];
+const STATUTS_PIPE_RECURRENT=["En discussion","Devis envoyé","Perdu"];
+const STATUTS_PIPE_ONESHOT=["En discussion","Devis envoyé","Perdu"];
 function optionsStatutPourType(t){ return t==='One-shot' ? STATUTS_PIPE_ONESHOT : STATUTS_PIPE_RECURRENT; }
 
 // UTILITAIRES
@@ -573,28 +601,30 @@ function renderCard(l,colKey){
   var isFutur=l['_futur']===true||estFutur(l['Date de début']);
   var m=parseFloat(l['Montant estimé (€/mois)']||l['MontantHT'])||0;
   var badge='',cardCls='card',montantCls='vert',montantLbl='€/mois';
+  var typeSuppr='',idSuppr='',rowSuppr=0,nomSuppr=l['Entreprise']||l['Prénom/Nom']||'';
   if(isOS){
     badge='<span class="card-badge badge-oneshot">ONE-SHOT</span>';
     cardCls+=' card-oneshot';montantCls='violet';montantLbl='€ HT';
+    typeSuppr='oneshot';rowSuppr=l['_rowIndex']||0;
   }else if(isFutur){
     badge='<span class="card-badge badge-futur">⏳ FUTUR CLIENT</span>';
     cardCls+=' card-futur';montantCls='orange';montantLbl='€/mois (à venir)';
+    typeSuppr='client';rowSuppr=l['_rowIndex']||0;
   }else if(isFF){
     badge='<span class="card-badge badge-actif">CLIENT ACTIF</span>';
     cardCls+=' card-encours';
+    typeSuppr='client';rowSuppr=l['_rowIndex']||0;
   }else if(l['Type']==='One-shot'){
-    badge='<span class="card-badge badge-oneshot">⚡ ONE-SHOT (prospect)</span>';
-    if(l['Statut']==='En discussion')cardCls+=' card-discussion';
-    else if(l['Statut']==='Devis envoyé')cardCls+=' card-devis';
-    else if(l['Statut']==='Perdu')cardCls+=' card-perdu';
-    else if(l['Statut']==='One-shot terminé')cardCls+=' card-encours';
-    else cardCls+=' card-devis';
+    badge='<span class="card-badge badge-oneshot">⚡ ONE-SHOT (à confirmer)</span>';
+    cardCls+=' card-oneshot';montantCls='violet';montantLbl='€ HT';
+    typeSuppr='lead';idSuppr=l['ID'];
   }else{
     badge='<span class="card-badge badge-recurrent">RÉCURRENT</span>';
     if(l['Statut']==='En discussion')cardCls+=' card-discussion';
     else if(l['Statut']==='Devis envoyé')cardCls+=' card-devis';
     else if(l['Statut']==='Perdu')cardCls+=' card-perdu';
     else cardCls+=' card-encours';
+    typeSuppr='lead';idSuppr=l['ID'];
   }
   var titre=isOS?(l['Entreprise']||'—'):isFF?(l['Prénom/Nom']||'—'):(l['Entreprise']||'—');
   var sous=isOS?(l['TypeMission']||''):isFF?(l['Commentaires']||''):(l['Prénom/Nom']||'');
@@ -613,8 +643,24 @@ function renderCard(l,colKey){
     footer='<div style="font-size:9px;color:var(--gris)">'+(l['Services souhaités']||'')+'</div>';
   }
   var clickFn=isOS?'ouvrirDetailOS(\''+l['ID']+'\')':(!isFF?'ouvrirDetailLead(\''+l['ID']+'\')':'');
-  return '<div class="'+cardCls+'" data-id="'+l['ID']+'" onclick="'+clickFn+'">'+badge+'<div class="card-titre">'+titre+'</div><div class="card-sous">'+sous+'</div>'+debutStr+mStr+'<div class="card-footer">'+footer+'</div></div>';
+  var nomEsc=String(nomSuppr).replace(/'/g,"\\'");
+  var delBtn='<button class="card-delete" title="Supprimer" onclick="supprimerCarte(event,\''+typeSuppr+'\',\''+idSuppr+'\','+rowSuppr+',\''+nomEsc+'\')">✕</button>';
+  return '<div class="'+cardCls+'" data-id="'+l['ID']+'" onclick="'+clickFn+'">'+delBtn+badge+'<div class="card-titre">'+titre+'</div><div class="card-sous">'+sous+'</div>'+debutStr+mStr+'<div class="card-footer">'+footer+'</div></div>';
 }
+
+async function supprimerCarte(e,type,id,rowIndex,nom){
+  e.stopPropagation();
+  if(!confirm('Supprimer "'+(nom||'cette carte')+'" ? Cette action est irréversible'+(type==='client'?' (le client sera retiré du facturier)':type==='oneshot'?' (la mission sera retirée du facturier)':'')+'.'))return;
+  try{
+    var action=type==='lead'?'deleteLead':type==='oneshot'?'deleteOneShot':'deleteClient';
+    var body=type==='lead'?{action:action,id:id}:{action:action,rowIndex:rowIndex};
+    var res=await fetch(API,{method:'POST',body:JSON.stringify(body)});
+    var json=await res.json();
+    if(json&&json.error){alert('Erreur : '+json.error);return;}
+    await chargerDonnees();
+  }catch(err){alert('Erreur lors de la suppression.');}
+}
+
 
 // DRAG & DROP
 function changerStatutMenu(e,id){
@@ -693,14 +739,14 @@ function ouvrirDetailLead(id){
   html+='</div>';
   document.getElementById('detail-body').innerHTML=html;
   var isOS=l['Type']==='One-shot';
-  var prog=isOS
-    ? {'En discussion':'Devis envoyé','Devis envoyé':'One-shot à venir','One-shot à venir':'One-shot terminé'}
-    : {'En discussion':'Devis envoyé'};
+  var prog={'En discussion':'Devis envoyé'};
   var suiv=prog[l['Statut']];
   var footerHtml='<button class="btn-secondary" onclick="fermerModal(\'modal-detail\')">Fermer</button>';
   footerHtml+='<button class="btn-edit" onclick="ouvrirEdition()">✏️ Modifier</button>';
   if(!isOS && l['Statut']==='Devis envoyé'){
     footerHtml+='<button class="btn-vert" onclick="ouvrirSigner()">✅ Marquer comme signé</button>';
+  }else if(isOS && (l['Statut']==='Devis envoyé' || l['Statut']==='One-shot à venir')){
+    footerHtml+='<button class="btn-vert" onclick="ouvrirSignerOneShot()">⚡ Confirmer le one-shot</button>';
   }else if(suiv){
     footerHtml+='<button class="btn-primary" onclick="changerStatutDepuisDetail(\''+suiv+'\')">→ '+suiv+'</button>';
   }
@@ -812,6 +858,37 @@ async function confirmerSigner(){
     fermerModal('modal-signer');leadCourant=null;
     await chargerDonnees();
     alert('✅ Client créé dans le facturier avec statut "'+json.statut+'" !');
+  }catch(e){alert('Erreur lors de la création.');}
+}
+
+function ouvrirSignerOneShot(){
+  if(!leadCourant)return;
+  var l=leadCourant;
+  document.getElementById('so-client').value=l['Entreprise']||'';
+  document.getElementById('so-adresse').value=l['Commentaires']||'';
+  document.getElementById('so-type').value=l['Services souhaités']||'';
+  document.getElementById('so-metrage').value='';
+  document.getElementById('so-debut').value=l['Date de début']||'';
+  document.getElementById('so-fin').value=l['Date de début']||'';
+  document.getElementById('so-montant').value=l['Montant estimé (€/mois)']||'';
+  document.getElementById('so-agent').value=l['Assigné à']||'';
+  document.getElementById('so-email').value=l['Email']||'';
+  document.getElementById('so-description').value='';
+  document.getElementById('so-devis').value=l['Lien devis']||'';
+  fermerModal('modal-detail');
+  ouvrirModal('modal-signer-oneshot');
+}
+async function confirmerSignerOneShot(){
+  if(!leadCourant)return;
+  var data={'Client':document.getElementById('so-client').value,'Adresse':document.getElementById('so-adresse').value,'TypeMission':document.getElementById('so-type').value,'Metrage':document.getElementById('so-metrage').value,'Date de début':document.getElementById('so-debut').value,'Date de fin':document.getElementById('so-fin').value,'Montant':document.getElementById('so-montant').value,'Agent':document.getElementById('so-agent').value,'Email':document.getElementById('so-email').value,'Description':document.getElementById('so-description').value,'LienDevis':document.getElementById('so-devis').value};
+  if(!data['Client']){alert('Le nom du client est obligatoire.');return;}
+  try{
+    var res=await fetch(API,{method:'POST',body:JSON.stringify({action:'signerLeadOneShot',id:leadCourant['ID'],data})});
+    var json=await res.json();
+    if(json.error){alert('Erreur : '+json.error);return;}
+    fermerModal('modal-signer-oneshot');leadCourant=null;
+    await chargerDonnees();
+    alert('✅ Mission créée dans le facturier avec statut "'+json.statut+'" !');
   }catch(e){alert('Erreur lors de la création.');}
 }
 
