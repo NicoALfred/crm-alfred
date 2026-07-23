@@ -678,12 +678,26 @@ function renderTendance(histo){
   const evolutionMensuelle=Math.round(pente);
   const lbl=evolutionMensuelle>=0?'+'+evolutionMensuelle.toLocaleString('fr-FR')+' €/mois en moyenne':evolutionMensuelle.toLocaleString('fr-FR')+' €/mois en moyenne';
   document.getElementById('tendance-title').innerHTML='📈 Tendance CA depuis 2023 <span style="color:'+(evolutionMensuelle>=0?'var(--vert)':'var(--rouge)')+'">— '+lbl+'</span>';
+
+  // Prolongement de la droite de tendance jusqu'à décembre de l'année en cours (pointillé violet)
+  const dernierPt=pts[pts.length-1];
+  const moisRestants=[];
+  for(let m=dernierPt.mois+1;m<=12;m++)moisRestants.push(m);
+  const labelsFuturs=moisRestants.map(function(m){return noms3[m-1]+' '+String(dernierPt.annee).slice(2);});
+  const labelsTotal=labels.concat(labelsFuturs);
+  const valeursTotal=valeurs.concat(moisRestants.map(function(){return null;}));
+  const tendanceTotal=tendance.concat(moisRestants.map(function(){return null;}));
+  const projectionTotal=labels.map(function(){return null;});
+  moisRestants.forEach(function(m,i){projectionTotal.push(Math.round(ordonnee+pente*(n+i)));});
+  if(moisRestants.length>0)projectionTotal[labels.length-1]=tendance[tendance.length-1]; // jonction
+
   if(window._chartTendance)window._chartTendance.destroy();
   window._chartTendance=new Chart(document.getElementById('chartTendance'),{
     type:'line',
-    data:{labels:labels,datasets:[
-      {label:'CA mensuel',data:valeurs,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true},
-      {label:'Tendance',data:tendance,borderColor:'#1A1A1A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[6,4]}
+    data:{labels:labelsTotal,datasets:[
+      {label:'CA mensuel',data:valeursTotal,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true,spanGaps:false},
+      {label:'Tendance',data:tendanceTotal,borderColor:'#1A1A1A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[6,4],spanGaps:false},
+      {label:'Projection',data:projectionTotal,borderColor:'#9B7FD4',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[8,4],spanGaps:false}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}}}
   });
@@ -1153,39 +1167,38 @@ function renderRentabilite(d){
   }
   if(window._chartMargeHisto) window._chartMargeHisto.destroy();
   if(histo.length>0){
-    const labels = histo.map(function(m){ return m.label; });
+    // Projection jusqu'à décembre : CA = contrats connus (comme le graphique CA mensuel),
+    // charges = dernière valeur connue + croissance d'effectif estimée (au doigt mouillé, jusqu'à +50% en décembre)
+    const anneeActuelle=new Date().getFullYear();
+    const noms=["","Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+    const dernier=histo[histo.length-1];
+    const moisFuturs=[];
+    for(let m=dernier.mois+1;m<=12;m++)moisFuturs.push(m);
+    const caParMois={};
+    (d.historique||[]).forEach(function(x){if(x.annee===anneeActuelle)caParMois[x.mois]=x.ca;});
+    (d.mois2026||[]).forEach(function(x){if(x.annee===anneeActuelle)caParMois[x.mois]=x.ca;});
+    (d.projection||[]).forEach(function(x){if(!(x.mois in caParMois))caParMois[x.mois]=x.ca;});
+    const futurs=moisFuturs.map(function(m){
+      var facteur=dernier.mois<12?1+0.5*((m-dernier.mois)/(12-dernier.mois)):1;
+      var chargesProj=Math.round(dernier.charges*facteur);
+      var caProj=caParMois[m]||0;
+      return{annee:anneeActuelle,mois:m,label:noms[m]+' '+anneeActuelle,ca:caProj,charges:chargesProj,taux:caProj>0?Math.round(((caProj-chargesProj)/caProj)*100):0};
+    });
+    const labels=histo.map(function(m){return m.label;}).concat(futurs.map(function(m){return m.label;}));
+    const nbPasse=histo.length;
+    const nulls=function(n){return new Array(n).fill(null);};
+    const tauxPasse=histo.map(function(m){return m.taux;}).concat(nulls(futurs.length));
+    const tauxFutur=nulls(nbPasse>0?nbPasse-1:0).concat([histo[nbPasse-1].taux]).concat(futurs.map(function(m){return m.taux;}));
     window._chartMargeHisto = new Chart(document.getElementById('chartMargeHisto'), {
       data: {
         labels: labels,
         datasets: [
-          {
-            type:'bar',
-            label:'CA',
-            data: histo.map(function(m){ return m.ca; }),
-            backgroundColor:'rgba(168,213,220,0.5)',
-            order:2,
-            yAxisID:'y'
-          },
-          {
-            type:'bar',
-            label:'Charges agents',
-            data: histo.map(function(m){ return m.charges; }),
-            backgroundColor:'rgba(217,79,79,0.35)',
-            order:2,
-            yAxisID:'y'
-          },
-          {
-            type:'line',
-            label:'Taux de marge',
-            data: histo.map(function(m){ return m.taux; }),
-            borderColor:'#4DA882',
-            backgroundColor:'#4DA882',
-            borderWidth:2.5,
-            tension:0.3,
-            pointRadius:4,
-            yAxisID:'y1',
-            order:1
-          }
+          {type:'bar',label:'CA',data:histo.map(function(m){return m.ca;}).concat(nulls(futurs.length)),backgroundColor:'rgba(168,213,220,0.5)',stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'CA (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.ca;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges agents',data:histo.map(function(m){return m.charges;}).concat(nulls(futurs.length)),backgroundColor:'rgba(217,79,79,0.35)',stack:'charges',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.charges;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'charges',order:2,yAxisID:'y'},
+          {type:'line',label:'Taux de marge',data:tauxPasse,borderColor:'#4DA882',backgroundColor:'#4DA882',borderWidth:2.5,tension:0.3,pointRadius:4,yAxisID:'y1',order:1,spanGaps:false},
+          {type:'line',label:'Taux (projection)',data:tauxFutur,borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,borderDash:[6,4],tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:false}
         ]
       },
       options:{
@@ -1194,14 +1207,15 @@ function renderRentabilite(d){
         plugins:{
           legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},
           tooltip:{callbacks:{label:function(ctx){
-            if(ctx.dataset.label==='Taux de marge') return ctx.dataset.label+' : '+ctx.parsed.y+'%';
+            if(ctx.dataset.label==='Taux de marge'||ctx.dataset.label==='Taux (projection)') return ctx.dataset.label+' : '+ctx.parsed.y+'%';
+            if(ctx.parsed.y===null)return null;
             return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';
           }}}
         },
         scales:{
-          y:{position:'left',ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},
+          y:{position:'left',stacked:true,ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},
           y1:{position:'right',ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{display:false},min:0},
-          x:{ticks:{font:{size:9}},grid:{display:false}}
+          x:{stacked:true,ticks:{font:{size:9}},grid:{display:false}}
         }
       }
     });
