@@ -25,9 +25,9 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;}
 .page-title{font-size:30px;font-weight:700;color:var(--noir);line-height:1;letter-spacing:-0.02em;}
 .page-subtitle{font-size:13px;color:var(--gris);margin-top:6px;}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:24px;}
 .stat-card{background:var(--blanc);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border-top:3px solid transparent;}
-.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}
+.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.teal{border-top-color:#3A9AAA;}
 .stat-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
 .stat-value{font-size:26px;font-weight:700;color:var(--noir);line-height:1;}
 .stat-value span{font-size:13px;font-weight:400;color:var(--gris);}
@@ -510,6 +510,7 @@ function renderDashboard(d){
   const av=d.contratsAVenir||0;
   document.getElementById('stats-grid').innerHTML=
     '<div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">'+(d.nbClientsActifs||'—')+' clients · '+av+' à venir</div></div>'+
+    '<div class="stat-card teal"><div class="stat-label">MRR</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">Revenu récurrent mensuel (hors one-shots)</div></div>'+
     '<div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">'+fmt(d.caReel2026)+'</div><div class="stat-sub">Jan → Juil 2026</div></div>'+
     '<div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">'+fmt(d.caEstime2026)+'</div><div class="stat-sub">Avec clients actuels + contrats à venir</div></div>'+
     '<div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">'+ru+'<span> leads</span></div><div class="stat-sub">'+(d.leadsEnCours||0)+' leads en cours</div></div>';
@@ -584,7 +585,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
           spanGaps:false
         },
         {
-          label:'Projection',
+          label:'MRR (projection)',
           data:dataProj,
           borderColor:'#9B7FD4',
           backgroundColor:'rgba(155,127,212,0.06)',
