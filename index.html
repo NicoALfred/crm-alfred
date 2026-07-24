@@ -53,6 +53,8 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .retention-item .num{font-size:22px;font-weight:700;}
 .retention-item .lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;}
 .pipeline-legend{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 20px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:8px 28px;font-size:11px;color:var(--gris);align-items:center;}
+.cycle-vente-badge{background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 20px;margin-bottom:14px;font-size:12px;color:var(--noir);display:flex;align-items:center;gap:10px;}
+.cycle-vente-badge strong{color:var(--violet);font-size:15px;}
 .pipeline-legend-item{display:flex;align-items:center;gap:6px;}
 .pipeline-legend-item strong{color:var(--noir);font-weight:700;}
 .pipeline-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;}
@@ -241,6 +243,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div><div class="page-title">Pipeline</div><div class="page-subtitle">Prospects (créés ici) · Clients & missions confirmées (créés dans le facturier)</div></div>
       <button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau prospect</button>
     </div>
+    <div class="cycle-vente-badge" id="cycle-vente-badge" style="display:none"></div>
     <div class="pipeline-legend">
       <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--bleu)"></span><strong>En discussion / Devis envoyé / Perdu</strong> → créés ici avec "+ Nouveau prospect"</div>
       <div class="pipeline-legend-item"><span class="pipeline-legend-dot" style="background:var(--vert)"></span><strong>En cours</strong> (clients récurrents) → créés dans le facturier, onglet "🗂️ Suivi Clients"</div>
@@ -506,6 +509,14 @@ async function rafraichirLeadsSeul(){
 
 // DASHBOARD
 function renderDashboard(d){
+  const cvBadge=document.getElementById('cycle-vente-badge');
+  if(d.cycleVenteNb>0){
+    cvBadge.style.display='flex';
+    cvBadge.innerHTML='⏱️ Cycle de vente moyen : <strong>'+d.cycleVenteMoyen+' jour'+(d.cycleVenteMoyen>1?'s':'')+'</strong> <span style="color:var(--gris)">(sur '+d.cycleVenteNb+' conversion'+(d.cycleVenteNb>1?'s':'')+' depuis la mise en place du suivi)</span>';
+  }else{
+    cvBadge.style.display='flex';
+    cvBadge.innerHTML='⏱️ Cycle de vente moyen : <span style="color:var(--gris)">pas encore de conversion enregistrée — se remplira au fil des prochaines confirmations ("Marquer comme signé" / "Confirmer le one-shot")</span>';
+  }
   const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJ(l['Date dernière relance'])>=7).length;
   const av=d.contratsAVenir||0;
   document.getElementById('stats-grid').innerHTML=
