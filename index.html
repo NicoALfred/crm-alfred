@@ -96,7 +96,7 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .filter-select{padding:9px 12px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;outline:none;background:var(--blanc);cursor:pointer;}
 table{width:100%;border-collapse:collapse;}
 thead th{padding:11px 18px;text-align:left;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gris);background:var(--gris-clair);font-weight:700;}
-tbody tr{border-bottom:1px solid #F2F2F2;transition:background 0.1s;}
+tbody tr{border-bottom:1px solid #F2F2F2;transition:background 0.1s;cursor:pointer;}
 tbody tr:hover{background:var(--bleu-pale);}
 tbody tr:last-child{border-bottom:none;}
 tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
@@ -277,6 +277,14 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="modal-header"><div class="modal-title" id="detail-title">—</div><button class="modal-close" onclick="fermerModal('modal-detail')">✕</button></div>
     <div class="modal-body" id="detail-body"></div>
     <div class="modal-footer" id="detail-footer"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-detail-client">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="detail-client-title">—</div><button class="modal-close" onclick="fermerModal('modal-detail-client')">✕</button></div>
+    <div class="modal-body" id="detail-client-body"></div>
+    <div class="modal-footer"><button class="btn-secondary" onclick="fermerModal('modal-detail-client')">Fermer</button></div>
   </div>
 </div>
 
@@ -1078,6 +1086,13 @@ async function confirmerSignerOneShot(){
 }
 
 // CLIENTS
+function emojiSatisfaction(v){
+  v=(v||'').trim().toLowerCase();
+  if(v==='content')return '😊';
+  if(v==='moyen')return '😐';
+  if(v==='mécontent'||v==='mecontent')return '😞';
+  return '—';
+}
 function renderClients(f,sf){
   f=f||'';sf=sf||'';
   var data=clientsData;
@@ -1089,14 +1104,55 @@ function renderClients(f,sf){
     var st=c['Statut']||'En cours';
     var bc=st.toLowerCase().includes('cours')||st===''?'badge-encours':st.toLowerCase().includes('pause')?'badge-pause':st.toLowerCase().includes('perdu')?'badge-perdu':'';
     var tot=parseFloat(c['TOTAL (€/mois)'])||0;
-    var fa=c['Statut Facturation']||'';
-    var fc=fa.toLowerCase().includes('retard')?'badge-retard':'badge-ajour';
-    return '<tr><td><strong>'+(c['Société (Facturation)']||'—')+'</strong></td><td>'+(c['Occupant']||'—')+'</td><td>'+(c['Adresse']||'—')+'</td><td>'+(c['Services']||'—')+'</td><td><span class="badge '+bc+'">'+(st||'En cours')+'</span></td><td>'+(tot?tot.toLocaleString('fr-FR')+' €':'—')+'</td><td>'+(fa?'<span class="badge '+fc+'">'+fa+'</span>':'—')+'</td><td>'+(c['Agent']||'—')+'</td></tr>';
+    return '<tr onclick="ouvrirDetailClientParRow('+(c['_rowIndex']||0)+')"><td><strong>'+(c['Société (Facturation)']||'—')+'</strong></td><td>'+(c['Occupant']||'—')+'</td><td>'+(c['Adresse']||'—')+'</td><td>'+(c['Services']||'—')+'</td><td><span class="badge '+bc+'">'+(st||'En cours')+'</span></td><td>'+(tot?tot.toLocaleString('fr-FR')+' €':'—')+'</td><td style="text-align:center;font-size:16px">'+emojiSatisfaction(c['Satisfaction'])+'</td></tr>';
   }).join('');
-  document.getElementById('clients-table').innerHTML='<table><thead><tr><th>Société</th><th>Occupant</th><th>Adresse</th><th>Services</th><th>Statut</th><th>CA/mois</th><th>Facturation</th><th>Agent</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  document.getElementById('clients-table').innerHTML='<table><thead><tr><th>Société</th><th>Occupant</th><th>Adresse</th><th>Services</th><th>Statut</th><th>CA/mois</th><th>Satisfaction</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 function filtrerClients(v){renderClients(v,document.querySelector('.filter-select').value);}
 function filtrerClientsStatut(v){renderClients(document.querySelector('.filter-search').value,v);}
+
+function ouvrirDetailClientParRow(rowIndex){
+  var c=clientsData.find(function(x){return x['_rowIndex']===rowIndex;});
+  if(!c)return;
+  var champ=function(lbl,val,full){return '<div class="detail-item'+(full?' full':'')+'"><div class="lbl">'+lbl+'</div><div class="val">'+((val===undefined||val===null||val==='')?'—':val)+'</div></div>';};
+  var tot=parseFloat(c['TOTAL (€/mois)'])||0;
+  var html='<div class="detail-row">';
+  html+=champ('Occupant',c['Occupant']);
+  html+=champ('Statut',c['Statut']);
+  html+=champ('Email',c['Email']);
+  html+=champ('Téléphone',c['Téléphone']);
+  html+=champ('Adresse',c['Adresse'],true);
+  html+=champ('Canal d\'acquisition',c['Canal']);
+  html+=champ('Métrage',c['Métrage']);
+  html+=champ('Nombre d\'occupants',c['Nombre occupants']);
+  html+=champ('Services',c['Services'],true);
+  html+=champ('Fréquence nettoyage',c['Fréquence']);
+  html+=champ('H/mois nettoyage',c['H/mois']);
+  html+=champ('Taux horaire',c['Taux horaire']);
+  html+=champ('Tarif HT/kilo',c['Tarif kilo']);
+  html+=champ('Nb kilos',c['Nb kilos']);
+  html+=champ('Machine café',c['Machine café']);
+  html+=champ('Nb machines café',c['Nb machines café']);
+  html+=champ('Fontaine à eau',c['Fontaine à eau']);
+  html+=champ('Nb machine fontaine',c['Nb machine fontaine']);
+  html+=champ('CA Nettoyage',c['CA Nettoyage']);
+  html+=champ('CA Café',c['CA Café']);
+  html+=champ('CA Consommables',c['CA Consommables']);
+  html+=champ('CA Fontaines',c['CA Fontaines']);
+  html+=champ('TOTAL (€/mois)',tot?tot.toLocaleString('fr-FR')+' €':'—');
+  html+=champ('Conditions paiement',c['Conditions paiement']);
+  html+=champ('Statut facturation',c['Statut Facturation']);
+  html+=champ('Moyen de paiement',c['Moyen de paiement']);
+  html+=champ('Agent',c['Agent']);
+  html+=champ('Dernier contrôle',c['Dernier contrôle']);
+  html+=champ('Satisfaction',c['Satisfaction']?c['Satisfaction']+' '+emojiSatisfaction(c['Satisfaction']):'—');
+  html+=champ('Date de début de contrat',fmtDate(c['Date de début']));
+  html+=champ('Notes internes',c['Notes internes'],true);
+  html+='</div>';
+  document.getElementById('detail-client-title').textContent=c['Société (Facturation)']||'—';
+  document.getElementById('detail-client-body').innerHTML=html;
+  ouvrirModal('modal-detail-client');
+}
 
 // RELANCES
 function renderRelances(){
