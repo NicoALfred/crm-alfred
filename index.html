@@ -11,16 +11,27 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
-.sidebar-logo{padding:0 20px 28px;border-bottom:1px solid rgba(255,255,255,0.12);text-align:center;}
-.sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;}
+.sidebar-logo{padding:0 20px 28px;border-bottom:1px solid rgba(255,255,255,0.12);text-align:center;perspective:900px;}
+.sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;transform-style:preserve-3d;animation:logoSpin3D 10s linear infinite,logoSheen 10s linear infinite;will-change:transform,filter;}
+.sidebar-logo:hover svg{animation-play-state:paused;}
+@keyframes logoSpin3D{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
+@keyframes logoSheen{0%,100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));}50%{filter:brightness(1.35) drop-shadow(0 0 6px rgba(255,255,255,0.35));}}
 .sidebar-nav{flex:1;padding:20px 0;display:flex;flex-direction:column;gap:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;color:rgba(255,255,255,0.45);font-size:12px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-transform:uppercase;}
 .nav-item:hover{color:var(--blanc);background:rgba(255,255,255,0.07);}
 .nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
 .nav-item .icon{font-size:16px;width:20px;text-align:center;}
 .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
-.btn-add-lead{width:100%;padding:11px;background:var(--bleu);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;}
-.btn-add-lead:hover{opacity:0.85;}
+.btn-add-lead{position:relative;overflow:hidden;width:100%;padding:11px;background:linear-gradient(180deg,#D6EEF2 0%,var(--bleu) 45%,#7FB8C2 100%);color:var(--noir);border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 -3px 5px rgba(0,0,0,0.15) inset,0 3px 6px rgba(0,0,0,0.25);transition:filter 0.15s,transform 0.1s;}
+.btn-add-lead::before{content:'';position:absolute;top:0;left:-60%;width:220%;height:100%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,0.65) 50%,transparent 58%);transform:translateX(-55%);transition:transform 0.7s ease;pointer-events:none;}
+.btn-add-lead:hover::before{transform:translateX(55%);}
+.btn-add-lead:hover{filter:brightness(1.06);}
+.btn-add-lead:active{transform:translateY(1px);box-shadow:0 1px 2px rgba(0,0,0,0.2) inset;}
+.btn-metallic{position:relative;overflow:hidden;background:linear-gradient(180deg,#D6EEF2 0%,var(--bleu) 45%,#7FB8C2 100%)!important;color:var(--noir)!important;border:1px solid rgba(0,0,0,0.1);box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 -3px 5px rgba(0,0,0,0.15) inset,0 3px 6px rgba(0,0,0,0.25);transition:filter 0.15s,transform 0.1s;}
+.btn-metallic::before{content:'';position:absolute;top:0;left:-60%;width:220%;height:100%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,0.65) 50%,transparent 58%);transform:translateX(-55%);transition:transform 0.7s ease;pointer-events:none;}
+.btn-metallic:hover::before{transform:translateX(55%);}
+.btn-metallic:hover{filter:brightness(1.06);opacity:1;}
+.btn-metallic:active{transform:translateY(1px);box-shadow:0 1px 2px rgba(0,0,0,0.2) inset;}
 .main{margin-left:220px;padding:40px 48px;min-height:100vh;}
 .page{display:none;}.page.active{display:block;}
 .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;}
@@ -243,7 +254,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   <div class="page" id="page-pipeline">
     <div class="page-header">
       <div><div class="page-title">Pipeline</div><div class="page-subtitle">Prospects (créés ici) · Clients & missions confirmées (créés dans le facturier)</div></div>
-      <div style="display:flex;gap:10px"><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button><button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
+      <div style="display:flex;gap:10px"><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button><button class="btn-primary btn-metallic" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
     </div>
     <div class="cycle-vente-badge" id="cycle-vente-badge" style="display:none"></div>
     <div class="pipeline-legend">
@@ -274,11 +285,11 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût main d'œuvre, sites avec ménage uniquement. Consommables et café à venir.</div></div><button class="btn-secondary" onclick="chargerRentabiliteSites(true)">🔄 Actualiser</button></div>
     <div class="stats-grid" id="rentabilite-sites-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
     <div class="charts-grid-2">
-      <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge ménage)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque (marge ménage)</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
     </div>
     <div class="chart-card" style="margin-top:20px;max-width:420px">
-      <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre</div>
+      <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre (ménage, mensuel actuel)</div>
       <div class="chart-wrap" style="height:240px"><canvas id="chartRepartitionCout"></canvas></div>
     </div>
     <div class="table-wrap" style="margin-top:24px">
@@ -1204,10 +1215,10 @@ function renderRentabiliteSites(d){
   var margeTotal=caTotal-coutTotal;
   var tauxGlobal=caTotal>0?Math.round((margeTotal/caTotal)*100):0;
   document.getElementById('rentabilite-sites-summary').innerHTML=
-    '<div class="stat-card teal"><div class="stat-label">CA total (sites ménage)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
-    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+sites.length+' sites avec ménage'+(nbExclus?' · '+nbExclus+' sans ménage exclus':'')+'</div></div>'+
-    '<div class="stat-card vert"><div class="stat-label">Marge (hors consommables/café)</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
-    '<div class="stat-card violet"><div class="stat-label">Taux de marge</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
+    '<div class="stat-card teal"><div class="stat-label">CA total/mois (sites ménage)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
+    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre/mois</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+sites.length+' sites avec ménage'+(nbExclus?' · '+nbExclus+' sans ménage exclus':'')+'</div></div>'+
+    '<div class="stat-card vert"><div class="stat-label">Marge ménage/mois</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
+    '<div class="stat-card violet"><div class="stat-label">Taux de marge ménage</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
   var rows=sites.slice().sort(function(a,b){
     if(a.tauxMarge==null&&b.tauxMarge==null)return 0;
     if(a.tauxMarge==null)return 1;
@@ -1217,18 +1228,17 @@ function renderRentabiliteSites(d){
     var tauxCls=s.tauxMarge==null?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
     return '<tr>'+
       '<td><strong>'+(s.societe||'—')+'</strong><div style="font-size:10px;color:var(--gris)">'+(s.adresse||'')+'</div></td>'+
-      '<td>'+(s.agent||'—')+'</td>'+
       '<td>'+fmt(s.ca)+'</td>'+
       '<td>'+(s.heures?s.heures+' h':'—')+'</td>'+
-      '<td>'+s.tarifHoraire+' €/h'+(s.tarifParDefaut?' <span style="color:var(--gris);font-size:9px">(base)</span>':'')+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')+'</td>'+
+      '<td>'+s.tarifHoraire+' €/h'+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')+'</td>'+
       '<td>'+fmt(s.coutAgent)+'</td>'+
       '<td>'+fmt(s.marge)+'</td>'+
       '<td>'+(s.tauxMarge==null?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
       '</tr>';
   }).join('');
   document.getElementById('rentabilite-sites-table').innerHTML=
-    '<table><thead><tr><th>Site</th><th>Agent</th><th>CA/mois</th><th>Heures/mois</th><th>Tarif</th><th>Coût agent</th><th>Marge</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  var noteHtml='💡 "(base)" = aucun tarif spécifique trouvé pour ce site, le tarif de base Alfred (15€/h) a été appliqué automatiquement.';
+    '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h) appliqué automatiquement.';
   if(nbExclus){
     noteHtml+='<br>'+nbExclus+' site(s) exclu(s) de cette page car sans ménage (CA Nettoyage à 0€ dans le facturier) — leur "marge" n\'aurait pas de sens ici.';
   }
