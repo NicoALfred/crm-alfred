@@ -12,26 +12,28 @@
 body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
 .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid rgba(255,255,255,0.12);text-align:center;perspective:900px;}
-.sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;transform-style:preserve-3d;animation:logoSpin3D 10s linear infinite,logoSheen 10s linear infinite;will-change:transform,filter;}
+.sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;transform-style:preserve-3d;animation:logoSpin3D 10s linear infinite;will-change:transform,filter;filter:
+    drop-shadow(0.5px 0.5px 0 #6f8992)
+    drop-shadow(1px 1px 0 #62828c)
+    drop-shadow(1.5px 1.5px 0 #557680)
+    drop-shadow(2px 2px 0 #486a74)
+    drop-shadow(2.5px 2.5px 0 #3b5e68)
+    drop-shadow(3px 3.5px 3px rgba(0,0,0,0.45));}
+.sidebar-logo svg path{fill:url(#chromeGrad) !important;}
 .sidebar-logo:hover svg{animation-play-state:paused;}
 @keyframes logoSpin3D{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
-@keyframes logoSheen{0%,100%{filter:brightness(1) drop-shadow(0 0 0 rgba(255,255,255,0));}50%{filter:brightness(1.35) drop-shadow(0 0 6px rgba(255,255,255,0.35));}}
 .sidebar-nav{flex:1;padding:20px 0;display:flex;flex-direction:column;gap:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;color:rgba(255,255,255,0.45);font-size:12px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-transform:uppercase;}
 .nav-item:hover{color:var(--blanc);background:rgba(255,255,255,0.07);}
 .nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
 .nav-item .icon{font-size:16px;width:20px;text-align:center;}
 .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
-.btn-add-lead{position:relative;overflow:hidden;width:100%;padding:11px;background:linear-gradient(180deg,#D6EEF2 0%,var(--bleu) 45%,#7FB8C2 100%);color:var(--noir);border:1px solid rgba(0,0,0,0.1);border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 -3px 5px rgba(0,0,0,0.15) inset,0 3px 6px rgba(0,0,0,0.25);transition:filter 0.15s,transform 0.1s;}
-.btn-add-lead::before{content:'';position:absolute;top:0;left:-60%;width:220%;height:100%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,0.65) 50%,transparent 58%);transform:translateX(-55%);transition:transform 0.7s ease;pointer-events:none;}
-.btn-add-lead:hover::before{transform:translateX(55%);}
-.btn-add-lead:hover{filter:brightness(1.06);}
-.btn-add-lead:active{transform:translateY(1px);box-shadow:0 1px 2px rgba(0,0,0,0.2) inset;}
-.btn-metallic{position:relative;overflow:hidden;background:linear-gradient(180deg,#D6EEF2 0%,var(--bleu) 45%,#7FB8C2 100%)!important;color:var(--noir)!important;border:1px solid rgba(0,0,0,0.1);box-shadow:0 1px 0 rgba(255,255,255,0.7) inset,0 -3px 5px rgba(0,0,0,0.15) inset,0 3px 6px rgba(0,0,0,0.25);transition:filter 0.15s,transform 0.1s;}
-.btn-metallic::before{content:'';position:absolute;top:0;left:-60%;width:220%;height:100%;background:linear-gradient(120deg,transparent 42%,rgba(255,255,255,0.65) 50%,transparent 58%);transform:translateX(-55%);transition:transform 0.7s ease;pointer-events:none;}
-.btn-metallic:hover::before{transform:translateX(55%);}
-.btn-metallic:hover{filter:brightness(1.06);opacity:1;}
-.btn-metallic:active{transform:translateY(1px);box-shadow:0 1px 2px rgba(0,0,0,0.2) inset;}
+.btn-add-lead{position:relative;width:100%;padding:11px;background:linear-gradient(100deg,#cfe0e5 0%,#eef6f8 8%,#9fb9c2 20%,#e4eef1 32%,#7f99a3 48%,#dce9ec 62%,#a8c4cc 78%,#f0f6f8 92%,#cfe0e5 100%);color:#1A1A1A;border:1px solid rgba(0,0,0,0.15);border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset,0 -3px 4px rgba(0,0,0,0.2) inset,0 1px 0 #eef6f8,0 2px 0 #cfe0e5,0 3px 0 #a8c4cc,0 4px 6px rgba(0,0,0,0.3);transition:filter 0.15s,transform 0.1s;}
+.btn-add-lead:hover{filter:brightness(1.04);}
+.btn-add-lead:active{transform:translateY(2px);box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;}
+.btn-metallic{position:relative;background:linear-gradient(100deg,#cfe0e5 0%,#eef6f8 8%,#9fb9c2 20%,#e4eef1 32%,#7f99a3 48%,#dce9ec 62%,#a8c4cc 78%,#f0f6f8 92%,#cfe0e5 100%)!important;color:#1A1A1A!important;border:1px solid rgba(0,0,0,0.15);box-shadow:0 1px 0 rgba(255,255,255,0.85) inset,0 -3px 4px rgba(0,0,0,0.2) inset,0 1px 0 #eef6f8,0 2px 0 #cfe0e5,0 3px 0 #a8c4cc,0 4px 6px rgba(0,0,0,0.3);transition:filter 0.15s,transform 0.1s;}
+.btn-metallic:hover{filter:brightness(1.04);opacity:1;}
+.btn-metallic:active{transform:translateY(2px);box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;}
 .main{margin-left:220px;padding:40px 48px;min-height:100vh;}
 .page{display:none;}.page.active{display:block;}
 .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;}
@@ -199,6 +201,21 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eef4f6"/>
+      <stop offset="10%" stop-color="#b8ccd2"/>
+      <stop offset="20%" stop-color="#e4eef1"/>
+      <stop offset="32%" stop-color="#7f9aa5"/>
+      <stop offset="45%" stop-color="#cfe4ea"/>
+      <stop offset="58%" stop-color="#9fbdc6"/>
+      <stop offset="72%" stop-color="#eaf3f5"/>
+      <stop offset="85%" stop-color="#6f8992"/>
+      <stop offset="100%" stop-color="#f2f7f9"/>
+    </linearGradient>
+  </defs>
+</svg>
 <div class="lock-screen" id="lock-screen">
   <div class="lock-box">
     <div class="lock-logo">🏢 Alfred CRM</div>
