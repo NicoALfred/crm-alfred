@@ -13,13 +13,13 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
 .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid rgba(255,255,255,0.12);text-align:center;perspective:900px;}
 .sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;transform-style:preserve-3d;animation:logoSpin3D 10s linear infinite;will-change:transform,filter;filter:
-    drop-shadow(0.5px 0.5px 0 #6f8992)
-    drop-shadow(1px 1px 0 #62828c)
-    drop-shadow(1.5px 1.5px 0 #557680)
-    drop-shadow(2px 2px 0 #486a74)
-    drop-shadow(2.5px 2.5px 0 #3b5e68)
+    drop-shadow(0.5px 0.5px 0 rgba(0,0,0,0.35))
+    drop-shadow(1px 1px 0 rgba(0,0,0,0.3))
+    drop-shadow(1.5px 1.5px 0 rgba(0,0,0,0.25))
+    drop-shadow(2px 2px 0 rgba(0,0,0,0.2))
+    drop-shadow(2.5px 2.5px 0 rgba(0,0,0,0.15))
     drop-shadow(3px 3.5px 3px rgba(0,0,0,0.45));}
-.sidebar-logo svg path{fill:url(#chromeGrad) !important;}
+.sidebar-logo svg path{fill:#fff !important;}
 .sidebar-logo:hover svg{animation-play-state:paused;}
 @keyframes logoSpin3D{from{transform:rotateY(0deg);}to{transform:rotateY(360deg);}}
 .sidebar-nav{flex:1;padding:20px 0;display:flex;flex-direction:column;gap:2px;}
@@ -28,12 +28,12 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
 .nav-item .icon{font-size:16px;width:20px;text-align:center;}
 .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
-.btn-add-lead{position:relative;width:100%;padding:11px;background:linear-gradient(100deg,#cfe0e5 0%,#eef6f8 8%,#9fb9c2 20%,#e4eef1 32%,#7f99a3 48%,#dce9ec 62%,#a8c4cc 78%,#f0f6f8 92%,#cfe0e5 100%);color:#1A1A1A;border:1px solid rgba(0,0,0,0.15);border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.85) inset,0 -3px 4px rgba(0,0,0,0.2) inset,0 1px 0 #eef6f8,0 2px 0 #cfe0e5,0 3px 0 #a8c4cc,0 4px 6px rgba(0,0,0,0.3);transition:filter 0.15s,transform 0.1s;}
-.btn-add-lead:hover{filter:brightness(1.04);}
-.btn-add-lead:active{transform:translateY(2px);box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;}
-.btn-metallic{position:relative;background:linear-gradient(100deg,#cfe0e5 0%,#eef6f8 8%,#9fb9c2 20%,#e4eef1 32%,#7f99a3 48%,#dce9ec 62%,#a8c4cc 78%,#f0f6f8 92%,#cfe0e5 100%)!important;color:#1A1A1A!important;border:1px solid rgba(0,0,0,0.15);box-shadow:0 1px 0 rgba(255,255,255,0.85) inset,0 -3px 4px rgba(0,0,0,0.2) inset,0 1px 0 #eef6f8,0 2px 0 #cfe0e5,0 3px 0 #a8c4cc,0 4px 6px rgba(0,0,0,0.3);transition:filter 0.15s,transform 0.1s;}
-.btn-metallic:hover{filter:brightness(1.04);opacity:1;}
-.btn-metallic:active{transform:translateY(2px);box-shadow:0 1px 2px rgba(0,0,0,0.25) inset;}
+.btn-add-lead{position:relative;width:100%;padding:11px;background:linear-gradient(180deg,#C9EAEE 0%,var(--bleu) 100%);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 4px 0 #6FA8B2,0 6px 10px rgba(0,0,0,0.25);transition:transform 0.08s,box-shadow 0.08s,filter 0.15s;}
+.btn-add-lead:hover{filter:brightness(1.03);}
+.btn-add-lead:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 0 0 #6FA8B2,0 1px 2px rgba(0,0,0,0.2);}
+.btn-metallic{position:relative;background:linear-gradient(180deg,#C9EAEE 0%,var(--bleu) 100%)!important;color:var(--noir)!important;border:none;box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 4px 0 #6FA8B2,0 6px 10px rgba(0,0,0,0.25);transition:transform 0.08s,box-shadow 0.08s,filter 0.15s;}
+.btn-metallic:hover{filter:brightness(1.03);opacity:1;}
+.btn-metallic:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 0 0 #6FA8B2,0 1px 2px rgba(0,0,0,0.2);}
 .main{margin-left:220px;padding:40px 48px;min-height:100vh;}
 .page{display:none;}.page.active{display:block;}
 .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;}
@@ -299,14 +299,14 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="relances-list" id="relances-list"><div class="loading">Chargement…</div></div>
   </div>
   <div class="page" id="page-rentabilite">
-    <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût main d'œuvre, sites avec ménage uniquement. Consommables et café à venir.</div></div><button class="btn-secondary" onclick="chargerRentabiliteSites(true)">🔄 Actualiser</button></div>
+    <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût ménage + café + consommables, sites avec ménage uniquement.</div></div><button class="btn-secondary" onclick="chargerRentabiliteSites(true)">🔄 Actualiser</button></div>
     <div class="stats-grid" id="rentabilite-sites-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
     <div class="charts-grid-2">
-      <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge ménage)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque (marge ménage)</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge ménage + café + conso)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque (marge ménage + café + conso)</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
     </div>
     <div class="chart-card" style="margin-top:20px;max-width:420px">
-      <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre (ménage, mensuel actuel)</div>
+      <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre (ménage + café + conso, mensuel actuel)</div>
       <div class="chart-wrap" style="height:240px"><canvas id="chartRepartitionCout"></canvas></div>
     </div>
     <div class="table-wrap" style="margin-top:24px">
@@ -1227,15 +1227,20 @@ function renderRentabiliteSites(d){
   var sites=(d&&d.sites)||[];
   var primes=(d&&d.primesNonAllouees)||[];
   var nbExclus=(d&&d.nbSitesSansMenage)||0;
+  var nbMoisConso=(d&&d.nbMoisConsoObserves)||1;
   var caTotal=sites.reduce(function(s,x){return s+x.ca;},0);
-  var coutTotal=sites.reduce(function(s,x){return s+x.coutAgent;},0);
+  var coutTotal=sites.reduce(function(s,x){return s+x.coutTotal;},0);
+  var coutCafeTotal=sites.reduce(function(s,x){return s+(x.coutCafe||0);},0);
+  var coutConsoTotal=sites.reduce(function(s,x){return s+(x.coutConso||0);},0);
+  var nbSitesCafeInconnu=sites.filter(function(s){return s.caCafe>0&&!s.coutCafeConnu;}).length;
+  var nbProduitsConsoInconnus=sites.reduce(function(s,x){return s+(x.nbProduitsConsoInconnus||0);},0);
   var margeTotal=caTotal-coutTotal;
   var tauxGlobal=caTotal>0?Math.round((margeTotal/caTotal)*100):0;
   document.getElementById('rentabilite-sites-summary').innerHTML=
     '<div class="stat-card teal"><div class="stat-label">CA total/mois (sites ménage)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
-    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre/mois</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+sites.length+' sites avec ménage'+(nbExclus?' · '+nbExclus+' sans ménage exclus':'')+'</div></div>'+
-    '<div class="stat-card vert"><div class="stat-label">Marge ménage/mois</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
-    '<div class="stat-card violet"><div class="stat-label">Taux de marge ménage</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
+    '<div class="stat-card rouge"><div class="stat-label">Coût ménage + café + conso /mois</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">dont '+fmt(coutCafeTotal)+' café · '+fmt(coutConsoTotal)+' conso (moy. '+nbMoisConso+' mois)</div></div>'+
+    '<div class="stat-card vert"><div class="stat-label">Marge totale/mois</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
+    '<div class="stat-card violet"><div class="stat-label">Taux de marge</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
   var rows=sites.slice().sort(function(a,b){
     if(a.tauxMarge==null&&b.tauxMarge==null)return 0;
     if(a.tauxMarge==null)return 1;
@@ -1243,19 +1248,33 @@ function renderRentabiliteSites(d){
     return b.tauxMarge-a.tauxMarge;
   }).map(function(s){
     var tauxCls=s.tauxMarge==null?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
+    var cafeTxt='—';
+    if(s.caCafe>0){
+      cafeTxt=s.coutCafeConnu?fmt(s.coutCafe):'<span style="color:var(--orange)">prix inconnu</span>';
+    }
+    var consoTxt=s.coutConso>0?fmt(s.coutConso):'—';
+    if(s.nbProduitsConsoInconnus>0)consoTxt+=' <span style="color:var(--orange);font-size:9px">('+s.nbProduitsConsoInconnus+' sans prix)</span>';
     return '<tr>'+
       '<td><strong>'+(s.societe||'—')+'</strong><div style="font-size:10px;color:var(--gris)">'+(s.adresse||'')+'</div></td>'+
       '<td>'+fmt(s.ca)+'</td>'+
       '<td>'+(s.heures?s.heures+' h':'—')+'</td>'+
       '<td>'+s.tarifHoraire+' €/h'+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')+'</td>'+
       '<td>'+fmt(s.coutAgent)+'</td>'+
+      '<td>'+cafeTxt+'</td>'+
+      '<td>'+consoTxt+'</td>'+
       '<td>'+fmt(s.marge)+'</td>'+
       '<td>'+(s.tauxMarge==null?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
       '</tr>';
   }).join('');
   document.getElementById('rentabilite-sites-table').innerHTML=
-    '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h) appliqué automatiquement.';
+    '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Coût café/mois</th><th>Coût conso/mois</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h). Prix café et consommables lus directement depuis la colonne "Prix unitaire HT" du stock — modifie-la dès qu\'un prix change, aucun redéploiement nécessaire. Coût consommables = moyenne mensuelle calculée sur '+nbMoisConso+' mois d\'historique de livraisons (pas de quantité mensuelle fixe comme pour le café, donc estimation).';
+  if(nbProduitsConsoInconnus){
+    noteHtml+='<br>'+nbProduitsConsoInconnus+' ligne(s) produit livré sans prix unitaire trouvé dans le stock (nom peut-être orthographié différemment entre les deux fichiers).';
+  }
+  if(nbSitesCafeInconnu){
+    noteHtml+='<br>'+nbSitesCafeInconnu+' site(s) facturent du café mais sans coût calculable (site introuvable dans le tableau "Livraisons café", ou prix manquant dans le stock).';
+  }
   if(nbExclus){
     noteHtml+='<br>'+nbExclus+' site(s) exclu(s) de cette page car sans ménage (CA Nettoyage à 0€ dans le facturier) — leur "marge" n\'aurait pas de sens ici.';
   }
