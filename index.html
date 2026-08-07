@@ -1088,9 +1088,9 @@ async function confirmerSignerOneShot(){
 // CLIENTS
 function emojiSatisfaction(v){
   v=(v||'').trim().toLowerCase();
-  if(v==='content')return '😊';
-  if(v==='moyen')return '😐';
-  if(v==='mécontent'||v==='mecontent')return '😞';
+  if(v==='content')return '✅';
+  if(v==='moyen')return '⚠️';
+  if(v==='mécontent'||v==='mecontent')return '❌';
   return '—';
 }
 function renderClients(f,sf){
