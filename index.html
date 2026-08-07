@@ -213,7 +213,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 
 <main class="main">
   <div class="page active" id="page-dashboard">
-    <div class="page-header"><div><div class="page-title">Bienvenue.</div><div class="page-subtitle" id="date-today"></div></div></div>
+    <div class="page-header"><div><div class="page-title">Bienvenue.</div><div class="page-subtitle" id="date-today"></div></div><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button></div>
     <div class="stats-grid" id="stats-grid"><div class="loading">Chargement…</div></div>
     <div id="oneshot-banner"></div>
     <div id="objectif-section"></div>
@@ -243,7 +243,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   <div class="page" id="page-pipeline">
     <div class="page-header">
       <div><div class="page-title">Pipeline</div><div class="page-subtitle">Prospects (créés ici) · Clients & missions confirmées (créés dans le facturier)</div></div>
-      <button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau prospect</button>
+      <div style="display:flex;gap:10px"><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button><button class="btn-primary" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
     </div>
     <div class="cycle-vente-badge" id="cycle-vente-badge" style="display:none"></div>
     <div class="pipeline-legend">
@@ -255,7 +255,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div id="kanban-board"><div class="loading">Chargement…</div></div>
   </div>
   <div class="page" id="page-clients">
-    <div class="page-header"><div><div class="page-title">Clients</div><div class="page-subtitle" id="clients-count"></div></div></div>
+    <div class="page-header"><div><div class="page-title">Clients</div><div class="page-subtitle" id="clients-count"></div></div><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button></div>
     <div class="table-wrap">
       <div class="table-filters">
         <input class="filter-search" type="text" placeholder="Rechercher…" oninput="filtrerClients(this.value)">
@@ -267,17 +267,13 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     </div>
   </div>
   <div class="page" id="page-relances">
-    <div class="page-header"><div><div class="page-title">Relances</div><div class="page-subtitle">Leads sans contact depuis plus de 7 jours</div></div></div>
+    <div class="page-header"><div><div class="page-title">Relances</div><div class="page-subtitle">Leads sans contact depuis plus de 7 jours</div></div><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button></div>
     <div class="relances-list" id="relances-list"><div class="loading">Chargement…</div></div>
   </div>
   <div class="page" id="page-rentabilite">
-    <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût main d'œuvre, par client. Coût consommables à venir (prix unitaires en cours d'ajout dans le stock).</div></div></div>
+    <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût main d'œuvre, sites avec ménage uniquement. Consommables et café à venir.</div></div><button class="btn-secondary" onclick="chargerRentabiliteSites(true)">🔄 Actualiser</button></div>
     <div class="stats-grid" id="rentabilite-sites-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
-    <div class="table-wrap">
-      <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
-    </div>
-    <div id="rentabilite-primes-note" style="margin-top:14px;font-size:11px;color:var(--gris)"></div>
-    <div class="charts-grid-2" style="margin-top:24px">
+    <div class="charts-grid-2">
       <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
     </div>
@@ -285,6 +281,10 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre</div>
       <div class="chart-wrap" style="height:240px"><canvas id="chartRepartitionCout"></canvas></div>
     </div>
+    <div class="table-wrap" style="margin-top:24px">
+      <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
+    </div>
+    <div id="rentabilite-primes-note" style="margin-top:14px;font-size:11px;color:var(--gris)"></div>
   </div>
 </main>
 
@@ -433,8 +433,8 @@ const API="https://script.google.com/macros/s/AKfycbzrQJzhHWsSlRtcETVAGpgV_mjd5k
 const TOKEN_KEY='alfred_crm_token';
 function getToken(){return localStorage.getItem(TOKEN_KEY)||'';}
 function setToken(t){localStorage.setItem(TOKEN_KEY,t);}
-function apiGet(action){
-  return fetch(API+"?action="+encodeURIComponent(action)+"&token="+encodeURIComponent(getToken()))
+function apiGet(action,force){
+  return fetch(API+"?action="+encodeURIComponent(action)+"&token="+encodeURIComponent(getToken())+(force?"&force=1":""))
     .then(function(r){return r.json();}).then(verifierAuth);
 }
 function apiPost(body){
@@ -505,14 +505,14 @@ function ouvrirModal(id){document.getElementById(id).classList.add('open');}
 function fermerModal(id){document.getElementById(id).classList.remove('open');}
 
 // CHARGEMENT
-async function chargerDonnees(){
+async function chargerDonnees(force){
   try{
     const[db,leads,clients,missions,os]=await Promise.all([
-      apiGet("getDashboard"),
-      apiGet("getLeads"),
-      apiGet("getClients"),
-      apiGet("getMissionsEnCours"),
-      apiGet("getOneShots"),
+      apiGet("getDashboard",force),
+      apiGet("getLeads",force),
+      apiGet("getClients",force),
+      apiGet("getMissionsEnCours",force),
+      apiGet("getOneShots",force),
     ]);
     leadsData=Array.isArray(leads)?leads:[];
     clientsData=Array.isArray(clients)?clients:[];
@@ -1187,9 +1187,9 @@ function renderRelances(){
   }).join('');
 }
 
-async function chargerRentabiliteSites(){
+async function chargerRentabiliteSites(force){
   try{
-    var d=await apiGet('getRentabiliteSites');
+    var d=await apiGet('getRentabiliteSites',force);
     renderRentabiliteSites(d);
   }catch(e){
     document.getElementById('rentabilite-sites-table').innerHTML='<div class="empty-state"><p>Erreur de chargement.</p></div>';
@@ -1198,15 +1198,15 @@ async function chargerRentabiliteSites(){
 function renderRentabiliteSites(d){
   var sites=(d&&d.sites)||[];
   var primes=(d&&d.primesNonAllouees)||[];
-  var siteAvecCout=sites.filter(function(s){return s.coutAgent!=null;});
+  var nbExclus=(d&&d.nbSitesSansMenage)||0;
   var caTotal=sites.reduce(function(s,x){return s+x.ca;},0);
-  var coutTotal=siteAvecCout.reduce(function(s,x){return s+x.coutAgent;},0);
+  var coutTotal=sites.reduce(function(s,x){return s+x.coutAgent;},0);
   var margeTotal=caTotal-coutTotal;
   var tauxGlobal=caTotal>0?Math.round((margeTotal/caTotal)*100):0;
   document.getElementById('rentabilite-sites-summary').innerHTML=
-    '<div class="stat-card teal"><div class="stat-label">CA total (sites actifs)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
-    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+siteAvecCout.length+'/'+sites.length+' sites avec tarif identifié</div></div>'+
-    '<div class="stat-card vert"><div class="stat-label">Marge (hors consommables)</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
+    '<div class="stat-card teal"><div class="stat-label">CA total (sites ménage)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
+    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+sites.length+' sites avec ménage'+(nbExclus?' · '+nbExclus+' sans ménage exclus':'')+'</div></div>'+
+    '<div class="stat-card vert"><div class="stat-label">Marge (hors consommables/café)</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
     '<div class="stat-card violet"><div class="stat-label">Taux de marge</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
   var rows=sites.slice().sort(function(a,b){
     if(a.tauxMarge==null&&b.tauxMarge==null)return 0;
@@ -1214,26 +1214,28 @@ function renderRentabiliteSites(d){
     if(b.tauxMarge==null)return -1;
     return b.tauxMarge-a.tauxMarge;
   }).map(function(s){
-    var pasDeTarif=s.coutAgent==null;
-    var tauxCls=pasDeTarif?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
+    var tauxCls=s.tauxMarge==null?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
     return '<tr>'+
       '<td><strong>'+(s.societe||'—')+'</strong><div style="font-size:10px;color:var(--gris)">'+(s.adresse||'')+'</div></td>'+
       '<td>'+(s.agent||'—')+'</td>'+
       '<td>'+fmt(s.ca)+'</td>'+
       '<td>'+(s.heures?s.heures+' h':'—')+'</td>'+
-      '<td>'+(pasDeTarif?'<span style="color:var(--orange)">tarif non trouvé</span>':(s.tarifHoraire+' €/h'+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')))+'</td>'+
-      '<td>'+(pasDeTarif?'—':fmt(s.coutAgent))+'</td>'+
-      '<td>'+(pasDeTarif?'—':fmt(s.marge))+'</td>'+
-      '<td>'+(pasDeTarif?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
+      '<td>'+s.tarifHoraire+' €/h'+(s.tarifParDefaut?' <span style="color:var(--gris);font-size:9px">(base)</span>':'')+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')+'</td>'+
+      '<td>'+fmt(s.coutAgent)+'</td>'+
+      '<td>'+fmt(s.marge)+'</td>'+
+      '<td>'+(s.tauxMarge==null?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
       '</tr>';
   }).join('');
   document.getElementById('rentabilite-sites-table').innerHTML=
     '<table><thead><tr><th>Site</th><th>Agent</th><th>CA/mois</th><th>Heures/mois</th><th>Tarif</th><th>Coût agent</th><th>Marge</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  var noteHtml='💡 Les sites en orange ("tarif non trouvé") n\'ont pas pu être rapprochés automatiquement de ton tableau de tarifs par mission — vérifie l\'orthographe de l\'adresse des deux côtés.';
+  var noteHtml='💡 "(base)" = aucun tarif spécifique trouvé pour ce site, le tarif de base Alfred (15€/h) a été appliqué automatiquement.';
+  if(nbExclus){
+    noteHtml+='<br>'+nbExclus+' site(s) exclu(s) de cette page car sans ménage (CA Nettoyage à 0€ dans le facturier) — leur "marge" n\'aurait pas de sens ici.';
+  }
   if(primes.length){
     noteHtml+='<br>Primes fixes agents non rattachées à un site précis : '+primes.map(function(p){return p.agent+' ('+p.bonus+'€)';}).join(', ')+'.';
   }
-  noteHtml+='<br>Le coût des consommables n\'est pas encore inclus dans cette marge — en attente des prix unitaires dans le fichier stock.';
+  noteHtml+='<br>☕ Marge café et coût consommables pas encore inclus — en attente du token Pennylane (factures fournisseurs) et des prix unitaires dans le stock.';
   document.getElementById('rentabilite-primes-note').innerHTML=noteHtml;
   renderGraphiquesRentabilite(sites, caTotal, coutTotal);
 }
@@ -1258,10 +1260,21 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
   });
 
   if(window._chartRepartCout)window._chartRepartCout.destroy();
+  var margePositive=Math.max(0,caTotal-coutTotal);
+  var totalDonut=margePositive+coutTotal;
   window._chartRepartCout=new Chart(document.getElementById('chartRepartitionCout'),{
     type:'doughnut',
-    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[Math.max(0,caTotal-coutTotal),coutTotal],backgroundColor:['#4DA882','#D94F4F'],borderWidth:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},tooltip:{callbacks:{label:function(ctx){return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' €';}}}},cutout:'65%'}
+    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[margePositive,coutTotal],backgroundColor:['#4DA882','#D94F4F'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{
+      legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
+        var ds=chart.data.datasets[0];
+        return chart.data.labels.map(function(lbl,i){
+          var pct=totalDonut>0?Math.round(ds.data[i]/totalDonut*100):0;
+          return{text:lbl+' : '+pct+'%',fillStyle:ds.backgroundColor[i],strokeStyle:ds.backgroundColor[i],hidden:false,index:i};
+        });
+      }}},
+      tooltip:{callbacks:{label:function(ctx){var pct=totalDonut>0?Math.round(ctx.parsed/totalDonut*100):0;return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' € ('+pct+'%)';}}}
+    },cutout:'65%'}
   });
 }
 
