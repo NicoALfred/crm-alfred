@@ -277,6 +277,14 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
     </div>
     <div id="rentabilite-primes-note" style="margin-top:14px;font-size:11px;color:var(--gris)"></div>
+    <div class="charts-grid-2" style="margin-top:24px">
+      <div class="chart-card"><div class="chart-title">🏆 Top 10 sites les plus rentables (taux de marge)</div><div class="chart-wrap" style="height:320px"><canvas id="chartTop10Rentables"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">⚠️ Sites les moins rentables / à risque</div><div class="chart-wrap" style="height:320px"><canvas id="chartFlop10Rentables"></canvas></div></div>
+    </div>
+    <div class="chart-card" style="margin-top:20px;max-width:420px">
+      <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="chartRepartitionCout"></canvas></div>
+    </div>
   </div>
 </main>
 
@@ -1200,7 +1208,12 @@ function renderRentabiliteSites(d){
     '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+siteAvecCout.length+'/'+sites.length+' sites avec tarif identifié</div></div>'+
     '<div class="stat-card vert"><div class="stat-label">Marge (hors consommables)</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
     '<div class="stat-card violet"><div class="stat-label">Taux de marge</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
-  var rows=sites.slice().sort(function(a,b){return (b.marge==null?-1:b.marge)-(a.marge==null?-1:a.marge);}).map(function(s){
+  var rows=sites.slice().sort(function(a,b){
+    if(a.tauxMarge==null&&b.tauxMarge==null)return 0;
+    if(a.tauxMarge==null)return 1;
+    if(b.tauxMarge==null)return -1;
+    return b.tauxMarge-a.tauxMarge;
+  }).map(function(s){
     var pasDeTarif=s.coutAgent==null;
     var tauxCls=pasDeTarif?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
     return '<tr>'+
@@ -1215,13 +1228,41 @@ function renderRentabiliteSites(d){
       '</tr>';
   }).join('');
   document.getElementById('rentabilite-sites-table').innerHTML=
-    '<table><thead><tr><th>Site</th><th>Agent</th><th>CA/mois</th><th>Heures/mois</th><th>Tarif</th><th>Coût agent</th><th>Marge</th><th>Taux</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    '<table><thead><tr><th>Site</th><th>Agent</th><th>CA/mois</th><th>Heures/mois</th><th>Tarif</th><th>Coût agent</th><th>Marge</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
   var noteHtml='💡 Les sites en orange ("tarif non trouvé") n\'ont pas pu être rapprochés automatiquement de ton tableau de tarifs par mission — vérifie l\'orthographe de l\'adresse des deux côtés.';
   if(primes.length){
     noteHtml+='<br>Primes fixes agents non rattachées à un site précis : '+primes.map(function(p){return p.agent+' ('+p.bonus+'€)';}).join(', ')+'.';
   }
   noteHtml+='<br>Le coût des consommables n\'est pas encore inclus dans cette marge — en attente des prix unitaires dans le fichier stock.';
   document.getElementById('rentabilite-primes-note').innerHTML=noteHtml;
+  renderGraphiquesRentabilite(sites, caTotal, coutTotal);
+}
+
+function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
+  var avecTaux=sites.filter(function(s){return s.tauxMarge!=null;}).sort(function(a,b){return b.tauxMarge-a.tauxMarge;});
+  var top10=avecTaux.slice(0,10);
+  var flop10=avecTaux.slice(-10).reverse();
+
+  if(window._chartTop10)window._chartTop10.destroy();
+  window._chartTop10=new Chart(document.getElementById('chartTop10Rentables'),{
+    type:'bar',
+    data:{labels:top10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:top10.map(function(s){return s.tauxMarge;}),backgroundColor:'#4DA882'}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
+  });
+
+  if(window._chartFlop10)window._chartFlop10.destroy();
+  window._chartFlop10=new Chart(document.getElementById('chartFlop10Rentables'),{
+    type:'bar',
+    data:{labels:flop10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:flop10.map(function(s){return s.tauxMarge;}),backgroundColor:flop10.map(function(s){return s.tauxMarge<0?'#D94F4F':'#E8A040';})}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
+  });
+
+  if(window._chartRepartCout)window._chartRepartCout.destroy();
+  window._chartRepartCout=new Chart(document.getElementById('chartRepartitionCout'),{
+    type:'doughnut',
+    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[Math.max(0,caTotal-coutTotal),coutTotal],backgroundColor:['#4DA882','#D94F4F'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8}},tooltip:{callbacks:{label:function(ctx){return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' €';}}}},cutout:'65%'}
+  });
 }
 
 function changerStatutMenu2(id,s){
