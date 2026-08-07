@@ -206,6 +206,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="nav-item" data-page="pipeline" onclick="goTo('pipeline')"><span class="icon">🎯</span> Pipeline</div>
     <div class="nav-item" data-page="clients" onclick="goTo('clients')"><span class="icon">🏢</span> Clients</div>
     <div class="nav-item" data-page="relances" onclick="goTo('relances')"><span class="icon">🔔</span> Relances</div>
+    <div class="nav-item" data-page="rentabilite" onclick="goTo('rentabilite')"><span class="icon">💰</span> Rentabilité</div>
   </nav>
   <div class="sidebar-bottom"><button class="btn-add-lead" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
 </aside>
@@ -268,6 +269,14 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
   <div class="page" id="page-relances">
     <div class="page-header"><div><div class="page-title">Relances</div><div class="page-subtitle">Leads sans contact depuis plus de 7 jours</div></div></div>
     <div class="relances-list" id="relances-list"><div class="loading">Chargement…</div></div>
+  </div>
+  <div class="page" id="page-rentabilite">
+    <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût main d'œuvre, par client. Coût consommables à venir (prix unitaires en cours d'ajout dans le stock).</div></div></div>
+    <div class="stats-grid" id="rentabilite-sites-summary" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
+    <div class="table-wrap">
+      <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
+    </div>
+    <div id="rentabilite-primes-note" style="margin-top:14px;font-size:11px;color:var(--gris)"></div>
   </div>
 </main>
 
@@ -468,6 +477,10 @@ function goTo(p){
   document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
   document.querySelector('[data-page="'+p+'"]').classList.add('active');
+  if(p==='rentabilite'&&!window._rentabiliteSitesChargee){
+    window._rentabiliteSitesChargee=true;
+    chargerRentabiliteSites();
+  }
 }
 function fmt(n){return n?Math.round(n).toLocaleString('fr-FR')+' €':'—';}
 function diffJ(d){if(!d)return 0;const dt=new Date(d);if(isNaN(dt))return 0;return Math.floor((new Date()-dt)/86400000);}
@@ -1165,6 +1178,52 @@ function renderRelances(){
     return '<div class="relance-card '+(j>=14?'urgent':'')+'"><div class="relance-info"><h3>'+(l['Entreprise']||'—')+'</h3><p>'+(l['Prénom/Nom']||'')+' · '+l['Statut']+' · '+(l['Assigné à']||'—')+'</p><div class="relance-actions"><button class="btn-relancer" onclick="ouvrirDetailLead(\''+l['ID']+'\')">Voir</button>'+btns+'</div></div><div class="relance-meta"><div class="relance-jours">'+j+'</div><div class="relance-label">jours sans<br>contact</div></div></div>';
   }).join('');
 }
+
+async function chargerRentabiliteSites(){
+  try{
+    var d=await apiGet('getRentabiliteSites');
+    renderRentabiliteSites(d);
+  }catch(e){
+    document.getElementById('rentabilite-sites-table').innerHTML='<div class="empty-state"><p>Erreur de chargement.</p></div>';
+  }
+}
+function renderRentabiliteSites(d){
+  var sites=(d&&d.sites)||[];
+  var primes=(d&&d.primesNonAllouees)||[];
+  var siteAvecCout=sites.filter(function(s){return s.coutAgent!=null;});
+  var caTotal=sites.reduce(function(s,x){return s+x.ca;},0);
+  var coutTotal=siteAvecCout.reduce(function(s,x){return s+x.coutAgent;},0);
+  var margeTotal=caTotal-coutTotal;
+  var tauxGlobal=caTotal>0?Math.round((margeTotal/caTotal)*100):0;
+  document.getElementById('rentabilite-sites-summary').innerHTML=
+    '<div class="stat-card teal"><div class="stat-label">CA total (sites actifs)</div><div class="stat-value">'+fmt(caTotal)+'</div></div>'+
+    '<div class="stat-card rouge"><div class="stat-label">Coût main d\'œuvre</div><div class="stat-value">'+fmt(coutTotal)+'</div><div class="stat-sub">'+siteAvecCout.length+'/'+sites.length+' sites avec tarif identifié</div></div>'+
+    '<div class="stat-card vert"><div class="stat-label">Marge (hors consommables)</div><div class="stat-value">'+fmt(margeTotal)+'</div></div>'+
+    '<div class="stat-card violet"><div class="stat-label">Taux de marge</div><div class="stat-value">'+tauxGlobal+'%</div></div>';
+  var rows=sites.slice().sort(function(a,b){return (b.marge==null?-1:b.marge)-(a.marge==null?-1:a.marge);}).map(function(s){
+    var pasDeTarif=s.coutAgent==null;
+    var tauxCls=pasDeTarif?'':(s.tauxMarge>=50?'badge-ajour':s.tauxMarge>=25?'badge-pause':'badge-retard');
+    return '<tr>'+
+      '<td><strong>'+(s.societe||'—')+'</strong><div style="font-size:10px;color:var(--gris)">'+(s.adresse||'')+'</div></td>'+
+      '<td>'+(s.agent||'—')+'</td>'+
+      '<td>'+fmt(s.ca)+'</td>'+
+      '<td>'+(s.heures?s.heures+' h':'—')+'</td>'+
+      '<td>'+(pasDeTarif?'<span style="color:var(--orange)">tarif non trouvé</span>':(s.tarifHoraire+' €/h'+(s.bonusFixe?' + '+s.bonusFixe+'€ prime':'')))+'</td>'+
+      '<td>'+(pasDeTarif?'—':fmt(s.coutAgent))+'</td>'+
+      '<td>'+(pasDeTarif?'—':fmt(s.marge))+'</td>'+
+      '<td>'+(pasDeTarif?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
+      '</tr>';
+  }).join('');
+  document.getElementById('rentabilite-sites-table').innerHTML=
+    '<table><thead><tr><th>Site</th><th>Agent</th><th>CA/mois</th><th>Heures/mois</th><th>Tarif</th><th>Coût agent</th><th>Marge</th><th>Taux</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var noteHtml='💡 Les sites en orange ("tarif non trouvé") n\'ont pas pu être rapprochés automatiquement de ton tableau de tarifs par mission — vérifie l\'orthographe de l\'adresse des deux côtés.';
+  if(primes.length){
+    noteHtml+='<br>Primes fixes agents non rattachées à un site précis : '+primes.map(function(p){return p.agent+' ('+p.bonus+'€)';}).join(', ')+'.';
+  }
+  noteHtml+='<br>Le coût des consommables n\'est pas encore inclus dans cette marge — en attente des prix unitaires dans le fichier stock.';
+  document.getElementById('rentabilite-primes-note').innerHTML=noteHtml;
+}
+
 function changerStatutMenu2(id,s){
   var l=leadsData.find(function(x){return x['ID']===id;});
   dragId=id;dragStatut=s;
