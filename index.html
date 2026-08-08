@@ -1278,28 +1278,57 @@ function renderRentabiliteSites(d){
       '<td>'+(s.tauxMarge==null?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
       '</tr>';
   }).join('');
+
+  // Constat général — calculé en direct sur les données actuellement chargées, jamais figé
   var siteAvecConso=sites.filter(function(s){return s.caConso>0||s.coutConso>0;});
   var siteDeficit=siteAvecConso.filter(function(s){return (s.caConso||0)-(s.coutConso||0)<0;});
   var siteSurplus=siteAvecConso.filter(function(s){return (s.caConso||0)-(s.coutConso||0)>0;});
   var totalDeficit=siteDeficit.reduce(function(s,x){return s+((x.caConso||0)-(x.coutConso||0));},0);
   var totalSurplus=siteSurplus.reduce(function(s,x){return s+((x.caConso||0)-(x.coutConso||0));},0);
   var nbLignesSansPrix=sites.reduce(function(s,x){return s+(x.nbProduitsConsoInconnus||0);},0);
-  var constatHtml='<div style="background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--violet);font-size:13px;line-height:1.7">';
-  constatHtml+='<strong>📦 Constat consommables (en direct)</strong><br>';
-  if(siteAvecConso.length===0){
-    constatHtml+='Pas encore assez de données pour tirer un constat.';
-  }else{
-    if(siteDeficit.length>0){
-      constatHtml+='<span style="color:var(--rouge)">⚠️ '+siteDeficit.length+' site'+(siteDeficit.length>1?'s':'')+' facture'+(siteDeficit.length>1?'nt':'')+' moins que ce qui leur est réellement livré</span>, pour un manque à gagner total d\'environ <strong>'+Math.round(Math.abs(totalDeficit)).toLocaleString('fr-FR')+' €/mois</strong>. ';
-    }else{
-      constatHtml+='<span style="color:var(--vert)">✅ Aucun site en déficit</span> sur les consommables actuellement. ';
-    }
-    if(siteSurplus.length>0){
-      constatHtml+=siteSurplus.length+' site'+(siteSurplus.length>1?'s':'')+' au contraire facture'+(siteSurplus.length>1?'nt':'')+' plus que ce qui leur est livré, pour environ <strong>+'+Math.round(totalSurplus).toLocaleString('fr-FR')+' €/mois</strong> de marge sur ce poste. ';
-    }
-    if(nbLignesSansPrix>0){
-      constatHtml+='<br>⚠️ <strong>'+nbLignesSansPrix+' ligne(s) produit</strong> livrée(s) sans prix unitaire renseigné dans le stock — les coûts ci-dessus sont donc probablement <strong>sous-estimés</strong>, l\'écart réel pourrait être moins favorable qu\'affiché.';
-    }
+  var nbTarifDefaut=sites.filter(function(s){return s.tarifParDefaut;}).length;
+  var siteCafeInconnu=sites.filter(function(s){return s.caCafe>0&&!s.coutCafeConnu;});
+  var siteMargeNeg=sites.filter(function(s){return s.marge<0;});
+  var siteMargeFaible=sites.filter(function(s){return s.tauxMarge!=null&&s.tauxMarge<20&&s.marge>=0;});
+  var tauxMoyenGlobal=sites.length?Math.round(sites.reduce(function(s,x){return s+(x.tauxMarge||0);},0)/sites.length):0;
+
+  var constatHtml='<div style="background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--violet);font-size:13px;line-height:1.9">';
+  constatHtml+='<strong>🔍 Constat général (en direct)</strong><br>';
+
+  // Vue d'ensemble
+  constatHtml+='• '+sites.length+' site'+(sites.length>1?'s':'')+' analysé'+(sites.length>1?'s':'')+', taux de marge moyen : <strong>'+tauxMoyenGlobal+'%</strong>.<br>';
+
+  // Sites à risque (marge négative ou très faible)
+  if(siteMargeNeg.length>0){
+    constatHtml+='• <span style="color:var(--rouge)">⚠️ '+siteMargeNeg.length+' site'+(siteMargeNeg.length>1?'s':'')+' en marge négative</span> ('+siteMargeNeg.map(function(s){return s.societe;}).join(', ')+') — à regarder en priorité.<br>';
+  }
+  if(siteMargeFaible.length>0){
+    constatHtml+='• '+siteMargeFaible.length+' site'+(siteMargeFaible.length>1?'s':'')+' avec un taux de marge sous les 20% (mais positif) — marge de manœuvre faible en cas d\'imprévu.<br>';
+  }
+  if(siteMargeNeg.length===0&&siteMargeFaible.length===0){
+    constatHtml+='• <span style="color:var(--vert)">✅ Aucun site en marge négative ou critique</span> actuellement.<br>';
+  }
+
+  // Ménage
+  if(nbTarifDefaut>0){
+    constatHtml+='• '+nbTarifDefaut+' site'+(nbTarifDefaut>1?'s':'')+' sans tarif de mission spécifique — facturé au tarif de base (15€/h) faute de correspondance trouvée dans le tableau des tarifs.<br>';
+  }
+
+  // Café
+  if(siteCafeInconnu.length>0){
+    constatHtml+='• ☕ '+siteCafeInconnu.length+' site'+(siteCafeInconnu.length>1?'s':'')+' facture'+(siteCafeInconnu.length>1?'nt':'')+' du café sans coût calculable (site introuvable dans le tableau "Livraisons café", ou prix manquant) — marge potentiellement surestimée pour ces sites.<br>';
+  }
+
+  // Consommables
+  if(siteDeficit.length>0){
+    constatHtml+='• 📦 <span style="color:var(--rouge)">'+siteDeficit.length+' site'+(siteDeficit.length>1?'s':'')+' facture'+(siteDeficit.length>1?'nt':'')+' moins que ce qui leur est réellement livré</span> en consommables, pour un manque à gagner total d\'environ <strong>'+Math.round(Math.abs(totalDeficit)).toLocaleString('fr-FR')+' €/mois</strong>.<br>';
+  }else if(siteAvecConso.length>0){
+    constatHtml+='• 📦 <span style="color:var(--vert)">Aucun site en déficit</span> sur les consommables actuellement';
+    if(siteSurplus.length>0)constatHtml+=' ('+siteSurplus.length+' en surplus, +'+Math.round(totalSurplus).toLocaleString('fr-FR')+' €/mois au total)';
+    constatHtml+='.<br>';
+  }
+  if(nbLignesSansPrix>0){
+    constatHtml+='• ⚠️ '+nbLignesSansPrix+' ligne(s) produit livrée(s) sans prix unitaire dans le stock — les coûts consommables affichés sont donc probablement <strong>sous-estimés</strong>.<br>';
   }
   constatHtml+='</div>';
   document.getElementById('rentabilite-sites-table').innerHTML=constatHtml+
