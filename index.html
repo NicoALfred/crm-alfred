@@ -1256,16 +1256,15 @@ function renderRentabiliteSites(d){
     if(s.caCafe>0){
       cafeTxt=s.coutCafeConnu?fmt(s.coutCafe):'<span style="color:var(--orange)">prix inconnu</span>';
     }
-    var consoTxt=s.coutConso>0?fmt(s.coutConso):'—';
-    if(s.nbProduitsConsoInconnus>0)consoTxt+=' <span style="color:var(--orange);font-size:9px">('+s.nbProduitsConsoInconnus+' sans prix)</span>';
-    var ecartConso=(s.caConso||0)-(s.coutConso||0);
-    var ecartTxt='';
-    if(s.caConso>0||s.coutConso>0){
+    var consoInconnu=s.nbProduitsConsoInconnus>0?' <span style="color:var(--orange);font-size:9px">('+s.nbProduitsConsoInconnus+' sans prix)</span>':'';
+    var consoConnu=(s.caConso>0||s.coutConso>0);
+    var consoTxt='—';
+    if(consoConnu){
+      var ecartConso=(s.caConso||0)-(s.coutConso||0);
       var ecartCouleur=ecartConso>=0?'var(--vert)':'var(--rouge)';
       var ecartSigne=ecartConso>=0?'+':'';
-      ecartTxt='<div>'+fmt(s.caConso)+'</div><div style="font-size:10px;color:'+ecartCouleur+';font-weight:700">'+ecartSigne+Math.round(ecartConso).toLocaleString('fr-FR')+' €</div>';
-    }else{
-      ecartTxt='—';
+      consoTxt='<div>'+fmt(s.coutConso)+' <span style="color:var(--gris)">→</span> '+fmt(s.caConso)+consoInconnu+'</div>'+
+        '<div style="font-size:10px;color:'+ecartCouleur+';font-weight:700">'+ecartSigne+Math.round(ecartConso).toLocaleString('fr-FR')+' € facturé vs livré</div>';
     }
     return '<tr>'+
       '<td><strong>'+(s.societe||'—')+'</strong><div style="font-size:10px;color:var(--gris)">'+(s.adresse||'')+'</div></td>'+
@@ -1275,14 +1274,37 @@ function renderRentabiliteSites(d){
       '<td>'+fmt(s.coutAgent)+'</td>'+
       '<td>'+cafeTxt+'</td>'+
       '<td>'+consoTxt+'</td>'+
-      '<td>'+ecartTxt+'</td>'+
       '<td>'+fmt(s.marge)+'</td>'+
       '<td>'+(s.tauxMarge==null?'—':'<span class="badge '+tauxCls+'">'+s.tauxMarge+'%</span>')+'</td>'+
       '</tr>';
   }).join('');
-  document.getElementById('rentabilite-sites-table').innerHTML=
-    '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Coût café/mois</th><th>Coût conso/mois</th><th>Facturé conso/mois</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h). Prix café et consommables lus directement depuis la colonne "Prix unitaire HT" du stock — modifie-la dès qu\'un prix change, aucun redéploiement nécessaire. Coût consommables (colonne du tableau) = moyenne mensuelle calculée sur '+nbMoisConso+' mois d\'historique de livraisons (pas de quantité mensuelle fixe comme pour le café, donc estimation).<br>📦 "Facturé conso/mois" : ce que le client paye chaque mois pour ses consommables (forfait fixe), à comparer avec "Coût conso/mois" juste à gauche (ce qu\'on lui livre réellement, en illimité selon ses besoins). L\'écart en petit (vert = on marge dessus, rouge = on perd de l\'argent sur ce poste précis) te dit si le forfait du client est encore calibré correctement, indépendamment du reste de sa marge.<br>⚠️ Les montants "'+moisLabel+'" du résumé ci-dessus supposent que les heures de ménage et les kg de café sont restés identiques à aujourd\'hui sur ce mois (pas d\'historique mensuel disponible pour ces deux postes) — seule la part consommables est vraiment recalculée mois par mois.';
+  var siteAvecConso=sites.filter(function(s){return s.caConso>0||s.coutConso>0;});
+  var siteDeficit=siteAvecConso.filter(function(s){return (s.caConso||0)-(s.coutConso||0)<0;});
+  var siteSurplus=siteAvecConso.filter(function(s){return (s.caConso||0)-(s.coutConso||0)>0;});
+  var totalDeficit=siteDeficit.reduce(function(s,x){return s+((x.caConso||0)-(x.coutConso||0));},0);
+  var totalSurplus=siteSurplus.reduce(function(s,x){return s+((x.caConso||0)-(x.coutConso||0));},0);
+  var nbLignesSansPrix=sites.reduce(function(s,x){return s+(x.nbProduitsConsoInconnus||0);},0);
+  var constatHtml='<div style="background:var(--blanc);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 22px;margin-bottom:16px;border-left:4px solid var(--violet);font-size:13px;line-height:1.7">';
+  constatHtml+='<strong>📦 Constat consommables (en direct)</strong><br>';
+  if(siteAvecConso.length===0){
+    constatHtml+='Pas encore assez de données pour tirer un constat.';
+  }else{
+    if(siteDeficit.length>0){
+      constatHtml+='<span style="color:var(--rouge)">⚠️ '+siteDeficit.length+' site'+(siteDeficit.length>1?'s':'')+' facture'+(siteDeficit.length>1?'nt':'')+' moins que ce qui leur est réellement livré</span>, pour un manque à gagner total d\'environ <strong>'+Math.round(Math.abs(totalDeficit)).toLocaleString('fr-FR')+' €/mois</strong>. ';
+    }else{
+      constatHtml+='<span style="color:var(--vert)">✅ Aucun site en déficit</span> sur les consommables actuellement. ';
+    }
+    if(siteSurplus.length>0){
+      constatHtml+=siteSurplus.length+' site'+(siteSurplus.length>1?'s':'')+' au contraire facture'+(siteSurplus.length>1?'nt':'')+' plus que ce qui leur est livré, pour environ <strong>+'+Math.round(totalSurplus).toLocaleString('fr-FR')+' €/mois</strong> de marge sur ce poste. ';
+    }
+    if(nbLignesSansPrix>0){
+      constatHtml+='<br>⚠️ <strong>'+nbLignesSansPrix+' ligne(s) produit</strong> livrée(s) sans prix unitaire renseigné dans le stock — les coûts ci-dessus sont donc probablement <strong>sous-estimés</strong>, l\'écart réel pourrait être moins favorable qu\'affiché.';
+    }
+  }
+  constatHtml+='</div>';
+  document.getElementById('rentabilite-sites-table').innerHTML=constatHtml+
+    '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Coût café/mois</th><th>Conso : coût → facturé</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
+  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h). Prix café et consommables lus directement depuis la colonne "Prix unitaire HT" du stock — modifie-la dès qu\'un prix change, aucun redéploiement nécessaire. Coût consommables = moyenne mensuelle calculée sur '+nbMoisConso+' mois d\'historique de livraisons (pas de quantité mensuelle fixe comme pour le café, donc estimation).<br>📦 Colonne "Conso : coût → facturé" : à gauche de la flèche, ce qu\'on livre réellement au client (coût) ; à droite, ce qu\'il paye chaque mois pour son forfait (facturé). L\'écart en dessous (vert = marge, rouge = déficit) te dit si le forfait est encore calibré correctement, indépendamment du reste de sa marge.<br>⚠️ Les montants "'+moisLabel+'" du résumé ci-dessus supposent que les heures de ménage et les kg de café sont restés identiques à aujourd\'hui sur ce mois (pas d\'historique mensuel disponible pour ces deux postes) — seule la part consommables est vraiment recalculée mois par mois.';
   if(nbProduitsConsoInconnus){
     noteHtml+='<br>'+nbProduitsConsoInconnus+' ligne(s) produit livré sans prix unitaire trouvé dans le stock (nom peut-être orthographié différemment entre les deux fichiers).';
   }
