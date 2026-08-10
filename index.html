@@ -225,7 +225,6 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="icon">🏠</span> Dashboard</div>
     <div class="nav-item" data-page="pipeline" onclick="goTo('pipeline')"><span class="icon">🎯</span> Pipeline</div>
     <div class="nav-item" data-page="clients" onclick="goTo('clients')"><span class="icon">🏢</span> Clients</div>
-    <div class="nav-item" data-page="relances" onclick="goTo('relances')"><span class="icon">🔔</span> Relances</div>
     <div class="nav-item" data-page="rentabilite" onclick="goTo('rentabilite')"><span class="icon">💰</span> Rentabilité</div>
   </nav>
   <div class="sidebar-bottom"><button class="btn-add-lead" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
@@ -285,10 +284,6 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       </div>
       <div id="clients-table"><div class="loading">Chargement…</div></div>
     </div>
-  </div>
-  <div class="page" id="page-relances">
-    <div class="page-header"><div><div class="page-title">Relances</div><div class="page-subtitle">Leads sans contact depuis plus de 7 jours</div></div><button class="btn-secondary" onclick="chargerDonnees(true)">🔄 Actualiser</button></div>
-    <div class="relances-list" id="relances-list"><div class="loading">Chargement…</div></div>
   </div>
   <div class="page" id="page-rentabilite">
     <div class="page-header"><div><div class="page-title">Rentabilité par site</div><div class="page-subtitle">CA − coût ménage + café + consommables, sites avec ménage uniquement.</div></div><button class="btn-secondary" onclick="chargerRentabiliteSites(true)">🔄 Actualiser</button></div>
@@ -1198,6 +1193,7 @@ function ouvrirDetailClientParRow(rowIndex){
 // RELANCES
 function renderRelances(){
   var c=document.getElementById('relances-list');
+  if(!c)return;
   var u=leadsData.filter(function(l){return STATUTS_ACTIFS.includes(l['Statut'])&&diffJ(l['Date dernière relance'])>=7;}).sort(function(a,b){return diffJ(b['Date dernière relance'])-diffJ(a['Date dernière relance']);});
   if(!u.length){c.innerHTML='<div class="empty-state">✅<p>Aucune relance en attente.</p></div>';return;}
   c.innerHTML=u.map(function(l){
