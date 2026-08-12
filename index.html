@@ -1259,7 +1259,8 @@ function renderRentabiliteSites(d){
       var ecartConso=(s.caConso||0)-(s.coutConso||0);
       var ecartCouleur=ecartConso>=0?'var(--vert)':'var(--rouge)';
       var ecartSigne=ecartConso>=0?'+':'';
-      consoTxt='<div>'+fmt(s.coutConso)+' <span style="color:var(--gris)">→</span> '+fmt(s.caConso)+consoInconnu+'</div>'+
+      var moisTxt=s.nbMoisSiteConso?' <span style="color:var(--gris);font-size:9px">(moy. '+s.nbMoisSiteConso+' mois pour ce site)</span>':'';
+      consoTxt='<div>'+fmt(s.coutConso)+moisTxt+' <span style="color:var(--gris)">→</span> '+fmt(s.caConso)+consoInconnu+'</div>'+
         '<div style="font-size:10px;color:'+ecartCouleur+';font-weight:700">'+ecartSigne+Math.round(ecartConso).toLocaleString('fr-FR')+' € facturé vs livré</div>';
     }
     return '<tr>'+
@@ -1343,7 +1344,7 @@ function renderRentabiliteSites(d){
   constatHtml+='</div>';
   document.getElementById('rentabilite-sites-table').innerHTML=constatHtml+
     '<table><thead><tr><th>Site</th><th>CA total/mois</th><th>Heures/mois</th><th>Tarif horaire</th><th>Coût agent/mois</th><th>Coût café/mois</th><th>Conso : coût → facturé</th><th>Marge/mois</th><th>Taux ▼</th></tr></thead><tbody>'+rows+'</tbody></table>';
-  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h). Prix café et consommables lus directement depuis la colonne "Prix unitaire HT" du stock — modifie-la dès qu\'un prix change, aucun redéploiement nécessaire. Coût consommables = moyenne mensuelle calculée sur '+nbMoisConso+' mois d\'historique de livraisons (pas de quantité mensuelle fixe comme pour le café, donc estimation).<br>📦 Colonne "Conso : coût → facturé" : à gauche de la flèche, ce qu\'on livre réellement au client (coût) ; à droite, ce qu\'il paye chaque mois pour son forfait (facturé). L\'écart en dessous (vert = marge, rouge = déficit) te dit si le forfait est encore calibré correctement, indépendamment du reste de sa marge.<br>⚠️ Les montants "'+moisLabel+'" du résumé ci-dessus supposent que les heures de ménage et les kg de café sont restés identiques à aujourd\'hui sur ce mois (pas d\'historique mensuel disponible pour ces deux postes) — seule la part consommables est vraiment recalculée mois par mois.';
+  var noteHtml='💡 Tarif horaire : celui de la mission si connu, sinon le tarif de base Alfred (15€/h). Prix café et consommables lus directement depuis la colonne "Prix unitaire HT" du stock — modifie-la dès qu\'un prix change, aucun redéploiement nécessaire. Coût consommables = moyenne mensuelle calculée sur l\'historique propre à <strong>chaque site</strong> (entre sa 1ère et sa dernière livraison connue, indiqué entre parenthèses dans le tableau) — pas une moyenne globale partagée entre tous les sites.<br>📦 Colonne "Conso : coût → facturé" : à gauche de la flèche, ce qu\'on livre réellement au client en moyenne chaque mois (coût) ; à droite, ce qu\'il paye chaque mois pour son forfait (facturé). L\'écart en dessous (vert = marge, rouge = déficit) te dit si le forfait est encore calibré correctement, indépendamment du reste de sa marge.<br>⚠️ Les montants "'+moisLabel+'" du résumé ci-dessus supposent que les heures de ménage et les kg de café sont restés identiques à aujourd\'hui sur ce mois (pas d\'historique mensuel disponible pour ces deux postes) — seule la part consommables est vraiment recalculée mois par mois.';
   if(nbProduitsConsoInconnus){
     noteHtml+='<br>'+nbProduitsConsoInconnus+' ligne(s) produit livré sans prix unitaire trouvé dans le stock (nom peut-être orthographié différemment entre les deux fichiers).';
   }
