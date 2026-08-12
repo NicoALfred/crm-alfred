@@ -1305,6 +1305,20 @@ function renderRentabiliteSites(d){
     constatHtml+='• <span style="color:var(--vert)">✅ Aucun site en marge négative ou critique</span> actuellement.<br>';
   }
 
+  // Agents qui reviennent le plus sur les sites à problème (marge faible/négative ou déficit conso)
+  // — signe possible de surconsommation de produits/papier sur leurs sites
+  var sitesASurveiller=sites.filter(function(s){return s.marge<0||(s.tauxMarge!=null&&s.tauxMarge<20)||((s.caConso||0)-(s.coutConso||0)<0);});
+  var agentTotalSites={};
+  sites.forEach(function(s){if(s.agent)agentTotalSites[s.agent]=(agentTotalSites[s.agent]||0)+1;});
+  var agentRisque={};
+  sitesASurveiller.forEach(function(s){if(s.agent)agentRisque[s.agent]=(agentRisque[s.agent]||0)+1;});
+  var agentsSuspects=Object.keys(agentRisque).filter(function(a){return agentRisque[a]>=2;})
+    .map(function(a){return{agent:a,risque:agentRisque[a],total:agentTotalSites[a]||agentRisque[a]};})
+    .sort(function(a,b){return b.risque-a.risque;});
+  if(agentsSuspects.length>0){
+    constatHtml+='• 🧑‍🔧 <span style="color:var(--orange)">Agent(s) qui reviennent souvent sur les sites à problème</span> : '+agentsSuspects.map(function(a){return '<strong>'+a.agent+'</strong> ('+a.risque+'/'+a.total+' de ses sites)';}).join(', ')+' — à vérifier s\'il y a une surconsommation de produits/papier sur ces sites précis.<br>';
+  }
+
   // Ménage
   if(nbTarifDefaut>0){
     constatHtml+='• '+nbTarifDefaut+' site'+(nbTarifDefaut>1?'s':'')+' sans tarif de mission spécifique — facturé au tarif de base (15€/h) faute de correspondance trouvée dans le tableau des tarifs.<br>';
