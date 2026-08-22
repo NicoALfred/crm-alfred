@@ -303,10 +303,6 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-title" style="margin-top:8px">📈 Chronologie mensuelle (dates réelles des livraisons)</div>
       <div class="chart-wrap" style="height:240px"><canvas id="chartCafeConsoHisto"></canvas></div>
     </div>
-    <div class="chart-card" style="margin-top:20px">
-      <div class="chart-title">📦☕ Sites les plus en déficit sur café + conso combinés</div>
-      <div class="chart-wrap" style="height:280px"><canvas id="chartCafeConsoDeficit"></canvas></div>
-    </div>
 
     <div class="table-wrap" style="margin-top:24px">
       <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
@@ -1425,45 +1421,38 @@ function renderCafeConso(sites, historique){
   var couleurConso=margeConsoTotal>=0?'var(--vert)':'var(--rouge)';
   document.getElementById('cafe-conso-summary').innerHTML=
     '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
-      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px">☕ Café</div>'+
-      '<div style="font-size:12px">Facturé : <strong>'+fmt(caCafeTotal)+'</strong></div>'+
-      '<div style="font-size:12px">Coût réel : <strong>'+fmt(coutCafeTotal)+'</strong></div>'+
+      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px">☕ Café</div>'+
+      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle</div>'+
+      '<div style="font-size:12px">Facturé (actuel) : <strong>'+fmt(caCafeTotal)+'</strong></div>'+
+      '<div style="font-size:12px">Coût réel (moyenne/mois) : <strong>'+fmt(coutCafeTotal)+'</strong></div>'+
       '<div style="font-size:14px;margin-top:6px;color:'+couleurCafe+';font-weight:700">Marge : '+(margeCafeTotal>=0?'+':'')+Math.round(margeCafeTotal).toLocaleString('fr-FR')+' €/mois</div>'+
     '</div>'+
     '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
-      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px">📦 Consommables</div>'+
-      '<div style="font-size:12px">Facturé : <strong>'+fmt(caConsoTotal)+'</strong></div>'+
-      '<div style="font-size:12px">Coût réel : <strong>'+fmt(coutConsoTotal)+'</strong></div>'+
+      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px">📦 Consommables</div>'+
+      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle</div>'+
+      '<div style="font-size:12px">Facturé (actuel) : <strong>'+fmt(caConsoTotal)+'</strong></div>'+
+      '<div style="font-size:12px">Coût réel (moyenne/mois) : <strong>'+fmt(coutConsoTotal)+'</strong></div>'+
       '<div style="font-size:14px;margin-top:6px;color:'+couleurConso+';font-weight:700">Marge : '+(margeConsoTotal>=0?'+':'')+Math.round(margeConsoTotal).toLocaleString('fr-FR')+' €/mois</div>'+
     '</div>';
 
-  // Chronologie mensuelle réelle (dates issues du journal de livraisons)
+  // Chronologie mensuelle réelle (dates issues du journal de livraisons) : coût réel qui varie
+  // dans le temps, comparé au niveau de facturation actuel (ligne pointillée plate — on n'a pas
+  // d'historique de facturation mois par mois, seulement le montant du contrat en ce moment)
   if(window._chartCafeConsoHisto)window._chartCafeConsoHisto.destroy();
   if(historique.length>0){
+    var labelsH=historique.map(function(h){return h.label;});
     window._chartCafeConsoHisto=new Chart(document.getElementById('chartCafeConsoHisto'),{
       type:'line',
-      data:{labels:historique.map(function(h){return h.label;}),datasets:[
-        {label:'Café',data:historique.map(function(h){return h.cafe;}),borderColor:'#E8A040',backgroundColor:'rgba(232,160,64,0.08)',tension:0.3,pointRadius:3,borderWidth:2,fill:true},
-        {label:'Consommables',data:historique.map(function(h){return h.conso;}),borderColor:'#9B7FD4',backgroundColor:'rgba(155,127,212,0.08)',tension:0.3,pointRadius:3,borderWidth:2,fill:true}
+      data:{labels:labelsH,datasets:[
+        {label:'Café — coût réel',data:historique.map(function(h){return h.cafe;}),borderColor:'#E8A040',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Café — facturé (actuel)',data:labelsH.map(function(){return Math.round(caCafeTotal);}),borderColor:'#E8A040',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0},
+        {label:'Consommables — coût réel',data:historique.map(function(h){return h.conso;}),borderColor:'#9B7FD4',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Consommables — facturé (actuel)',data:labelsH.map(function(){return Math.round(caConsoTotal);}),borderColor:'#9B7FD4',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
       ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';}}}},scales:{y:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';}}}},scales:{y:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
     });
   }else{
     document.getElementById('chartCafeConsoHisto').parentElement.innerHTML='<div class="empty-state"><p>Pas encore assez de livraisons datées pour tracer une chronologie.</p></div>';
-  }
-
-  // Sites les plus en déficit sur café + conso combinés (facturé − coûté)
-  var siteAvecCafeConso=sites.filter(function(s){return (s.caCafe>0||s.coutCafe>0)||(s.caConso>0||s.coutConso>0);})
-    .map(function(s){return{societe:s.societe,ecart:((s.caCafe||0)+(s.caConso||0))-((s.coutCafe||0)+(s.coutConso||0))};})
-    .sort(function(a,b){return a.ecart-b.ecart;})
-    .slice(0,10);
-  if(window._chartCafeConsoDeficit)window._chartCafeConsoDeficit.destroy();
-  if(siteAvecCafeConso.length>0){
-    window._chartCafeConsoDeficit=new Chart(document.getElementById('chartCafeConsoDeficit'),{
-      type:'bar',
-      data:{labels:siteAvecCafeConso.map(function(s){return s.societe;}),datasets:[{label:'Écart facturé − coûté',data:siteAvecCafeConso.map(function(s){return Math.round(s.ecart);}),backgroundColor:siteAvecCafeConso.map(function(s){return s.ecart<0?'#D94F4F':'#4DA882';})}]},
-      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return (ctx.parsed.x>=0?'+':'')+ctx.parsed.x+' €';}}}},scales:{x:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
-    });
   }
 }
 
