@@ -1412,24 +1412,29 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
 function renderCafeConso(sites, historique){
   // Résumé café vs conso, isolés du ménage
   var caCafeTotal=sites.reduce(function(s,x){return s+(x.caCafe||0);},0);
-  var coutCafeTotal=sites.reduce(function(s,x){return s+(x.coutCafe||0);},0);
-  var margeCafeTotal=caCafeTotal-coutCafeTotal;
   var caConsoTotal=sites.reduce(function(s,x){return s+(x.caConso||0);},0);
-  var coutConsoTotal=sites.reduce(function(s,x){return s+(x.coutConso||0);},0);
+  // Coût réel = moyenne sur la même chronologie que le graphique juste en dessous (mois où on a
+  // des dates réelles de livraison) — pas un instantané basé sur la consommation actuelle, pour
+  // que la carte et le graphique racontent exactement la même histoire
+  var nbMoisHisto=historique.length;
+  var coutCafeTotal=nbMoisHisto?historique.reduce(function(s,h){return s+h.cafe;},0)/nbMoisHisto:0;
+  var coutConsoTotal=nbMoisHisto?historique.reduce(function(s,h){return s+h.conso;},0)/nbMoisHisto:0;
+  var periodeTxt=nbMoisHisto?' ('+historique[0].label+' → '+historique[nbMoisHisto-1].label+')':'';
+  var margeCafeTotal=caCafeTotal-coutCafeTotal;
   var margeConsoTotal=caConsoTotal-coutConsoTotal;
   var couleurCafe=margeCafeTotal>=0?'var(--vert)':'var(--rouge)';
   var couleurConso=margeConsoTotal>=0?'var(--vert)':'var(--rouge)';
   document.getElementById('cafe-conso-summary').innerHTML=
     '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
       '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px">☕ Café</div>'+
-      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle</div>'+
+      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle'+periodeTxt+'</div>'+
       '<div style="font-size:12px">Facturé (actuel) : <strong>'+fmt(caCafeTotal)+'</strong></div>'+
       '<div style="font-size:12px">Coût réel (moyenne/mois) : <strong>'+fmt(coutCafeTotal)+'</strong></div>'+
       '<div style="font-size:14px;margin-top:6px;color:'+couleurCafe+';font-weight:700">Marge : '+(margeCafeTotal>=0?'+':'')+Math.round(margeCafeTotal).toLocaleString('fr-FR')+' €/mois</div>'+
     '</div>'+
     '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
       '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2px">📦 Consommables</div>'+
-      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle</div>'+
+      '<div style="font-size:9px;color:var(--gris);margin-bottom:10px">Facturé = contrat actuel · Coût = moyenne mensuelle réelle'+periodeTxt+'</div>'+
       '<div style="font-size:12px">Facturé (actuel) : <strong>'+fmt(caConsoTotal)+'</strong></div>'+
       '<div style="font-size:12px">Coût réel (moyenne/mois) : <strong>'+fmt(coutConsoTotal)+'</strong></div>'+
       '<div style="font-size:14px;margin-top:6px;color:'+couleurConso+';font-weight:700">Marge : '+(margeConsoTotal>=0?'+':'')+Math.round(margeConsoTotal).toLocaleString('fr-FR')+' €/mois</div>'+
