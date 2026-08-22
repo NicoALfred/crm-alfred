@@ -296,6 +296,18 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-title">🥧 Répartition CA vs coût main d'œuvre (ménage + café + conso, mensuel actuel)</div>
       <div class="chart-wrap" style="height:240px"><canvas id="chartRepartitionCout"></canvas></div>
     </div>
+
+    <div class="chart-card" style="margin-top:24px">
+      <div class="chart-title">☕📦 Café & Consommables — vue dédiée</div>
+      <div id="cafe-conso-summary" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px"></div>
+      <div class="chart-title" style="margin-top:8px">📈 Chronologie mensuelle (dates réelles des livraisons)</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="chartCafeConsoHisto"></canvas></div>
+    </div>
+    <div class="chart-card" style="margin-top:20px">
+      <div class="chart-title">📦☕ Sites les plus en déficit sur café + conso combinés</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartCafeConsoDeficit"></canvas></div>
+    </div>
+
     <div class="table-wrap" style="margin-top:24px">
       <div id="rentabilite-sites-table"><div class="loading">Chargement…</div></div>
     </div>
@@ -1360,6 +1372,7 @@ function renderRentabiliteSites(d){
   noteHtml+='<br>☕ Marge café et coût consommables pas encore inclus — en attente du token Pennylane (factures fournisseurs) et des prix unitaires dans le stock.';
   document.getElementById('rentabilite-primes-note').innerHTML=noteHtml;
   renderGraphiquesRentabilite(sites, caTotal, coutTotal);
+  renderCafeConso(sites, (d&&d.historiqueCafeConso)||[]);
 }
 
 function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
@@ -1398,6 +1411,60 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
       tooltip:{callbacks:{label:function(ctx){var pct=totalDonut>0?Math.round(ctx.parsed/totalDonut*100):0;return ctx.label+' : '+Math.round(ctx.parsed).toLocaleString('fr-FR')+' € ('+pct+'%)';}}}
     },cutout:'65%'}
   });
+}
+
+function renderCafeConso(sites, historique){
+  // Résumé café vs conso, isolés du ménage
+  var caCafeTotal=sites.reduce(function(s,x){return s+(x.caCafe||0);},0);
+  var coutCafeTotal=sites.reduce(function(s,x){return s+(x.coutCafe||0);},0);
+  var margeCafeTotal=caCafeTotal-coutCafeTotal;
+  var caConsoTotal=sites.reduce(function(s,x){return s+(x.caConso||0);},0);
+  var coutConsoTotal=sites.reduce(function(s,x){return s+(x.coutConso||0);},0);
+  var margeConsoTotal=caConsoTotal-coutConsoTotal;
+  var couleurCafe=margeCafeTotal>=0?'var(--vert)':'var(--rouge)';
+  var couleurConso=margeConsoTotal>=0?'var(--vert)':'var(--rouge)';
+  document.getElementById('cafe-conso-summary').innerHTML=
+    '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px">☕ Café</div>'+
+      '<div style="font-size:12px">Facturé : <strong>'+fmt(caCafeTotal)+'</strong></div>'+
+      '<div style="font-size:12px">Coût réel : <strong>'+fmt(coutCafeTotal)+'</strong></div>'+
+      '<div style="font-size:14px;margin-top:6px;color:'+couleurCafe+';font-weight:700">Marge : '+(margeCafeTotal>=0?'+':'')+Math.round(margeCafeTotal).toLocaleString('fr-FR')+' €/mois</div>'+
+    '</div>'+
+    '<div style="background:var(--blanc-casse);border-radius:8px;padding:16px">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px">📦 Consommables</div>'+
+      '<div style="font-size:12px">Facturé : <strong>'+fmt(caConsoTotal)+'</strong></div>'+
+      '<div style="font-size:12px">Coût réel : <strong>'+fmt(coutConsoTotal)+'</strong></div>'+
+      '<div style="font-size:14px;margin-top:6px;color:'+couleurConso+';font-weight:700">Marge : '+(margeConsoTotal>=0?'+':'')+Math.round(margeConsoTotal).toLocaleString('fr-FR')+' €/mois</div>'+
+    '</div>';
+
+  // Chronologie mensuelle réelle (dates issues du journal de livraisons)
+  if(window._chartCafeConsoHisto)window._chartCafeConsoHisto.destroy();
+  if(historique.length>0){
+    window._chartCafeConsoHisto=new Chart(document.getElementById('chartCafeConsoHisto'),{
+      type:'line',
+      data:{labels:historique.map(function(h){return h.label;}),datasets:[
+        {label:'Café',data:historique.map(function(h){return h.cafe;}),borderColor:'#E8A040',backgroundColor:'rgba(232,160,64,0.08)',tension:0.3,pointRadius:3,borderWidth:2,fill:true},
+        {label:'Consommables',data:historique.map(function(h){return h.conso;}),borderColor:'#9B7FD4',backgroundColor:'rgba(155,127,212,0.08)',tension:0.3,pointRadius:3,borderWidth:2,fill:true}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';}}}},scales:{y:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
+    });
+  }else{
+    document.getElementById('chartCafeConsoHisto').parentElement.innerHTML='<div class="empty-state"><p>Pas encore assez de livraisons datées pour tracer une chronologie.</p></div>';
+  }
+
+  // Sites les plus en déficit sur café + conso combinés (facturé − coûté)
+  var siteAvecCafeConso=sites.filter(function(s){return (s.caCafe>0||s.coutCafe>0)||(s.caConso>0||s.coutConso>0);})
+    .map(function(s){return{societe:s.societe,ecart:((s.caCafe||0)+(s.caConso||0))-((s.coutCafe||0)+(s.coutConso||0))};})
+    .sort(function(a,b){return a.ecart-b.ecart;})
+    .slice(0,10);
+  if(window._chartCafeConsoDeficit)window._chartCafeConsoDeficit.destroy();
+  if(siteAvecCafeConso.length>0){
+    window._chartCafeConsoDeficit=new Chart(document.getElementById('chartCafeConsoDeficit'),{
+      type:'bar',
+      data:{labels:siteAvecCafeConso.map(function(s){return s.societe;}),datasets:[{label:'Écart facturé − coûté',data:siteAvecCafeConso.map(function(s){return Math.round(s.ecart);}),backgroundColor:siteAvecCafeConso.map(function(s){return s.ecart<0?'#D94F4F':'#4DA882';})}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return (ctx.parsed.x>=0?'+':'')+ctx.parsed.x+' €';}}}},scales:{x:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
+    });
+  }
 }
 
 function changerStatutMenu2(id,s){
