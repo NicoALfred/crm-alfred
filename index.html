@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -1485,7 +1485,15 @@ function ajouterAssigne(){
   var n=prompt('Prénom :');
   if(n&&n.trim()&&!assignesList.includes(n.trim())){assignesList.push(n.trim());renderAssigneSelect();document.getElementById('f-assigne').value=n.trim();}
 }
-function ouvrirModalLead(){renderServicesCheckboxes();renderAssigneSelect();setType('Récurrent');ouvrirModal('modal-lead');}
+function ouvrirModalLead(){
+  ['f-nom','f-poste','f-entreprise','f-email','f-tel','f-montant','f-debut','f-devis','f-commentaires'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  document.getElementById('f-statut').value='';
+  document.getElementById('f-source').value='Prospection';
+  renderServicesCheckboxes();renderAssigneSelect();setType('Récurrent');ouvrirModal('modal-lead');
+}
 var _enregistrementEnCours=false;
 async function sauvegarderLead(){
   if(_enregistrementEnCours)return;
