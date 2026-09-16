@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -258,7 +258,13 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-title" id="tendance-title">📈 Tendance CA depuis 2023</div>
       <div class="chart-wrap" style="height:260px"><canvas id="chartTendance"></canvas></div>
     </div>
-    <div id="evolution-mensuelle-section" style="margin-bottom:24px"></div>
+    <div id="evolution-mensuelle-section" style="margin-bottom:24px">
+      <div class="chart-card">
+        <div class="chart-title" id="evolution-mensuelle-title">📊 Évolution mensuelle du CA</div>
+        <div class="chart-wrap" style="height:240px"><canvas id="chartEvolutionMensuelle"></canvas></div>
+        <div id="evolution-mensuelle-table" style="margin-top:16px;max-height:280px;overflow-y:auto"></div>
+      </div>
+    </div>
   </div>
   <div class="page" id="page-pipeline">
     <div class="page-header">
@@ -770,8 +776,7 @@ function renderTendance(histo){
   });
 }
 function renderEvolutionMensuelle(histo){
-  var section=document.getElementById('evolution-mensuelle-section');
-  if(!histo||!histo.length){section.innerHTML='';return;}
+  if(!histo||!histo.length){return;}
   var trie=histo.slice().sort(function(a,b){return (a.annee-b.annee)||(a.mois-b.mois);});
   var lignes=trie.map(function(m,i){
     var precedent=i>0?trie[i-1]:null;
@@ -781,13 +786,33 @@ function renderEvolutionMensuelle(histo){
   var evolsValides=lignes.filter(function(l){return l.evol!=null;}).map(function(l){return l.evol;});
   var moyenne=evolsValides.length?evolsValides.reduce(function(s,e){return s+e;},0)/evolsValides.length:0;
   var couleurMoyenne=moyenne>=0?'var(--vert)':'var(--rouge)';
+  document.getElementById('evolution-mensuelle-title').innerHTML='📊 Évolution mensuelle du CA <span style="color:'+couleurMoyenne+'">— moyenne '+(moyenne>=0?'+':'')+moyenne.toFixed(1)+'%/mois vs M-1</span>';
+
+  if(window._chartEvolutionMensuelle)window._chartEvolutionMensuelle.destroy();
+  window._chartEvolutionMensuelle=new Chart(document.getElementById('chartEvolutionMensuelle'),{
+    data:{labels:lignes.map(function(l){return l.label;}),datasets:[
+      {type:'bar',label:'CA',data:lignes.map(function(l){return l.ca;}),backgroundColor:'rgba(168,213,220,0.55)',yAxisID:'y',order:2},
+      {type:'line',label:'Évolution vs M-1',data:lignes.map(function(l){return l.evol;}),borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:true}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){
+        if(ctx.dataset.label==='CA')return 'CA : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';
+        return ctx.parsed.y==null?null:'Évolution : '+(ctx.parsed.y>=0?'+':'')+ctx.parsed.y.toFixed(1)+'%';
+      }}}},
+      scales:{
+        y:{position:'left',ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},
+        y1:{position:'right',ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{display:false}},
+        x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}
+      }
+    }
+  });
+
   var rowsHtml=lignes.slice().reverse().map(function(l){
     var evolTxt=l.evol==null?'—':(l.evol>=0?'+':'')+l.evol.toFixed(1)+'%';
     var evolCouleur=l.evol==null?'var(--gris)':(l.evol>=0?'var(--vert)':'var(--rouge)');
     return '<tr><td>'+l.label+'</td><td>'+fmt(l.ca)+'</td><td style="color:'+evolCouleur+';font-weight:700">'+evolTxt+'</td></tr>';
   }).join('');
-  section.innerHTML='<div class="chart-card"><div class="chart-title">📊 Évolution mensuelle du CA <span style="color:'+couleurMoyenne+'">— moyenne '+(moyenne>=0?'+':'')+moyenne.toFixed(1)+'%/mois vs M-1</span></div>'+
-    '<div style="max-height:340px;overflow-y:auto"><table><thead><tr><th>Mois</th><th>CA</th><th>Évolution vs M-1</th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div></div>';
+  document.getElementById('evolution-mensuelle-table').innerHTML='<table><thead><tr><th>Mois</th><th>CA</th><th>Évolution vs M-1</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';
 }
 // KANBAN
 function renderKanban(){
