@@ -258,6 +258,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
       <div class="chart-title" id="tendance-title">📈 Tendance CA depuis 2023</div>
       <div class="chart-wrap" style="height:260px"><canvas id="chartTendance"></canvas></div>
     </div>
+    <div id="evolution-mensuelle-section" style="margin-bottom:24px"></div>
   </div>
   <div class="page" id="page-pipeline">
     <div class="page-header">
@@ -720,6 +721,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
     chartHisto=new Chart(document.getElementById('chartHistorique'),{type:'line',data:{labels:noms12,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}});
   }
   renderTendance(histo);
+  renderEvolutionMensuelle(histo);
 }
 
 // Courbe continue (pas année par année) depuis 2023 + droite de tendance (régression linéaire)
@@ -766,6 +768,26 @@ function renderTendance(histo){
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}}}
   });
+}
+function renderEvolutionMensuelle(histo){
+  var section=document.getElementById('evolution-mensuelle-section');
+  if(!histo||!histo.length){section.innerHTML='';return;}
+  var trie=histo.slice().sort(function(a,b){return (a.annee-b.annee)||(a.mois-b.mois);});
+  var lignes=trie.map(function(m,i){
+    var precedent=i>0?trie[i-1]:null;
+    var evol=(precedent&&precedent.ca>0)?((m.ca-precedent.ca)/precedent.ca*100):null;
+    return {label:m.label,ca:m.ca,evol:evol};
+  });
+  var evolsValides=lignes.filter(function(l){return l.evol!=null;}).map(function(l){return l.evol;});
+  var moyenne=evolsValides.length?evolsValides.reduce(function(s,e){return s+e;},0)/evolsValides.length:0;
+  var couleurMoyenne=moyenne>=0?'var(--vert)':'var(--rouge)';
+  var rowsHtml=lignes.slice().reverse().map(function(l){
+    var evolTxt=l.evol==null?'—':(l.evol>=0?'+':'')+l.evol.toFixed(1)+'%';
+    var evolCouleur=l.evol==null?'var(--gris)':(l.evol>=0?'var(--vert)':'var(--rouge)');
+    return '<tr><td>'+l.label+'</td><td>'+fmt(l.ca)+'</td><td style="color:'+evolCouleur+';font-weight:700">'+evolTxt+'</td></tr>';
+  }).join('');
+  section.innerHTML='<div class="chart-card"><div class="chart-title">📊 Évolution mensuelle du CA <span style="color:'+couleurMoyenne+'">— moyenne '+(moyenne>=0?'+':'')+moyenne.toFixed(1)+'%/mois vs M-1</span></div>'+
+    '<div style="max-height:340px;overflow-y:auto"><table><thead><tr><th>Mois</th><th>CA</th><th>Évolution vs M-1</th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div></div>';
 }
 // KANBAN
 function renderKanban(){
