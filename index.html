@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bleu:#A8D5DC;--bleu-pale:#D6EEF2;--noir:#1A1A1A;--gris:#6B6B6B;--gris-clair:#F0F0F0;--blanc-casse:#F8F6F2;--blanc:#FFFFFF;--rouge:#D94F4F;--orange:#E8A040;--vert:#4DA882;--violet:#9B7FD4;--violet-pale:#F0EBF9;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);}
+:root{--bleu:#C17A56;--bleu-pale:#F0DDD0;--noir:#1A1A1A;--gris:#6E655C;--gris-clair:#F0ECE6;--blanc-casse:#F8F6F2;--blanc:#FFFFFF;--rouge:#B5654F;--orange:#C99A5B;--vert:#8B9574;--violet:#A88B7A;--violet-pale:#F2E9E2;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
@@ -17,8 +17,8 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .sidebar-nav{flex:1;padding:20px 0;display:flex;flex-direction:column;gap:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;color:rgba(255,255,255,0.45);font-size:12px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-transform:uppercase;}
 .nav-item:hover{color:var(--blanc);background:rgba(255,255,255,0.07);}
-.nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
-.nav-item .icon{font-size:16px;width:20px;text-align:center;}
+.nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(193,122,86,0.1);font-weight:600;}
+.nav-item .icon{width:20px;display:inline-flex;align-items:center;justify-content:center;}
 .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
 .btn-add-lead{position:relative;width:100%;padding:11px;background:linear-gradient(180deg,#C9EAEE 0%,var(--bleu) 100%);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 4px 0 #6FA8B2,0 6px 10px rgba(0,0,0,0.25);transition:transform 0.08s,box-shadow 0.08s,filter 0.15s;}
 .btn-add-lead:hover{filter:brightness(1.03);}
@@ -33,7 +33,7 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .page-subtitle{font-size:13px;color:var(--gris);margin-top:6px;}
 .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:24px;}
 .stat-card{background:var(--blanc);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border-top:3px solid transparent;}
-.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.teal{border-top-color:#3A9AAA;}
+.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.teal{border-top-color:#8A7361;}
 .stat-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
 .stat-value{font-size:26px;font-weight:700;color:var(--noir);line-height:1;}
 .stat-value span{font-size:13px;font-weight:400;color:var(--gris);}
@@ -86,7 +86,7 @@ body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-ser
 .card-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-bottom:5px;}
 .badge-actif{background:#E0F5EC;color:var(--vert);}
 .badge-futur{background:#FFF3E0;color:var(--orange);}
-.badge-recurrent{background:var(--bleu-pale);color:#3A9AAA;}
+.badge-recurrent{background:var(--bleu-pale);color:#8A7361;}
 .badge-oneshot{background:#DDD0F5;color:var(--violet);}
 .badge-annulee{background:#FFECEC;color:var(--rouge);}
 .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:4px;}
@@ -147,7 +147,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .btn-add-assigne{padding:9px 12px;background:var(--gris-clair);border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
 .type-toggle{display:flex;gap:8px;}
 .type-btn{flex:1;padding:9px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:11px;cursor:pointer;text-align:center;transition:all 0.15s;background:var(--blanc);}
-.type-btn.active-recurrent{background:var(--bleu-pale);border-color:var(--bleu);color:#3A9AAA;font-weight:700;}
+.type-btn.active-recurrent{background:var(--bleu-pale);border-color:var(--bleu);color:#8A7361;font-weight:700;}
 .type-btn.active-oneshot{background:var(--violet-pale);border-color:var(--violet);color:var(--violet);font-weight:700;}
 .modal-footer{padding:18px 30px 26px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
 .btn-secondary{padding:9px 22px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
@@ -181,7 +181,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .marge-kpi-lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
 .marge-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .taux-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;}
-.signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;}
+.signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#8B9574;}
 .lock-screen{display:none;position:fixed;inset:0;background:var(--noir);z-index:5000;align-items:center;justify-content:center;}
 .lock-screen.open{display:flex;}
 .lock-box{background:var(--blanc);border-radius:14px;padding:36px 32px;width:320px;max-width:90vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
@@ -222,10 +222,10 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1093.7 312.78"><g><path d="M16.12,173.86C30.52,140.76,74.25,31.66,74.25,11.52c0-4.03-.56-6.91-2.02-8.93,10.95-1.72,25.92-2.59,34.83-2.59,10.95,0,14.11,2.31,16.99,10.37l54.4,150.24c5.77,16.71,12.37,32.53,19.29,42.33h-60.73c3.45-7.78,3.45-19.87-2.32-36.56l-12.37-34.83h-61.59c-.28,20.16,3.75,49.22,2.02,59.01-.56,9.77-6.61,12.37-18.98,12.37H0c5.46-7.5,10.36-15.54,16.12-29.09ZM120.02,124.94L80.88,14.11c-11.51,35.69-20.44,75.7-19.87,110.83h59.01Z" style="fill:#fff"/><path d="M229.22,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h68.51c-12.37,11.52-16.71,32.24-16.71,57.85v102.19c0,16.41.3,28.5,2.32,37.15h4.03c36.54,0,52.38-46.45,77.13-46.45v8.74c0,13.8,0,28.19,3.75,42.02h-139.03c6.61-8.93,8.91-22.17,8.91-41.46Z" style="fill:#fff"/><path d="M562.7,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h75.12c50.95,0,78.58,18.42,78.58,52.39,0,29.06-20.72,46.92-57,51.82,33.68,50.65,52.97,73.69,71.39,78.28-5.18,14.7-19.85,21.89-34.83,21.89-19.85,0-36.56-26.48-74.27-98.46h-7.2v54.12c0,19.29,2.02,32.53,8.65,41.46h-60.44c6.61-8.93,8.91-22.17,8.91-41.46ZM621.44,102.19c24.75,0,40.57-17.27,40.57-48.35s-15.54-47.5-44.32-47.5h-12.09v94.98c4.9.59,10.95.87,15.84.87Z" style="fill:#fff"/><path d="M932.78,161.48V41.17c0-18.14-2.3-30.52-8.91-39.73h73.1c62.18,0,96.73,44.33,96.73,100.46s-30.52,101.04-94.12,101.04h-75.7c6.61-8.93,8.91-22.17,8.91-41.46ZM979.42,197.18l15.26.59c37.41,0,50.95-43.48,50.95-95.86,0-57.28-20.44-95.57-54.98-95.57h-14.98v155.14c0,15.54,1.15,27.07,3.75,35.69Z" style="fill:#fff"/><path d="M787.22,92.85l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M424.51,91.17l-19.6,12.51c58.6,6.68,73.17,14.09,86.73,8.18,11.34-4.94,15.2-23.13,9.03-33.2-11.44,9.75-33.32,12.5-76.16,12.5Z" style="fill:#fff"/><path d="M746.76,202.94h145.92c-4.03-12.09-4.03-24.75-4.03-36.84v-7.59c-23.02,0-44.04,40.12-78.87,40.12h-5.18c-4.59-8.65-6.05-20.74-6.05-37.15v-56.98c.92.2,1.82.42,2.72.64v-6.22c-.9.13-1.81.24-2.72.4V6.05h7.2c43.48,0,58.15,35.5,82.34,35.5v-7.58c0-10.95.28-21.88,4.03-32.53h-145.36c6.61,9.21,8.91,21.59,8.91,39.73v120.31c0,19.29-2.3,32.53-8.91,41.46Z" style="fill:#fff"/><path d="M384.16,1.44c6.63,9.21,8.93,21.59,8.93,39.73v120.31c0,19.29-2.3,32.53-8.93,41.46h68.51c-12.37-10.08-16.69-36.28-16.69-57.87v-39.42c.72.16,1.41.33,2.12.5v-6.08c-.71.13-1.41.27-2.12.4V6.05h7.19c42.59,0,57.56,36.08,81.16,36.36v-8.43c0-10.95.28-21.88,4.03-32.53h-144.21Z" style="fill:#fff"/></g><g><g><path d="M94.8,300.08v-18.36h-.21l-8.97,15.13h-.74l-8.97-15.13h-.21v18.36h-4.42v-27h4.75l9.39,15.92h.08l9.39-15.92h4.55v27h-4.63Z" style="fill:#fff"/><path d="M126.88,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M168.85,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M190.15,273.08h4.22l12.53,27h-5.09l-3.27-7.28h-12.86l-3.23,7.28h-4.84l12.53-27ZM187.34,289.08h9.55l-4.63-10.46h-.25l-4.67,10.46Z" style="fill:#fff"/><path d="M236.96,280.03c-2.27-2.27-6.12-3.64-9.3-3.64-5.83,0-9.92,4.63-9.92,10.21,0,5.21,3.56,10.17,10.38,10.17,2.81,0,6.12-.83,7.94-2.19v-5.42h-8.48v-4.13h12.69v11.83c-3.39,2.48-8.19,4.05-12.45,4.05-8.56,0-14.93-6.41-14.93-14.35s6.45-14.31,14.72-14.31c4.3,0,8.89,1.74,12.57,4.88l-3.23,2.89Z" style="fill:#fff"/><path d="M266.69,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M296.71,300.08v-27h14.89c3.8,0,6.16,1.08,7.82,2.85,1.45,1.57,2.15,3.43,2.15,5.42,0,2.32-.95,4.34-2.48,5.83-1.61,1.53-3.89,2.52-7.48,2.52h-10.26v10.38h-4.63ZM301.34,277.22v8.35h10.26c1.16,0,2.77-.08,4.09-1.32.79-.75,1.24-1.78,1.24-2.85s-.41-1.99-1.12-2.73c-1.24-1.32-2.89-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M330.82,300.08v-27h14.89c3.6,0,6.08.99,7.82,2.85,1.36,1.45,2.15,3.35,2.15,5.42,0,3.64-2.4,6.41-5.95,7.73l6.45,11h-5.33l-5.79-10.38h-9.59v10.38h-4.63ZM335.45,277.22v8.35h11.08c2.44,0,4.51-1.9,4.51-4.22,0-1.03-.41-1.94-1.12-2.69-1.28-1.32-2.77-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M379.08,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM379.08,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M404.38,300.08v-27h21.71v4.13h-17.08v6.7h10.38v4.13h-10.38v12.03h-4.63Z" style="fill:#fff"/><path d="M449.83,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M486.55,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M520.08,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M534.51,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M564.37,272.25c8.52,0,15.3,6.37,15.3,14.27s-6.78,14.39-15.3,14.39-15.18-6.37-15.18-14.39,6.66-14.27,15.18-14.27ZM564.37,296.78c5.83,0,10.42-4.63,10.42-10.25s-4.59-10.13-10.42-10.13-10.3,4.55-10.3,10.13,4.51,10.25,10.3,10.25Z" style="fill:#fff"/><path d="M614.03,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M650.83,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M678.29,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M700.53,273.08v22.87h16.58v4.13h-21.21v-27h4.63Z" style="fill:#fff"/><path d="M757.47,273.08h25.84v4.13h-10.59v22.87h-4.63v-22.87h-10.63v-4.13Z" style="fill:#fff"/><path d="M792.33,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M828.51,279.41c-1.49-1.36-4.84-3.14-9.8-3.14-3.23,0-6.08,1.03-6.08,3.89s4.01,3.06,8.1,3.35c4.84.33,12.45.83,12.45,8.35,0,6.53-5.46,9.06-11.91,9.06-7.11,0-11.74-2.94-14.76-5.67l2.81-3.22c2.19,1.98,6,4.88,12.03,4.88,4.01,0,7.2-1.37,7.2-4.42,0-3.39-3.1-4.09-7.82-4.47-5.95-.41-12.74-.91-12.74-7.44s5.91-8.31,10.88-8.31c5.71,0,10.3,2.23,12.45,3.93l-2.81,3.22Z" style="fill:#fff"/><path d="M851.79,273.08h4.22l12.53,27h-5.09l-3.27-7.28h-12.86l-3.23,7.28h-4.84l12.53-27ZM848.98,289.08h9.55l-4.63-10.46h-.25l-4.67,10.46Z" style="fill:#fff"/><path d="M901.66,273.08v27h-4.09l-15.59-18.73h-.04v18.73h-4.63v-27h4.09l15.59,18.73h.04v-18.73h4.63Z" style="fill:#fff"/><path d="M929.11,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/><path d="M946.73,300.08v-27h14.89c3.6,0,6.08.99,7.82,2.85,1.36,1.45,2.15,3.35,2.15,5.42,0,3.64-2.4,6.41-5.95,7.73l6.45,11h-5.33l-5.79-10.38h-9.59v10.38h-4.63ZM951.36,277.22v8.35h11.08c2.44,0,4.51-1.9,4.51-4.22,0-1.03-.41-1.94-1.12-2.69-1.28-1.32-2.77-1.45-4.22-1.45h-10.26Z" style="fill:#fff"/><path d="M982.21,300.08v-27h4.63v27h-4.63Z" style="fill:#fff"/><path d="M1014.3,288.05h-10.38v7.9h18.28v4.13h-22.91v-27h21.92v4.13h-17.29v6.7h10.38v4.13Z" style="fill:#fff"/></g><circle cx="740.23" cy="286.33" r="2.47" style="fill:#fff"/></g></svg>
   </div>
   <nav class="sidebar-nav">
-    <div class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="icon">🏠</span> Dashboard</div>
-    <div class="nav-item" data-page="pipeline" onclick="goTo('pipeline')"><span class="icon">🎯</span> Pipeline</div>
-    <div class="nav-item" data-page="clients" onclick="goTo('clients')"><span class="icon">🏢</span> Clients</div>
-    <div class="nav-item" data-page="rentabilite" onclick="goTo('rentabilite')"><span class="icon">💰</span> Rentabilité</div>
+    <div class="nav-item active" data-page="dashboard" onclick="goTo('dashboard')"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M9.5 20v-6h5v6"/></svg></span> Dashboard</div>
+    <div class="nav-item" data-page="pipeline" onclick="goTo('pipeline')"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 7.5v6L10 20v-7.5z"/></svg></span> Pipeline</div>
+    <div class="nav-item" data-page="clients" onclick="goTo('clients')"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3.5" width="14" height="17" rx="1"/><path d="M9.5 20.5v-4h5v4"/><path d="M8.5 7.5h1M14.5 7.5h1M8.5 11.5h1M14.5 11.5h1"/></svg></span> Clients</div>
+    <div class="nav-item" data-page="rentabilite" onclick="goTo('rentabilite')"><span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 13.5 11 11l2 2 3-3.5"/></svg></span> Rentabilité</div>
   </nav>
   <div class="sidebar-bottom"><button class="btn-add-lead" onclick="ouvrirModalLead()">+ Nouveau prospect</button></div>
 </aside>
@@ -577,14 +577,16 @@ function renderDashboard(d){
     cvBadge.style.display='flex';
     cvBadge.innerHTML='⏱️ Cycle de vente moyen : <span style="color:var(--gris)">pas encore de conversion enregistrée — se remplira au fil des prochaines confirmations ("Marquer comme signé" / "Confirmer le one-shot")</span>';
   }
-  const ru=leadsData.filter(l=>STATUTS_ACTIFS.includes(l['Statut'])&&diffJ(l['Date dernière relance'])>=7).length;
+  const leadsDevis=leadsData.filter(function(l){return l['Statut']==='Devis envoyé';});
+  const totalDevis=leadsDevis.reduce(function(s,l){return s+(parseFloat(l['Montant estimé (€/mois)'])||0);},0);
+  const totalMRRPotentiel=leadsDevis.filter(function(l){return l['Type']!=='One-shot';}).reduce(function(s,l){return s+(parseFloat(l['Montant estimé (€/mois)'])||0);},0);
   const av=d.contratsAVenir||0;
   document.getElementById('stats-grid').innerHTML=
     '<div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">'+(d.nbClientsActifs||'—')+' clients · '+av+' à venir</div></div>'+
     '<div class="stat-card teal"><div class="stat-label">MRR</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">Revenu récurrent mensuel (hors one-shots)</div></div>'+
     '<div class="stat-card vert"><div class="stat-label">CA réel 2026</div><div class="stat-value">'+fmt(d.caReel2026)+'</div><div class="stat-sub">Jan → Juil 2026</div></div>'+
     '<div class="stat-card violet"><div class="stat-label">CA estimé fin 2026</div><div class="stat-value">'+fmt(d.caEstime2026)+'</div><div class="stat-sub">Avec clients actuels + contrats à venir</div></div>'+
-    '<div class="stat-card rouge"><div class="stat-label">Relances urgentes</div><div class="stat-value">'+ru+'<span> leads</span></div><div class="stat-sub">'+(d.leadsEnCours||0)+' leads en cours</div></div>';
+    '<div class="stat-card rouge"><div class="stat-label">Devis envoyés</div><div class="stat-value">'+leadsDevis.length+'<span> devis</span></div><div class="stat-sub">Total : '+fmt(totalDevis)+' · dont MRR potentiel : '+fmt(totalMRRPotentiel)+'</div></div>';
 
   // Bannière one-shots
   if(d.caOneShots!=null){
@@ -600,12 +602,27 @@ function renderDashboard(d){
       '</div></div>';
   }
 
-  const pct=Math.min(Math.round((d.caEstime2026/d.objectif2026)*100),100);
-  document.getElementById('objectif-section').innerHTML=
-    '<div class="objectif-card"><div class="objectif-header"><div class="objectif-title">🎯 Objectif 2026</div>'+
-    '<div class="objectif-chiffres"><strong>'+fmt(d.caEstime2026)+'</strong> estimé sur <strong>'+fmt(d.objectif2026)+'</strong></div></div>'+
-    '<div class="barre-fond"><div class="barre-remplissage" style="width:'+pct+'%"></div></div>'+
-    '<div class="objectif-pct">'+pct+'%</div></div>';
+  const dataPaliers=d.paliersMRR||{mrrActuel:d.caMensuel,paliers:[]};
+  const pal=dataPaliers.paliers||[];
+  let paliersHtml='';
+  if(pal.length){
+    const minP=pal[0].valeur,maxP=pal[pal.length-1].valeur;
+    const pctBar=Math.max(0,Math.min(100,((dataPaliers.mrrActuel-minP)/(maxP-minP))*100));
+    const ticks=pal.map(function(p){
+      const pos=((p.valeur-minP)/(maxP-minP))*100;
+      const check=p.atteint?'<span style="color:var(--vert);font-size:13px">✔</span>':'<span style="color:#D8D2C8;font-size:13px">○</span>';
+      return '<div style="position:absolute;left:'+pos+'%;transform:translateX(-50%);text-align:center;top:100%;margin-top:8px;white-space:nowrap">'+
+        '<div style="font-size:9px;color:var(--gris)">'+(p.valeur/1000)+'k€</div>'+
+        '<div style="margin-top:2px">'+check+'</div></div>';
+    }).join('');
+    paliersHtml='<div class="objectif-card"><div class="objectif-header"><div class="objectif-title">🎯 Paliers MRR — prime tous les 5 000€</div>'+
+      '<div class="objectif-chiffres">MRR actuel : <strong>'+fmt(dataPaliers.mrrActuel)+'</strong> · Objectif 100 000€ au 31/12/2027</div></div>'+
+      '<div style="position:relative;margin-bottom:42px">'+
+      '<div class="barre-fond"><div class="barre-remplissage" style="width:'+pctBar+'%"></div></div>'+
+      ticks+
+      '</div></div>';
+  }
+  document.getElementById('objectif-section').innerHTML=paliersHtml;
 
   document.getElementById('charts-section').style.display='grid';
   if(d.totalCharges!=null)renderRentabilite(d);
@@ -644,11 +661,11 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
         {
           label:'CA réel',
           data:dataReel,
-          borderColor:'#A8D5DC',
-          backgroundColor:'rgba(168,213,220,0.12)',
+          borderColor:'#C17A56',
+          backgroundColor:'rgba(193,122,86,0.12)',
           tension:0.4,
           pointRadius:5,
-          pointBackgroundColor:'#A8D5DC',
+          pointBackgroundColor:'#C17A56',
           pointBorderColor:'#fff',
           pointBorderWidth:2,
           borderWidth:2.5,
@@ -658,11 +675,11 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
         {
           label:'MRR (projection)',
           data:dataProj,
-          borderColor:'#9B7FD4',
-          backgroundColor:'rgba(155,127,212,0.06)',
+          borderColor:'#A88B7A',
+          backgroundColor:'rgba(168,139,122,0.06)',
           tension:0.4,
           pointRadius:4,
-          pointBackgroundColor:'#9B7FD4',
+          pointBackgroundColor:'#A88B7A',
           pointBorderColor:'#fff',
           pointBorderWidth:2,
           borderWidth:2,
@@ -704,7 +721,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
   });
   const act=d.caActivites||{};
   if(chartAct)chartAct.destroy();
-  chartAct=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#A8D5DC','#E8A040','#4DA882','#9B7FD4'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
+  chartAct=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#C17A56','#C99A5B','#8B9574','#A88B7A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
     var ds=chart.data.datasets[0];
     return chart.data.labels.map(function(lbl,i){
       return{text:lbl+' : '+Math.round(ds.data[i]).toLocaleString('fr-FR')+' €',fillStyle:ds.backgroundColor[i],strokeStyle:ds.backgroundColor[i],hidden:false,index:i};
@@ -718,7 +735,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
   const histo=(d.historique||[]).filter(function(m){return m.annee>=2023;});
   if(chartHisto)chartHisto.destroy();
   if(histo.length>0){
-    const couleurs={2023:'#D0D0D0',2024:'#A8D5DC',2025:'#4DA882',2026:'#1A1A1A'};
+    const couleurs={2023:'#D0D0D0',2024:'#C17A56',2025:'#8B9574',2026:'#1A1A1A'};
     const ds=[2023,2024,2025,2026].map(function(an){
       const dt=new Array(12).fill(null);
       histo.filter(function(m){return m.annee===an;}).forEach(function(m){dt[m.mois-1]=m.ca;});
@@ -768,9 +785,9 @@ function renderTendance(histo){
   window._chartTendance=new Chart(document.getElementById('chartTendance'),{
     type:'line',
     data:{labels:labelsTotal,datasets:[
-      {label:'CA mensuel',data:valeursTotal,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true,spanGaps:false},
+      {label:'CA mensuel',data:valeursTotal,borderColor:'#C17A56',backgroundColor:'rgba(193,122,86,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true,spanGaps:false},
       {label:'Tendance',data:tendanceTotal,borderColor:'#1A1A1A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[6,4],spanGaps:false},
-      {label:'Projection',data:projectionTotal,borderColor:'#9B7FD4',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[8,4],spanGaps:false}
+      {label:'Projection',data:projectionTotal,borderColor:'#A88B7A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[8,4],spanGaps:false}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}}}
   });
@@ -781,18 +798,18 @@ function renderEvolutionMensuelle(histo){
   var lignes=trie.map(function(m,i){
     var precedent=i>0?trie[i-1]:null;
     var evol=(precedent&&precedent.ca>0)?((m.ca-precedent.ca)/precedent.ca*100):null;
-    return {label:m.label,ca:m.ca,evol:evol};
+    return {label:m.label,ca:m.ca,evol:evol,annee:m.annee};
   });
-  var evolsValides=lignes.filter(function(l){return l.evol!=null;}).map(function(l){return l.evol;});
+  var evolsValides=lignes.filter(function(l){return l.evol!=null&&l.annee===2026;}).map(function(l){return l.evol;});
   var moyenne=evolsValides.length?evolsValides.reduce(function(s,e){return s+e;},0)/evolsValides.length:0;
   var couleurMoyenne=moyenne>=0?'var(--vert)':'var(--rouge)';
-  document.getElementById('evolution-mensuelle-title').innerHTML='📊 Évolution mensuelle du CA <span style="color:'+couleurMoyenne+'">— moyenne '+(moyenne>=0?'+':'')+moyenne.toFixed(1)+'%/mois vs M-1</span>';
+  document.getElementById('evolution-mensuelle-title').innerHTML='📊 Évolution mensuelle du CA <span style="color:'+couleurMoyenne+'">— moyenne '+(moyenne>=0?'+':'')+moyenne.toFixed(1)+'%/mois vs M-1, depuis 2026</span>';
 
   if(window._chartEvolutionMensuelle)window._chartEvolutionMensuelle.destroy();
   window._chartEvolutionMensuelle=new Chart(document.getElementById('chartEvolutionMensuelle'),{
     data:{labels:lignes.map(function(l){return l.label;}),datasets:[
-      {type:'bar',label:'CA',data:lignes.map(function(l){return l.ca;}),backgroundColor:'rgba(168,213,220,0.55)',yAxisID:'y',order:2},
-      {type:'line',label:'Évolution vs M-1',data:lignes.map(function(l){return l.evol;}),borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:true}
+      {type:'bar',label:'CA',data:lignes.map(function(l){return l.ca;}),backgroundColor:'rgba(193,122,86,0.55)',yAxisID:'y',order:2},
+      {type:'line',label:'Évolution vs M-1',data:lignes.map(function(l){return l.evol;}),borderColor:'#A88B7A',backgroundColor:'#A88B7A',borderWidth:2.5,tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:true}
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){
@@ -1426,14 +1443,14 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
   if(window._chartTop10)window._chartTop10.destroy();
   window._chartTop10=new Chart(document.getElementById('chartTop10Rentables'),{
     type:'bar',
-    data:{labels:top10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:top10.map(function(s){return s.tauxMarge;}),backgroundColor:'#4DA882'}]},
+    data:{labels:top10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:top10.map(function(s){return s.tauxMarge;}),backgroundColor:'#8B9574'}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
   });
 
   if(window._chartFlop10)window._chartFlop10.destroy();
   window._chartFlop10=new Chart(document.getElementById('chartFlop10Rentables'),{
     type:'bar',
-    data:{labels:flop10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:flop10.map(function(s){return s.tauxMarge;}),backgroundColor:flop10.map(function(s){return s.tauxMarge<0?'#D94F4F':'#E8A040';})}]},
+    data:{labels:flop10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:flop10.map(function(s){return s.tauxMarge;}),backgroundColor:flop10.map(function(s){return s.tauxMarge<0?'#B5654F':'#C99A5B';})}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
   });
 
@@ -1442,7 +1459,7 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
   var totalDonut=margePositive+coutTotal;
   window._chartRepartCout=new Chart(document.getElementById('chartRepartitionCout'),{
     type:'doughnut',
-    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[margePositive,coutTotal],backgroundColor:['#4DA882','#D94F4F'],borderWidth:0}]},
+    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[margePositive,coutTotal],backgroundColor:['#8B9574','#B5654F'],borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{
       legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
         var ds=chart.data.datasets[0];
@@ -1496,10 +1513,10 @@ function renderCafeConso(sites, historique){
     window._chartCafeConsoHisto=new Chart(document.getElementById('chartCafeConsoHisto'),{
       type:'line',
       data:{labels:labelsH,datasets:[
-        {label:'Café — coût réel',data:historique.map(function(h){return h.cafe;}),borderColor:'#E8A040',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
-        {label:'Café — facturé (actuel)',data:labelsH.map(function(){return Math.round(caCafeTotal);}),borderColor:'#E8A040',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0},
-        {label:'Consommables — coût réel',data:historique.map(function(h){return h.conso;}),borderColor:'#9B7FD4',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
-        {label:'Consommables — facturé (actuel)',data:labelsH.map(function(){return Math.round(caConsoTotal);}),borderColor:'#9B7FD4',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
+        {label:'Café — coût réel',data:historique.map(function(h){return h.cafe;}),borderColor:'#C99A5B',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Café — facturé (actuel)',data:labelsH.map(function(){return Math.round(caCafeTotal);}),borderColor:'#C99A5B',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0},
+        {label:'Consommables — coût réel',data:historique.map(function(h){return h.conso;}),borderColor:'#A88B7A',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Consommables — facturé (actuel)',data:labelsH.map(function(){return Math.round(caConsoTotal);}),borderColor:'#A88B7A',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
       ]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';}}}},scales:{y:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
     });
@@ -1613,12 +1630,12 @@ function renderRentabilite(d){
       data: {
         labels: labels,
         datasets: [
-          {type:'bar',label:'CA',data:histo.map(function(m){return m.ca;}).concat(nulls(futurs.length)),backgroundColor:'rgba(168,213,220,0.5)',stack:'ca',order:2,yAxisID:'y'},
-          {type:'bar',label:'CA (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.ca;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'ca',order:2,yAxisID:'y'},
-          {type:'bar',label:'Charges agents',data:histo.map(function(m){return m.charges;}).concat(nulls(futurs.length)),backgroundColor:'rgba(217,79,79,0.35)',stack:'charges',order:2,yAxisID:'y'},
-          {type:'bar',label:'Charges (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.charges;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'charges',order:2,yAxisID:'y'},
-          {type:'line',label:'Taux de marge',data:tauxPasse,borderColor:'#4DA882',backgroundColor:'#4DA882',borderWidth:2.5,tension:0.3,pointRadius:4,yAxisID:'y1',order:1,spanGaps:false},
-          {type:'line',label:'Taux (projection)',data:tauxFutur,borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,borderDash:[6,4],tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:false}
+          {type:'bar',label:'CA',data:histo.map(function(m){return m.ca;}).concat(nulls(futurs.length)),backgroundColor:'rgba(193,122,86,0.5)',stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'CA (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.ca;})),backgroundColor:'rgba(168,139,122,0.18)',borderColor:'#A88B7A',borderWidth:1.5,borderDash:[4,3],stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges agents',data:histo.map(function(m){return m.charges;}).concat(nulls(futurs.length)),backgroundColor:'rgba(181,101,79,0.35)',stack:'charges',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.charges;})),backgroundColor:'rgba(168,139,122,0.18)',borderColor:'#A88B7A',borderWidth:1.5,borderDash:[4,3],stack:'charges',order:2,yAxisID:'y'},
+          {type:'line',label:'Taux de marge',data:tauxPasse,borderColor:'#8B9574',backgroundColor:'#8B9574',borderWidth:2.5,tension:0.3,pointRadius:4,yAxisID:'y1',order:1,spanGaps:false},
+          {type:'line',label:'Taux (projection)',data:tauxFutur,borderColor:'#A88B7A',backgroundColor:'#A88B7A',borderWidth:2.5,borderDash:[6,4],tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:false}
         ]
       },
       options:{
