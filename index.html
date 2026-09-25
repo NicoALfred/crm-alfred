@@ -5,14 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alfred CRM</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bleu:#E8A67D;--bleu-pale:#F5DCC8;--noir:#0E0F10;--gris:#6B6862;--gris-clair:#F0EBDD;--blanc-casse:#F7F2E6;--blanc:#FFFFFF;--rouge:#A8503A;--orange:#C2691F;--vert:#7A8B5C;--violet:#ABC7D1;--violet-pale:#E4EDF0;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);}
+:root{--bleu:#A8D5DC;--bleu-pale:#D6EEF2;--noir:#1A1A1A;--gris:#6B6B6B;--gris-clair:#F0F0F0;--blanc-casse:#F8F6F2;--blanc:#FFFFFF;--rouge:#D94F4F;--orange:#E8A040;--vert:#4DA882;--violet:#9B7FD4;--violet-pale:#F0EBF9;--radius:10px;--shadow:0 2px 12px rgba(0,0,0,0.07);}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Jost','Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
+body{font-family:'Sweet Sans Pro','Gill Sans','Century Gothic','Futura',sans-serif;background:var(--blanc-casse);color:var(--noir);min-height:100vh;}
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--noir);display:flex;flex-direction:column;padding:32px 0 24px;z-index:100;}
 .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid rgba(255,255,255,0.12);text-align:center;}
 .sidebar-logo svg{width:100%;max-width:160px;display:block;margin:0 auto;}
@@ -20,7 +17,7 @@ body{font-family:'Jost','Sweet Sans Pro','Gill Sans','Century Gothic','Futura',s
 .sidebar-nav{flex:1;padding:20px 0;display:flex;flex-direction:column;gap:2px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:11px 24px;color:rgba(255,255,255,0.45);font-size:12px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;text-transform:uppercase;}
 .nav-item:hover{color:var(--blanc);background:rgba(255,255,255,0.07);}
-.nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(232,166,125,0.1);font-weight:600;}
+.nav-item.active{color:var(--bleu);border-left-color:var(--bleu);background:rgba(168,213,220,0.1);font-weight:600;}
 .nav-item .icon{width:20px;display:inline-flex;align-items:center;justify-content:center;}
 .sidebar-bottom{padding:16px 24px;border-top:1px solid rgba(255,255,255,0.12);}
 .btn-add-lead{position:relative;width:100%;padding:11px;background:linear-gradient(180deg,#C9EAEE 0%,var(--bleu) 100%);color:var(--noir);border:none;border-radius:var(--radius);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,0.6) inset,0 4px 0 #6FA8B2,0 6px 10px rgba(0,0,0,0.25);transition:transform 0.08s,box-shadow 0.08s,filter 0.15s;}
@@ -36,7 +33,7 @@ body{font-family:'Jost','Sweet Sans Pro','Gill Sans','Century Gothic','Futura',s
 .page-subtitle{font-size:13px;color:var(--gris);margin-top:6px;}
 .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:24px;}
 .stat-card{background:var(--blanc);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);border-top:3px solid transparent;}
-.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.teal{border-top-color:#8A5228;}
+.stat-card.bleu{border-top-color:var(--bleu);}.stat-card.vert{border-top-color:var(--vert);}.stat-card.violet{border-top-color:var(--violet);}.stat-card.rouge{border-top-color:var(--rouge);}.stat-card.teal{border-top-color:#3A9AAA;}
 .stat-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
 .stat-value{font-size:26px;font-weight:700;color:var(--noir);line-height:1;}
 .stat-value span{font-size:13px;font-weight:400;color:var(--gris);}
@@ -89,7 +86,7 @@ body{font-family:'Jost','Sweet Sans Pro','Gill Sans','Century Gothic','Futura',s
 .card-badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-bottom:5px;}
 .badge-actif{background:#E0F5EC;color:var(--vert);}
 .badge-futur{background:#FFF3E0;color:var(--orange);}
-.badge-recurrent{background:var(--bleu-pale);color:#8A5228;}
+.badge-recurrent{background:var(--bleu-pale);color:#3A9AAA;}
 .badge-oneshot{background:#DDD0F5;color:var(--violet);}
 .badge-annulee{background:#FFECEC;color:var(--rouge);}
 .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px;margin-top:4px;}
@@ -150,7 +147,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .btn-add-assigne{padding:9px 12px;background:var(--gris-clair);border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
 .type-toggle{display:flex;gap:8px;}
 .type-btn{flex:1;padding:9px;border:1px solid #E0E0E0;border-radius:8px;font-family:inherit;font-size:11px;cursor:pointer;text-align:center;transition:all 0.15s;background:var(--blanc);}
-.type-btn.active-recurrent{background:var(--bleu-pale);border-color:var(--bleu);color:#8A5228;font-weight:700;}
+.type-btn.active-recurrent{background:var(--bleu-pale);border-color:var(--bleu);color:#3A9AAA;font-weight:700;}
 .type-btn.active-oneshot{background:var(--violet-pale);border-color:var(--violet);color:var(--violet);font-weight:700;}
 .modal-footer{padding:18px 30px 26px;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
 .btn-secondary{padding:9px 22px;border:1px solid #E0E0E0;background:var(--blanc);border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer;}
@@ -184,7 +181,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
 .marge-kpi-lbl{font-size:10px;color:var(--gris);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
 .marge-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
 .taux-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700;}
-.signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#7A8B5C;}
+.signer-info{margin-top:16px;padding:12px;background:#E0F5EC;border-radius:8px;font-size:12px;color:#4DA882;}
 .lock-screen{display:none;position:fixed;inset:0;background:var(--noir);z-index:5000;align-items:center;justify-content:center;}
 .lock-screen.open{display:flex;}
 .lock-box{background:var(--blanc);border-radius:14px;padding:36px 32px;width:320px;max-width:90vw;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
@@ -664,11 +661,11 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
         {
           label:'CA réel',
           data:dataReel,
-          borderColor:'#E8A67D',
-          backgroundColor:'rgba(232,166,125,0.12)',
+          borderColor:'#A8D5DC',
+          backgroundColor:'rgba(168,213,220,0.12)',
           tension:0.4,
           pointRadius:5,
-          pointBackgroundColor:'#E8A67D',
+          pointBackgroundColor:'#A8D5DC',
           pointBorderColor:'#fff',
           pointBorderWidth:2,
           borderWidth:2.5,
@@ -678,11 +675,11 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
         {
           label:'MRR (projection)',
           data:dataProj,
-          borderColor:'#ABC7D1',
-          backgroundColor:'rgba(171,199,209,0.06)',
+          borderColor:'#9B7FD4',
+          backgroundColor:'rgba(155,127,212,0.06)',
           tension:0.4,
           pointRadius:4,
-          pointBackgroundColor:'#ABC7D1',
+          pointBackgroundColor:'#9B7FD4',
           pointBorderColor:'#fff',
           pointBorderWidth:2,
           borderWidth:2,
@@ -724,7 +721,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
   });
   const act=d.caActivites||{};
   if(chartAct)chartAct.destroy();
-  chartAct=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#E8A67D','#C2691F','#7A8B5C','#ABC7D1'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
+  chartAct=new Chart(document.getElementById('chartActivites'),{type:'doughnut',data:{labels:['Nettoyage','Café','Consommables','Fontaines'],datasets:[{data:[act.nettoyage||0,act.cafe||0,act.consommables||0,act.fontaines||0],backgroundColor:['#A8D5DC','#E8A040','#4DA882','#9B7FD4'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
     var ds=chart.data.datasets[0];
     return chart.data.labels.map(function(lbl,i){
       return{text:lbl+' : '+Math.round(ds.data[i]).toLocaleString('fr-FR')+' €',fillStyle:ds.backgroundColor[i],strokeStyle:ds.backgroundColor[i],hidden:false,index:i};
@@ -738,7 +735,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
   const histo=(d.historique||[]).filter(function(m){return m.annee>=2023;});
   if(chartHisto)chartHisto.destroy();
   if(histo.length>0){
-    const couleurs={2023:'#D0D0D0',2024:'#E8A67D',2025:'#7A8B5C',2026:'#1A1A1A'};
+    const couleurs={2023:'#D0D0D0',2024:'#A8D5DC',2025:'#4DA882',2026:'#1A1A1A'};
     const ds=[2023,2024,2025,2026].map(function(an){
       const dt=new Array(12).fill(null);
       histo.filter(function(m){return m.annee===an;}).forEach(function(m){dt[m.mois-1]=m.ca;});
@@ -788,9 +785,9 @@ function renderTendance(histo){
   window._chartTendance=new Chart(document.getElementById('chartTendance'),{
     type:'line',
     data:{labels:labelsTotal,datasets:[
-      {label:'CA mensuel',data:valeursTotal,borderColor:'#E8A67D',backgroundColor:'rgba(232,166,125,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true,spanGaps:false},
+      {label:'CA mensuel',data:valeursTotal,borderColor:'#A8D5DC',backgroundColor:'rgba(168,213,220,0.1)',tension:0.3,pointRadius:2,borderWidth:1.5,fill:true,spanGaps:false},
       {label:'Tendance',data:tendanceTotal,borderColor:'#1A1A1A',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[6,4],spanGaps:false},
-      {label:'Projection',data:projectionTotal,borderColor:'#ABC7D1',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[8,4],spanGaps:false}
+      {label:'Projection',data:projectionTotal,borderColor:'#9B7FD4',backgroundColor:'transparent',borderWidth:2.5,pointRadius:0,borderDash:[8,4],spanGaps:false}
     ]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},scales:{y:{ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:8},maxRotation:60,minRotation:60},grid:{display:false}}}}
   });
@@ -811,8 +808,8 @@ function renderEvolutionMensuelle(histo){
   if(window._chartEvolutionMensuelle)window._chartEvolutionMensuelle.destroy();
   window._chartEvolutionMensuelle=new Chart(document.getElementById('chartEvolutionMensuelle'),{
     data:{labels:lignes.map(function(l){return l.label;}),datasets:[
-      {type:'bar',label:'CA',data:lignes.map(function(l){return l.ca;}),backgroundColor:'rgba(232,166,125,0.55)',yAxisID:'y',order:2},
-      {type:'line',label:'Évolution vs M-1',data:lignes.map(function(l){return l.evol;}),borderColor:'#ABC7D1',backgroundColor:'#ABC7D1',borderWidth:2.5,tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:true}
+      {type:'bar',label:'CA',data:lignes.map(function(l){return l.ca;}),backgroundColor:'rgba(168,213,220,0.55)',yAxisID:'y',order:2},
+      {type:'line',label:'Évolution vs M-1',data:lignes.map(function(l){return l.evol;}),borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:true}
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{font:{size:10},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){
@@ -1446,14 +1443,14 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
   if(window._chartTop10)window._chartTop10.destroy();
   window._chartTop10=new Chart(document.getElementById('chartTop10Rentables'),{
     type:'bar',
-    data:{labels:top10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:top10.map(function(s){return s.tauxMarge;}),backgroundColor:'#7A8B5C'}]},
+    data:{labels:top10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:top10.map(function(s){return s.tauxMarge;}),backgroundColor:'#4DA882'}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
   });
 
   if(window._chartFlop10)window._chartFlop10.destroy();
   window._chartFlop10=new Chart(document.getElementById('chartFlop10Rentables'),{
     type:'bar',
-    data:{labels:flop10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:flop10.map(function(s){return s.tauxMarge;}),backgroundColor:flop10.map(function(s){return s.tauxMarge<0?'#A8503A':'#C2691F';})}]},
+    data:{labels:flop10.map(function(s){return s.societe;}),datasets:[{label:'Taux de marge',data:flop10.map(function(s){return s.tauxMarge;}),backgroundColor:flop10.map(function(s){return s.tauxMarge<0?'#D94F4F':'#E8A040';})}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.x+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:9}},grid:{color:'#F0F0F0'}},y:{ticks:{font:{size:9}}}}}
   });
 
@@ -1462,7 +1459,7 @@ function renderGraphiquesRentabilite(sites, caTotal, coutTotal){
   var totalDonut=margePositive+coutTotal;
   window._chartRepartCout=new Chart(document.getElementById('chartRepartitionCout'),{
     type:'doughnut',
-    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[margePositive,coutTotal],backgroundColor:['#7A8B5C','#A8503A'],borderWidth:0}]},
+    data:{labels:['Marge','Coût main d\'œuvre'],datasets:[{data:[margePositive,coutTotal],backgroundColor:['#4DA882','#D94F4F'],borderWidth:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{
       legend:{position:'bottom',labels:{font:{size:10},boxWidth:10,padding:8,generateLabels:function(chart){
         var ds=chart.data.datasets[0];
@@ -1516,10 +1513,10 @@ function renderCafeConso(sites, historique){
     window._chartCafeConsoHisto=new Chart(document.getElementById('chartCafeConsoHisto'),{
       type:'line',
       data:{labels:labelsH,datasets:[
-        {label:'Café — coût réel',data:historique.map(function(h){return h.cafe;}),borderColor:'#C2691F',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
-        {label:'Café — facturé (actuel)',data:labelsH.map(function(){return Math.round(caCafeTotal);}),borderColor:'#C2691F',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0},
-        {label:'Consommables — coût réel',data:historique.map(function(h){return h.conso;}),borderColor:'#ABC7D1',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
-        {label:'Consommables — facturé (actuel)',data:labelsH.map(function(){return Math.round(caConsoTotal);}),borderColor:'#ABC7D1',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
+        {label:'Café — coût réel',data:historique.map(function(h){return h.cafe;}),borderColor:'#E8A040',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Café — facturé (actuel)',data:labelsH.map(function(){return Math.round(caCafeTotal);}),borderColor:'#E8A040',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0},
+        {label:'Consommables — coût réel',data:historique.map(function(h){return h.conso;}),borderColor:'#9B7FD4',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2.5},
+        {label:'Consommables — facturé (actuel)',data:labelsH.map(function(){return Math.round(caConsoTotal);}),borderColor:'#9B7FD4',backgroundColor:'transparent',borderDash:[5,4],borderWidth:1.5,pointRadius:0}
       ]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:9},boxWidth:10}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+' : '+Math.round(ctx.parsed.y).toLocaleString('fr-FR')+' €';}}}},scales:{y:{ticks:{callback:function(v){return v+'€';},font:{size:9}},grid:{color:'#F0F0F0'}},x:{ticks:{font:{size:9}},grid:{display:false}}}}
     });
@@ -1633,12 +1630,12 @@ function renderRentabilite(d){
       data: {
         labels: labels,
         datasets: [
-          {type:'bar',label:'CA',data:histo.map(function(m){return m.ca;}).concat(nulls(futurs.length)),backgroundColor:'rgba(232,166,125,0.5)',stack:'ca',order:2,yAxisID:'y'},
-          {type:'bar',label:'CA (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.ca;})),backgroundColor:'rgba(171,199,209,0.18)',borderColor:'#ABC7D1',borderWidth:1.5,borderDash:[4,3],stack:'ca',order:2,yAxisID:'y'},
-          {type:'bar',label:'Charges agents',data:histo.map(function(m){return m.charges;}).concat(nulls(futurs.length)),backgroundColor:'rgba(168,80,58,0.35)',stack:'charges',order:2,yAxisID:'y'},
-          {type:'bar',label:'Charges (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.charges;})),backgroundColor:'rgba(171,199,209,0.18)',borderColor:'#ABC7D1',borderWidth:1.5,borderDash:[4,3],stack:'charges',order:2,yAxisID:'y'},
-          {type:'line',label:'Taux de marge',data:tauxPasse,borderColor:'#7A8B5C',backgroundColor:'#7A8B5C',borderWidth:2.5,tension:0.3,pointRadius:4,yAxisID:'y1',order:1,spanGaps:false},
-          {type:'line',label:'Taux (projection)',data:tauxFutur,borderColor:'#ABC7D1',backgroundColor:'#ABC7D1',borderWidth:2.5,borderDash:[6,4],tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:false}
+          {type:'bar',label:'CA',data:histo.map(function(m){return m.ca;}).concat(nulls(futurs.length)),backgroundColor:'rgba(168,213,220,0.5)',stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'CA (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.ca;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'ca',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges agents',data:histo.map(function(m){return m.charges;}).concat(nulls(futurs.length)),backgroundColor:'rgba(217,79,79,0.35)',stack:'charges',order:2,yAxisID:'y'},
+          {type:'bar',label:'Charges (projection)',data:nulls(nbPasse).concat(futurs.map(function(m){return m.charges;})),backgroundColor:'rgba(155,127,212,0.18)',borderColor:'#9B7FD4',borderWidth:1.5,borderDash:[4,3],stack:'charges',order:2,yAxisID:'y'},
+          {type:'line',label:'Taux de marge',data:tauxPasse,borderColor:'#4DA882',backgroundColor:'#4DA882',borderWidth:2.5,tension:0.3,pointRadius:4,yAxisID:'y1',order:1,spanGaps:false},
+          {type:'line',label:'Taux (projection)',data:tauxFutur,borderColor:'#9B7FD4',backgroundColor:'#9B7FD4',borderWidth:2.5,borderDash:[6,4],tension:0.3,pointRadius:3,yAxisID:'y1',order:1,spanGaps:false}
         ]
       },
       options:{
