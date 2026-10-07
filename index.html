@@ -237,7 +237,7 @@ tbody td{padding:13px 18px;font-size:12px;color:var(--noir);}
     <div id="oneshot-banner"></div>
     <div id="objectif-section"></div>
     <div class="charts-grid" id="charts-section" style="display:none">
-      <div class="chart-card"><div class="chart-title">📈 CA mensuel 2026</div><div class="chart-wrap"><canvas id="chartCA"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">📈 CA mensuel</div><div class="chart-wrap"><canvas id="chartCA"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">📊 Répartition CA par activité</div><div class="chart-wrap"><canvas id="chartActivites"></canvas></div></div>
     </div>
     <div id="rentabilite-section"></div>
@@ -629,25 +629,29 @@ function renderDashboard(d){
   const noms12=["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
   const mi=new Date().getMonth();
   // Construire les données du graphique sur 12 mois
-  var labels12 = noms12; // Jan à Déc (12 mois, doit matcher les 12 points de dataReel/dataProj)
-  var dataReel = new Array(12).fill(null);
-  var dataProj = new Array(12).fill(null);
+  var labels12 = [];
+  for(var an=2026;an<=2027;an++){ noms12.forEach(function(n){ labels12.push(n+" "+String(an).slice(2)); }); }
+  var NB=labels12.length; // 24 mois : Jan 2026 → Déc 2027
+  var dataReel = new Array(NB).fill(null);
+  var dataProj = new Array(NB).fill(null);
   
-  // Données réelles Pennylane (jan à mois actuel uniquement)
- var moisCourant = new Date().getMonth() + 1;
-var jourCourant = new Date().getDate();
-var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
-(d.mois2026||[]).forEach(function(m){
-  if(m.mois <= dernierMoisComplet) dataReel[m.mois-1] = m.ca;
-});
+  // Données réelles Pennylane (jan 2026 à mois actuel uniquement)
+  var moisCourant = new Date().getMonth() + 1;
+  var jourCourant = new Date().getDate();
+  var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
+  (d.mois2026||[]).forEach(function(m){
+    if((m.annee||2026)===2026 && m.mois <= dernierMoisComplet) dataReel[m.mois-1] = m.ca;
+  });
   
-  // Projection (mois suivants depuis le Apps Script)
-  var proj = d.projection || [];
-  proj.forEach(function(m){ dataProj[m.mois-1] = m.ca; });
+  // Projection (mois suivants depuis le Apps Script, jusqu'à déc 2027)
+  (d.projection||[]).forEach(function(m){
+    var idx=((m.annee||2026)-2026)*12+m.mois-1;
+    if(idx>=0 && idx<NB) dataProj[idx] = m.ca;
+  });
   
   // Point de jonction : le dernier mois réel sert de premier point de projection
   var dernierMoisReel = -1;
-  for(var i=0;i<12;i++){ if(dataReel[i]!==null) dernierMoisReel=i; }
+  for(var i=0;i<NB;i++){ if(dataReel[i]!==null) dernierMoisReel=i; }
   if(dernierMoisReel>=0 && dataProj[dernierMoisReel+1]!==null){
     dataProj[dernierMoisReel] = dataReel[dernierMoisReel]; // jonction
   }
@@ -715,7 +719,7 @@ var dernierMoisComplet = jourCourant >= 15 ? moisCourant : moisCourant - 1;
           ticks:{callback:function(v){return(v/1000).toFixed(0)+'k€';},font:{size:10}},
           grid:{color:'#F0F0F0'}
         },
-        x:{ticks:{font:{size:10}},grid:{display:false}}
+        x:{ticks:{font:{size:10},maxRotation:60,autoSkip:false},grid:{display:false}}
       }
     }
   });
@@ -1614,7 +1618,7 @@ function renderRentabilite(d){
     const caParMois={};
     (d.historique||[]).forEach(function(x){if(x.annee===anneeActuelle)caParMois[x.mois]=x.ca;});
     (d.mois2026||[]).forEach(function(x){if(x.annee===anneeActuelle)caParMois[x.mois]=x.ca;});
-    (d.projection||[]).forEach(function(x){if(!(x.mois in caParMois))caParMois[x.mois]=x.ca;});
+    (d.projection||[]).forEach(function(x){if((x.annee||anneeActuelle)===anneeActuelle && !(x.mois in caParMois))caParMois[x.mois]=x.ca;});
     const futurs=moisFuturs.map(function(m){
       var facteur=dernier.mois<12?1+0.5*((m-dernier.mois)/(12-dernier.mois)):1;
       var chargesProj=Math.round(dernier.charges*facteur);
