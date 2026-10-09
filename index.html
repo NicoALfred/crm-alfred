@@ -623,29 +623,7 @@ async function chargerDonnees(force){
     renderClients();
     renderRelances();
   }catch(e){
-    // CA réel de l'année en cours : calculé à partir des mois réellement facturés (se met à jour tout seul)
-  var caR=(function(){
-    var NM=["","Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
-    var now=new Date(), an=now.getFullYear(), mc=now.getMonth()+1;
-    var dernierComplet=now.getDate()>=15?mc:mc-1;
-    var cur=(d.mois2026||[]).filter(function(m){return (m.annee||an)===an && m.mois<=dernierComplet && m.ca>0;});
-    if(!cur.length) return {an:an,total:d.caReel2026,periode:'',detail:''};
-    var dernier=Math.max.apply(null,cur.map(function(m){return m.mois;}));
-    var total=cur.reduce(function(s,m){return s+m.ca;},0);
-    var hist=d.historique||[];
-    var prev=hist.filter(function(m){return m.annee===an-1;});
-    var prevTotal=prev.reduce(function(s,m){return s+m.ca;},0);
-    var prevMeme=prev.filter(function(m){return m.mois<=dernier;}).reduce(function(s,m){return s+m.ca;},0);
-    var detail='';
-    if(prevTotal>0){
-      var evol=prevMeme>0?Math.round((total-prevMeme)/prevMeme*1000)/10:null;
-      var coul=evol==null?'var(--gris)':(evol>=0?'var(--vert)':'var(--rouge)');
-      detail='<div class="stat-sub" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(26,26,26,0.09)">CA '+(an-1)+' : <strong style="color:var(--noir)">'+fmt(prevTotal)+'</strong></div>'+
-        (evol!=null?'<div class="stat-sub">Évolution '+(an-1)+' → '+an+' : <strong style="color:'+coul+'">'+(evol>=0?'+':'')+String(evol).replace('.',',')+' %</strong> <span style="opacity:.8">(Jan → '+NM[dernier]+', '+fmt(prevMeme)+' en '+(an-1)+')</span></div>':'');
-    }
-    return {an:an,total:total,periode:'Jan → '+NM[dernier]+' '+an,detail:detail};
-  })();
-  document.getElementById('stats-grid').innerHTML='<div class="loading">Erreur de chargement. Vérifiez le Apps Script.</div>';
+    document.getElementById('stats-grid').innerHTML='<div class="loading">Erreur de chargement. Vérifiez le Apps Script.</div>';
   }
 }
 
@@ -673,6 +651,28 @@ function renderDashboard(d){
   const totalDevis=leadsDevis.reduce(function(s,l){return s+(parseFloat(l['Montant estimé (€/mois)'])||0);},0);
   const totalMRRPotentiel=leadsDevis.filter(function(l){return l['Type']!=='One-shot';}).reduce(function(s,l){return s+(parseFloat(l['Montant estimé (€/mois)'])||0);},0);
   const av=d.contratsAVenir||0;
+  // CA réel de l'année en cours : calculé à partir des mois réellement facturés (se met à jour tout seul)
+  var caR=(function(){
+    var NM=["","Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+    var now=new Date(), an=now.getFullYear(), mc=now.getMonth()+1;
+    var dernierComplet=now.getDate()>=15?mc:mc-1;
+    var cur=(d.mois2026||[]).filter(function(m){return (m.annee||an)===an && m.mois<=dernierComplet && m.ca>0;});
+    if(!cur.length) return {an:an,total:d.caReel2026,periode:'',detail:''};
+    var dernier=Math.max.apply(null,cur.map(function(m){return m.mois;}));
+    var total=cur.reduce(function(s,m){return s+m.ca;},0);
+    var hist=d.historique||[];
+    var prev=hist.filter(function(m){return m.annee===an-1;});
+    var prevTotal=prev.reduce(function(s,m){return s+m.ca;},0);
+    var prevMeme=prev.filter(function(m){return m.mois<=dernier;}).reduce(function(s,m){return s+m.ca;},0);
+    var detail='';
+    if(prevTotal>0){
+      var evol=prevMeme>0?Math.round((total-prevMeme)/prevMeme*1000)/10:null;
+      var coul=evol==null?'var(--gris)':(evol>=0?'var(--vert)':'var(--rouge)');
+      detail='<div class="stat-sub" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(26,26,26,0.09)">CA '+(an-1)+' : <strong style="color:var(--noir)">'+fmt(prevTotal)+'</strong></div>'+
+        (evol!=null?'<div class="stat-sub">Évolution '+(an-1)+' → '+an+' : <strong style="color:'+coul+'">'+(evol>=0?'+':'')+String(evol).replace('.',',')+' %</strong> <span style="opacity:.8">(Jan → '+NM[dernier]+', '+fmt(prevMeme)+' en '+(an-1)+')</span></div>':'');
+    }
+    return {an:an,total:total,periode:'Jan → '+NM[dernier]+' '+an,detail:detail};
+  })();
   document.getElementById('stats-grid').innerHTML=
     '<div class="stat-card bleu"><div class="stat-label">CA mensuel actuel</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">'+(d.nbClientsActifs||'—')+' clients · '+av+' à venir</div></div>'+
     '<div class="stat-card teal"><div class="stat-label">MRR</div><div class="stat-value">'+fmt(d.caMensuel)+'</div><div class="stat-sub">Revenu récurrent mensuel (hors one-shots)</div></div>'+
